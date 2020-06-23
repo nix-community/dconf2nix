@@ -9,7 +9,17 @@ data Entry = Entry
 
 parseEntry :: [String] -> Maybe Entry
 parseEntry []      = Nothing
-parseEntry (h : t) = Just (Entry h t)
+parseEntry (h : t) = Just (Entry (parseHeader h) t)
+
+trim :: String -> String
+trim xs =
+  let trim' ys = dropWhile (== ' ') ys
+  in  trim' (reverse $ trim' (reverse xs))
+
+parseHeader :: String -> String
+parseHeader [] = []
+parseHeader ('[' : t) = parseHeader (reverse t)
+parseHeader (']' : t) = trim (reverse t)
 
 parseDconf :: IO ()
 parseDconf = do
