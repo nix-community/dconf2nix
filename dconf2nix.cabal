@@ -19,7 +19,8 @@ extra-source-files:  CHANGELOG.md, README.md
 library
   exposed-modules:     DConf
   build-depends:       base
-                     , megaparsec
+                     , containers
+                     , parsec
   hs-source-dirs:      src
   default-language:    Haskell2010
 
