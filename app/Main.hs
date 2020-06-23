@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import DConf
 
 main :: IO ()
-main = greet
+main = parseDconf
