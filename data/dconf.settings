@@ -259,12 +259,6 @@ timer-sound-file-path='file:///home/gvolpe/.nix-profile/share/gnome-shell/extens
 [org/gnome/shell/extensions/user-theme]
 name=''
 
-[org/gnome/shell/extensions/workspace-grid ]
-num-columns=2
-
-[org/gnome/shell/extensions/wsmatrix ]
-num-columns=2
-
 [org/gnome/shell/world-clocks]
 locations=@av []
 

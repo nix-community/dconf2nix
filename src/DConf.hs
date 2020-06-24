@@ -1,16 +1,10 @@
 module DConf where
 
 import Data.Map (Map)
-import Text.Parsec
-import Text.Parsec.String (Parser)
-import Text.Parsec.Language (emptyDef)
-
-import qualified Text.Parsec.Expr as Expr
-import qualified Text.Parsec.Token as Token
-import System.IO (readFile)
+import qualified Data.Map as Map
+import System.IO (appendFile, readFile, writeFile)
 
 type Field = String
-
 data Value = S String | B Bool | I Int | D Double | L [Value] deriving Show
 
 type Header  = String
@@ -18,15 +12,31 @@ type Content = Map Field Value
 
 data Entry = Entry
   { header :: Header
-  , content :: [String]
+  , content :: Content
   } deriving Show
 
+type Nix = String
+
+entryToNix :: Entry -> Nix
+entryToNix (Entry h c) =
+  let header = "  \"" ++ h ++ "\" = {\n"
+      body   = (Map.toList c) >>= (\(f, (S v)) -> "    \"" ++ f ++ "\"=" ++ v ++ "\n")
+      close  = "  }\n"
+  in header ++ body ++ close
+
 parseContent :: [String] -> Content
-parseContent = undefined
+parseContent []   = Map.fromList []
+parseContent xs = Map.fromList (xs >>= f)
+ where
+  f [] = []
+  f ys =
+    let field = trim $ takeWhile (/= '=') ys
+        value = S . trim $ drop (length field + 1) ys
+    in  [(field, value)]
 
 parseEntry :: [String] -> Maybe Entry
 parseEntry []      = Nothing
-parseEntry (h : t) = Just (Entry (parseHeader h) t)
+parseEntry (h : t) = Just (Entry (parseHeader h) (parseContent t))
 
 trim :: String -> String
 trim xs =
@@ -40,28 +50,16 @@ parseHeader (']' : t) = trim (reverse t)
 
 parseDconf :: IO ()
 parseDconf = do
-  ls <- lines <$> readFile "./data/dconf.easy"
-  iter ls
+  ls <- lines <$> readFile "./data/dconf.settings"
+  writeFile output "{\n" -- override if it exists
+  appendFile output (iter ls)
+  appendFile output "}"
  where
-  iter [] = pure ()
-  iter xs = do
-    let e = takeWhile (/= []) xs
-    print . show $ parseEntry e
-    iter $ drop (length e + 1) xs
-
---------------------------------------------
-
-langDef :: Token.LanguageDef ()
-langDef = Token.LanguageDef
-  { Token.commentStart    = "{-"
-  , Token.commentEnd      = "-}"
-  , Token.commentLine     = "--"
-  , Token.nestedComments  = True
-  , Token.identStart      = letter
-  , Token.identLetter     = alphaNum <|> oneOf "_'"
-  , Token.opStart         = oneOf ":!#$%&*+./<=>?@\\^|-~"
-  , Token.opLetter        = oneOf ":!#$%&*+./<=>?@\\^|-~"
-  , Token.reservedNames   = []
-  , Token.reservedOpNames = []
-  , Token.caseSensitive   = True
-  }
+  output  = "./output/dconf.nix"
+  iter [] = ""
+  iter xs =
+    let e  = takeWhile (/= []) xs
+        ys = case parseEntry e of
+          Nothing -> ""
+          Just e  -> entryToNix e
+    in  ys ++ (iter $ drop (length e + 1) xs)
