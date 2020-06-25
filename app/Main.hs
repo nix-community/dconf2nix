@@ -1,6 +1,7 @@
 module Main where
 
 import DConf
+import DConfParser
 
 main :: IO ()
-main = parseDconf
+main = myParser
