@@ -1,4 +1,4 @@
-{- Nix renderer of DConf entries -}
+{- Nix renderer for DConf entries -}
 module Nix (
   renderEntry,
   renderHeader
@@ -21,7 +21,7 @@ renderHeader = unlines
 renderEntry :: Entry -> Nix
 renderEntry (Entry h c) =
   let header = "  \"" <> h <> "\" = {\n"
-      body   = (Map.toList c) >>= (\(Key k, v) -> "    \"" <> k <> "\" = " <> unNix (renderValue v) <> "\n")
+      body   = Map.toList c >>= \(Key k, v) -> "    \"" <> k <> "\" = " <> unNix (renderValue v) <> "\n"
       close  = "  };\n\n"
   in  Nix $ header <> body <> close
 

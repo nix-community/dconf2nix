@@ -6,3 +6,4 @@ dist/
 .ghc.*
 .direnv
 output/
+out.nix

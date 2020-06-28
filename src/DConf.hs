@@ -1,5 +1,6 @@
 {-# LANGUAGE LambdaCase #-}
 
+{- Parser combinators for dconf files (Gnome Shell) -}
 module DConf (
   dconfParser
 ) where
@@ -60,12 +61,12 @@ vString = try $ do
   S . concat <$> manyTill inputs (string "'")
  where
   tokens    = many1 <$> [alphaNum, space] ++ (char <$> "-_()[],#@")
-  files     = many1 <$> char <$> ":/."
-  shortcuts = many1 <$> char <$> "<>"
+  files     = many1 . char <$> ":/."
+  shortcuts = many1 . char <$> "<>"
   inputs    = choice (tokens ++ files ++ shortcuts)
 
 vAny :: Parsec String () Value
-vAny = S <$> try (manyTill anyChar endOfLine)
+vAny = S <$> manyTill anyChar endOfLine
 
 dconf :: Parsec String () Value
 dconf = choice [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString, vTuple, vAny]
@@ -88,10 +89,12 @@ dconfValue = vList <|> dconf
 vKey :: Parsec String () Key
 vKey = Key <$> manyTill (choice [alphaNum, char '-']) (char '=')
 
+-- To debug insert `parserTraced "name" $` before the parser
 entryParser :: Parsec String () Entry
 entryParser = do
-  h  <- parserTraced "header" $ dconfHeader <* endOfLine
-  kv <- parserTraced "entry" $ manyTill ((,) <$> vKey <*> (dconfValue <* endOfLine)) endOfLine
+  h  <- dconfHeader <* endOfLine
+  kv <- many1 ((,) <$> vKey <*> (dconfValue <* endOfLine))
+  optional endOfLine
   pure $ Entry h (Map.fromList kv)
 
 dconfParser :: Parsec String () [Entry]
