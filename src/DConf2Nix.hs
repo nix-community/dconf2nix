@@ -10,9 +10,9 @@ import           Text.Parsec.Text               ( parseFromFile )
 
 dconf2nix :: InputFilePath -> OutputFilePath -> IO ()
 dconf2nix (InputFilePath input) (OutputFilePath output) = do
-  T.writeFile output Nix.renderHeader
   parseFromFile dconfParser input >>= \case
-    Left err -> error (show err)
-    Right xs ->
+    Left  err -> error (show err)
+    Right xs  -> do
+      T.writeFile output Nix.renderHeader
       traverse (\e -> T.appendFile output (unNix $ Nix.renderEntry e)) xs
   T.appendFile output "}"
