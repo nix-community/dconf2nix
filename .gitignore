@@ -5,5 +5,3 @@ dist-newstyle/
 dist/
 .ghc.*
 .direnv
-output/
-out.nix
