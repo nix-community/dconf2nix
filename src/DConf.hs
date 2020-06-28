@@ -1,14 +1,15 @@
 {-# LANGUAGE LambdaCase, OverloadedStrings #-}
 
 {- Parser combinators for dconf files (Gnome Shell) -}
-module DConf (
-  dconfParser
-) where
+module DConf
+  ( dconfParser
+  )
+where
 
-import           Data.Functor     ( (<&>) )
-import qualified Data.Map       as Map
-import           Data.Text        ( Text  )
-import qualified Data.Text      as T
+import           Data.Functor                   ( (<&>) )
+import qualified Data.Map                      as Map
+import           Data.Text                      ( Text )
+import qualified Data.Text                     as T
 import           Domain
 import           Text.Parsec
 
@@ -46,8 +47,8 @@ vTuple = try $ do
   char '('
   rs <- manyTill (dconf `sepBy` (string "," >> spaces)) (char ')')
   case concat rs of
-    (x:y:_) -> pure $ T x y
-    _       -> fail "Not a tuple"
+    (x : y : _) -> pure $ T x y
+    _           -> fail "Not a tuple"
 
 vTupleInList :: Parsec Text () Value
 vTupleInList = vTuple <&> \case
@@ -71,19 +72,21 @@ vAny :: Parsec Text () Value
 vAny = S . T.pack <$> manyTill anyChar endOfLine
 
 dconf :: Parsec Text () Value
-dconf = choice [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString, vTuple, vAny]
+dconf = choice
+  [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString, vTuple, vAny]
 
 vList :: Parsec Text () Value
 vList = try $ do
   char '['
-  L . concat <$> manyTill ((vTupleInList <|> dconf) `sepBy` (string "," >> spaces)) (char ']')
+  L . concat <$> manyTill
+    ((vTupleInList <|> dconf) `sepBy` (string "," >> spaces))
+    (char ']')
 
 dconfHeader :: Parsec Text () Header
 dconfHeader = do
   many1 (char '[') <* spaces
   T.pack . concat <$> manyTill tokens (string " ]" <|> string "]")
- where
-  tokens = choice $ many1 <$> [char '/', char '-', alphaNum]
+  where tokens = choice $ many1 <$> [char '/', char '-', alphaNum]
 
 dconfValue :: Parsec Text () Value
 dconfValue = vList <|> dconf

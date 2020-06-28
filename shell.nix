@@ -14,7 +14,7 @@ in
     my_project = drv;
     shell = haskellPackages.shellFor {
       packages = p: [drv];
-      buildInputs = with haskellPackages; [ hlint cabal-install ];
+      buildInputs = with haskellPackages; [ brittany hlint cabal-install ];
       shellHook = ''
         export NIX_GHC="$(which ghc)"
         export NIX_GHCPKG="$(which ghc-pkg)"

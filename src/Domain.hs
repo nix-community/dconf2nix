@@ -1,7 +1,7 @@
 module Domain where
 
-import Data.Map (Map)
-import Data.Text (Text)
+import           Data.Map                       ( Map )
+import           Data.Text                      ( Text )
 
 newtype Nix = Nix { unNix :: Text } deriving Show
 
@@ -18,7 +18,7 @@ data Value = S Text
            | L [Value]
            deriving Show
 
-type Header  = Text
+type Header = Text
 type Content = Map Key Value
 
 data Entry = Entry
