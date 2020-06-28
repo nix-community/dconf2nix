@@ -4,7 +4,7 @@ import Data.Functor ( (<&>) )
 import Text.Parsec
 
 type Field = String
-data Value = S String | B Bool | I Int | D Double | L [Value] deriving Show
+data Value = S String | B Bool | I Int | I32 Int | D Double | L [Value] deriving Show
 
 vBool :: Parsec String () Value
 vBool = B False <$ string "false" <|> B True <$ string "true"
@@ -21,11 +21,11 @@ vInt :: Parsec String () Value
 vInt = try $
   I . read <$> many1 digit <* notFollowedBy (char '.')
 
--- TODO: Introduce proper type
 vUint32 :: Parsec String () Value
 vUint32 = do
   many1 (string "uint32 ") >> spaces
-  S <$> ((++) "uint32 ") <$> many1 digit
+  n <- many1 digit
+  pure . I32 $ read n
 
 vString :: Parsec String () Value
 vString = try $ do

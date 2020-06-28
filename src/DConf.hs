@@ -29,15 +29,16 @@ entryToNix (Entry h c) =
   in header ++ body ++ close
 
 valueToNix :: Value -> Nix
-valueToNix raw = valueToNix' raw ++ ";"
+valueToNix raw = valueToNix' raw <> ";"
  where
-  valueToNix' (S v)  = "\"" ++ trim (takeWhile (/= '\'') (drop 1 v)) ++ "\""
-  valueToNix' (B v)  = (toLower <$> show v)
-  valueToNix' (I v)  = show v
-  valueToNix' (D v)  = show v
-  valueToNix' (L xs) =
-    let ls = concat ((\c -> c ++ " ") <$> (valueToNix' <$> xs))
-    in  "[ " ++ ls ++ "]"
+  valueToNix' (S v)   = "\"" <> trim (takeWhile (/= '\'') (drop 1 v)) <> "\""
+  valueToNix' (B v)   = (toLower <$> show v)
+  valueToNix' (I v)   = show v
+  valueToNix' (I32 v) = "\"uint32 " <> show v <> "\""
+  valueToNix' (D v)   = show v
+  valueToNix' (L xs)  =
+    let ls = concat ((<> " ") <$> (valueToNix' <$> xs))
+    in  "[ " <> ls <> "]"
 
 ---------- DConf to Entry -----------
 
