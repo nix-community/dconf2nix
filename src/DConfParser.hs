@@ -21,9 +21,6 @@ vInt :: Parsec String () Value
 vInt = try $
   I . read <$> many1 digit <* notFollowedBy (char '.')
 
-symbol :: Char -> Parsec String () String
-symbol = many1 . char
-
 -- TODO: Introduce proper type
 vUint32 :: Parsec String () Value
 vUint32 = do
@@ -35,10 +32,9 @@ vString = try $ do
   many1 (string "'" >> spaces)
   S . concat <$> manyTill inputs (try (string "'"))
  where
-  tokens    = [many1 alphaNum, symbol '-', many1 space, symbol ',',
-               symbol '@', symbol '[', symbol ']', symbol '#']
-  files     = [symbol ':', symbol '/', symbol '.']
-  shortcuts = [symbol '<', symbol '>']
+  tokens    = many1 <$> [alphaNum, char '-', space, char ',', char '@', char '[', char ']', char '#']
+  files     = many1 <$> [char ':', char '/', char '.']
+  shortcuts = many1 <$> [char '<', char '>']
   inputs    = choice (tokens ++ files ++ shortcuts)
 
 nixHeader :: Parsec String () Value
