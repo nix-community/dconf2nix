@@ -6,13 +6,13 @@ in
 {
   "org/gnome/desktop/interface" = {
     "clock-show-weekday" = true;
-    "document-font-name" = " JetBrainsMono Nerd Font 11 ";
+    "document-font-name" = "JetBrainsMono Nerd Font 11";
     "enable-hot-corners" = false;
-    "font-name" = " JetBrainsMono Nerd Font 11 ";
-    "gtk-im-module" = " gtk-im-context-simple ";
-    "gtk-theme" = " Adwaita-dark ";
-    "icon-theme" = " Adwaita ";
-    "monospace-font-name" = " JetBrainsMono Nerd Font 10 ";
+    "font-name" = "JetBrainsMono Nerd Font 11";
+    "gtk-im-module" = "gtk-im-context-simple";
+    "gtk-theme" = "Adwaita-dark";
+    "icon-theme" = "Adwaita";
+    "monospace-font-name" = "JetBrainsMono Nerd Font 10";
     "show-battery-percentage" = true;
   };
 
@@ -27,7 +27,7 @@ in
   };
 
   "org/gnome/desktop/screensaver" = {
-    "picture-uri" = " file:///home/gvolpe/Pictures/nixos.png ";
+    "picture-uri" = "file:///home/gvolpe/Pictures/nixos.png";
   };
 
   "org/gnome/desktop/sound" = {
@@ -36,11 +36,11 @@ in
   };
 
   "org/gnome/desktop/wm/keybindings" = {
-    "close" = [ " <Super> w " ];
+    "close" = [ "<Super> w" ];
   };
 
   "org/gnome/desktop/wm/preferences" = {
-    "button-layout" = " close,minimize,maximize:";
+    "button-layout" = "close,minimize,maximize:";
     "titlebar-font" = "JetBrainsMono Nerd Font Mono 11";
     "workspace-names" = "@as []";
   };
@@ -85,7 +85,7 @@ in
   "org/gnome/desktop/input-sources" = {
     "current" = "uint32 0";
     "sources" = [ (mkTuple [ "xkb" "us" ]) ];
-    "xkb-options" = [ " terminate:ctrl_alt_bksp " " lv3:ralt_switch " " caps:ctrl_modifier " ];
+    "xkb-options" = [ "terminate:ctrl_alt_bksp" "lv3:ralt_switch" "caps:ctrl_modifier" ];
   };
 
   "org/gnome/desktop/interface" = {
@@ -273,7 +273,7 @@ in
 
   "org/gnome/shell/extensions/dash-to-dock" = {
     "dock-fixed" = false;
-    "dock-position" = " BOTTOM ";
+    "dock-position" = "BOTTOM";
   };
 
   "org/gnome/shell/extensions/dash-to-dock" = {

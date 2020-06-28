@@ -1,13 +1,14 @@
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE LambdaCase, OverloadedStrings #-}
 
 module Main where
 
-import Domain               ( unNix         )
-import DConf                ( dconfParser   )
+import qualified Data.Text.IO as T
+import Domain                   ( unNix         )
+import DConf                    ( dconfParser   )
 import qualified Nix
-import System.Environment   ( getArgs       )
-import Text.Parsec          ( runParser     )
-import Text.Parsec.String   ( parseFromFile )
+import System.Environment       ( getArgs       )
+import Text.Parsec              ( runParser     )
+import Text.Parsec.Text         ( parseFromFile )
 
 -- TODO: Use optparse-applicative before releasing it as a binary?
 main :: IO ()
@@ -22,8 +23,8 @@ main = getArgs >>= \case
 
 dconf2nix :: FilePath -> FilePath -> IO ()
 dconf2nix input output = do
-  writeFile output Nix.renderHeader
+  T.writeFile output Nix.renderHeader
   parseFromFile dconfParser input >>= \case
     Left err -> error (show err)
-    Right xs -> traverse (\e -> appendFile output (unNix $ Nix.renderEntry e)) xs
-  appendFile output "}"
+    Right xs -> traverse (\e -> T.appendFile output (unNix $ Nix.renderEntry e)) xs
+  T.appendFile output "}"

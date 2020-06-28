@@ -2,9 +2,9 @@ cabal-version:       2.4
 
 name:                dconf2nix
 version:             0.1.0.0
--- synopsis:
--- description:
--- bug-reports:
+synopsis:            Convert dconf files to Nix, as expected by Home Manager.
+description:         A convenient converter of DConf files to Nix, as expected by Home Manager's dconf settings. So you can Nixify your Gnome Shell configuration ;)
+bug-reports:         https://github.com/gvolpe/dconf2nix/issues
 -- license:
 license-file:        LICENSE
 author:              gvolpe
@@ -21,6 +21,7 @@ library
   build-depends:       base
                      , containers
                      , parsec
+                     , text
   hs-source-dirs:      src
   default-language:    Haskell2010
 
@@ -29,5 +30,6 @@ executable dconf2nix
   build-depends:       base
                      , dconf2nix
                      , parsec
+                     , text
   hs-source-dirs:      app
   default-language:    Haskell2010
