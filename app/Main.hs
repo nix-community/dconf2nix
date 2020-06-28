@@ -9,6 +9,7 @@ import System.Environment   ( getArgs       )
 import Text.Parsec          ( runParser     )
 import Text.Parsec.String   ( parseFromFile )
 
+-- TODO: Use optparse-applicative before releasing it as a binary?
 main :: IO ()
 main = getArgs >>= \case
   [i, o] -> do
