@@ -35,7 +35,7 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (I32 v)  = "\"uint32 " <> show v <> "\""
   renderValue' (I64 v)  = "\"int64 " <> show v <> "\""
   renderValue' (T x y)  =
-    -- mkTuple [ -1 -1 ] is illegal in Nix
+    -- mkTuple [ -1 -1 ] is illegal in Home Manager (report)
     let wrapInt x | x < 0     = "\"" <> show x <> "\""
                   | otherwise = show x
     in  case (x, y) of

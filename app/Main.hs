@@ -1,27 +1,20 @@
+{-# LANGUAGE LambdaCase #-}
+
 module Main where
 
-import Domain (unNix)
-import qualified DConf
+import Domain               ( unNix         )
+import DConf                ( dconfParser   )
 import qualified Nix
---import Text.Parsec (runParser)
+import Text.Parsec          ( runParser     )
+import Text.Parsec.String   ( parseFromFile )
 
 -- TODO: Parse args for input and output file
--- TODO: Use `parseFromFile` maybe?
 main :: IO ()
 main = do
-  ls <- lines <$> readFile "./data/dconf.settings"
   writeFile output Nix.renderHeader
-  appendFile output (iter ls)
+  parseFromFile dconfParser "./data/dconf.settings2" >>= \case
+    Left err -> error (show err)
+    Right xs -> traverse (\e -> appendFile output (unNix $ Nix.renderEntry e)) xs
   appendFile output "}"
  where
-  output  = "./output/dconf.nix"
-  iter [] = ""
-  iter xs =
-    let e  = takeWhile (/= []) xs
-        ys = case DConf.parseEntry e of
-          Nothing -> ""
-          Just v  -> unNix $ Nix.renderEntry v
-        --ys = case runParser DConf.parseEntry' () (show e) e of
-          --Left e  -> show e
-          --Right v -> Nix.renderEntry v
-    in  ys <> (iter $ drop (length e + 1) xs)
+  output  = "./output/dconf2.nix"

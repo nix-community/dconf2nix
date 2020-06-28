@@ -1,14 +1,13 @@
 {-# LANGUAGE LambdaCase #-}
 
 module DConf (
-  parseEntry
-  --parseEntry'
+  dconfParser
 ) where
 
-import Data.Functor ( (<&>) )
-import qualified Data.Map as Map
-import Domain
-import Text.Parsec
+import           Data.Functor     ( (<&>) )
+import qualified Data.Map       as Map
+import           Domain
+import           Text.Parsec
 
 vBool :: Parsec String () Value
 vBool = B False <$ string "false" <|> B True <$ string "true"
@@ -45,7 +44,7 @@ vTuple = try $ do
   rs <- manyTill (dconf `sepBy` (string "," >> spaces)) (char ')')
   case concat rs of
     (x:y:_) -> pure $ T x y
-    _       -> parserFail "Not a tuple"
+    _       -> fail "Not a tuple"
 
 vTupleInList :: Parsec String () Value
 vTupleInList = vTuple <&> \case
@@ -66,7 +65,7 @@ vString = try $ do
   inputs    = choice (tokens ++ files ++ shortcuts)
 
 vAny :: Parsec String () Value
-vAny = S <$> try (manyTill anyChar eof)
+vAny = S <$> try (manyTill anyChar endOfLine)
 
 dconf :: Parsec String () Value
 dconf = choice [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString, vTuple, vAny]
@@ -76,7 +75,7 @@ vList = try $ do
   char '['
   L . concat <$> manyTill ((vTupleInList <|> dconf) `sepBy` (string "," >> spaces)) (char ']')
 
-dconfHeader :: Parsec String () String
+dconfHeader :: Parsec String () Header
 dconfHeader = do
   many1 (char '[') <* spaces
   concat <$> manyTill tokens (string " ]" <|> string "]")
@@ -85,39 +84,15 @@ dconfHeader = do
 
 dconfValue :: Parsec String () Value
 dconfValue = vList <|> dconf
---dconfValue = parserTraced "dconf" $ vList <|> dconf
-
----------------------------------------------------------
 
 vKey :: Parsec String () Key
 vKey = Key <$> manyTill (choice [alphaNum, char '-']) (char '=')
 
-vContent :: Parsec String () (Key, Value)
-vContent = do
-  k <- vKey
-  v <- dconfValue
-  pure (k,v)
+entryParser :: Parsec String () Entry
+entryParser = do
+  h  <- parserTraced "header" $ dconfHeader <* endOfLine
+  kv <- parserTraced "entry" $ manyTill ((,) <$> vKey <*> (dconfValue <* endOfLine)) endOfLine
+  pure $ Entry h (Map.fromList kv)
 
-parseContent :: [String] -> Content
-parseContent [] = Map.fromList []
-parseContent xs = Map.fromList $
-  xs >>= \x -> case runParser vContent () x x of
-    Left _  -> []
-    Right x -> pure x
-
-parseEntry :: [String] -> Maybe Entry
-parseEntry []      = Nothing
-parseEntry (h : t) = Just (Entry (parseHeader h) (parseContent t))
-
---parseEntry' :: Parsec [String] () Entry
---parseEntry' = do
-  --getInput >>= \case
-    --[] -> fail "empty input"
-    --(x:xs) -> do
-      --h <- many dconfHeader
-      --traverse vContent xs
-
-parseHeader :: String -> String
-parseHeader s = case runParser dconfHeader () s s of
-  Left e  -> error (show e)
-  Right v -> v
+dconfParser :: Parsec String () [Entry]
+dconfParser = manyTill entryParser eof
