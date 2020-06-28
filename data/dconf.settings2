@@ -1,0 +1,67 @@
+[ org/gnome/desktop/interface ]
+clock-show-weekday=true
+document-font-name=' JetBrainsMono Nerd Font 11 '
+enable-hot-corners=false
+font-name=' JetBrainsMono Nerd Font 11 '
+gtk-im-module=' gtk-im-context-simple '
+gtk-theme=' Adwaita-dark '
+icon-theme=' Adwaita '
+monospace-font-name=' JetBrainsMono Nerd Font 10 '
+show-battery-percentage=true
+
+[ org/gnome/desktop/peripherals/mouse ]
+natural-scroll=false
+speed=-0.5
+
+[ org/gnome/desktop/peripherals/touchpad ]
+tap-to-click=false
+two-finger-scrolling-enabled=true
+
+[ org/gnome/desktop/screensaver ]
+picture-uri=' file:///home/gvolpe/Pictures/nixos.png '
+
+[ org/gnome/desktop/sound ]
+allow-volume-above-100-percent=true
+event-sounds=true
+
+[ org/gnome/desktop/wm/keybindings ]
+close=[' <Super> w ']
+
+[ org/gnome/desktop/wm/preferences ]
+button-layout=' close,minimize,maximize:'
+titlebar-font='JetBrainsMono Nerd Font Mono 11'
+workspace-names='@as []'
+
+[ca/desrt/dconf-editor]
+saved-pathbar-path='/org/gnome/desktop/input-sources/'
+saved-view='/org/gnome/desktop/input-sources/'
+window-height=709
+window-is-maximized=false
+window-width=785
+
+[org/gnome/control-center]
+last-panel='sound'
+
+[org/gnome/desktop/app-folders]
+folder-children=['Utilities', 'YaST']
+
+[org/gnome/desktop/app-folders/folders/Utilities]
+apps=['gnome-abrt.desktop', 'gnome-system-log.desktop', 'gnome-system-monitor.desktop', 'gucharmap.desktop', 'nm-connection-editor.desktop', 'org.gnome.baobab.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.DejaDup.desktop', 'org.gnome.Dictionary.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.eog.desktop', 'org.gnome.Evince.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.fonts.desktop', 'org.gnome.Screenshot.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.Usage.desktop', 'simple-scan.desktop', 'vinagre.desktop', 'yelp.desktop']
+categories=['X-GNOME-Utilities']
+name='X-GNOME-Utilities.directory'
+translate=true
+
+[org/gnome/desktop/app-folders/folders/YaST]
+categories=['X-SuSE-YaST']
+name='suse-yast.directory'
+translate=true
+
+[org/gnome/desktop/background]
+color-shading-type='solid'
+picture-options='zoom'
+picture-uri='file:///home/gvolpe/Pictures/nixos.png'
+primary-color='#000000000000'
+secondary-color='#000000000000'
+
+[org/gnome/desktop/input-sources]
+current=uint32 0

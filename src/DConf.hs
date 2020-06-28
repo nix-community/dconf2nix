@@ -1,5 +1,3 @@
-{-# LANGUAGE ScopedTypeVariables, RankNTypes #-}
-
 module DConf where
 
 import Data.Char (toLower)
@@ -8,8 +6,8 @@ import qualified Data.Map as Map
 import Data.List (intersperse)
 import System.IO (appendFile, readFile, writeFile)
 
-type Field = String
-data Value = S String | B Bool | I Int | D Double | L [Value] deriving Show
+import DConfParser
+import Text.Parsec
 
 type Nix = String
 
@@ -43,7 +41,6 @@ valueToNix raw = valueToNix' raw ++ ";"
 
 ---------- DConf to Entry -----------
 
--- TODO: use parser combinators
 parseContent :: [String] -> Content
 parseContent [] = Map.fromList []
 parseContent xs = Map.fromList (xs >>= f)
@@ -52,33 +49,10 @@ parseContent xs = Map.fromList (xs >>= f)
   f ys =
     let field = trim $ takeWhile (/= '=') ys
         raw   = trim $ drop (length field + 1) ys
-        value = case parseList raw of
-          Nothing -> parseValue raw
-          Just l  -> l
+        value = case runParser nix () raw raw of
+          Left e  -> error (show e)
+          Right v -> v
     in  [(field, value)]
-
-parseValue :: String -> Value
-parseValue raw = case raw of
-  "false" -> B False
-  "true"  -> B True
-  v       -> numberOr v
- where
-  numberOr :: String -> Value
-  numberOr v = case (readNumber v :: Maybe Int) of
-    Nothing -> case (readNumber v :: Maybe Double) of
-      Nothing -> S v
-      Just n  -> D n
-    Just n  -> I n
-
-parseList :: String -> Maybe Value
-parseList ('[':xs) = Just (L $ parseValue <$> words (takeWhile (/= ']') xs))
-parseList _        = Nothing
-
-readNumber :: forall a . (Num a, Read a) => String -> Maybe a
-readNumber s =
-  case (reads s :: [(a, String)]) of
-    (i, _):_ -> Just i
-    []       -> Nothing
 
 parseEntry :: [String] -> Maybe Entry
 parseEntry []      = Nothing
@@ -93,7 +67,7 @@ parseHeader (']' : t) = trim (reverse t)
 
 parseDconf :: IO ()
 parseDconf = do
-  ls <- lines <$> readFile "./data/dconf.settings"
+  ls <- lines <$> readFile "./data/dconf.settings2"
   writeFile output "{\n" -- override if it exists
   appendFile output (iter ls)
   appendFile output "}"

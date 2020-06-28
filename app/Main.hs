@@ -4,4 +4,4 @@ import DConf
 import DConfParser
 
 main :: IO ()
-main = myParser
+main = parseDconf
