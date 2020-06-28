@@ -10,7 +10,7 @@ import           Data.Functor                   ( (<&>) )
 import qualified Data.Map                      as Map
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
-import           Domain
+import           DConf.Data
 import           Text.Parsec
 
 vBool :: Parsec Text () Value

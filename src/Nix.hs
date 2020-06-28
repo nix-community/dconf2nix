@@ -9,7 +9,7 @@ where
 
 import qualified Data.Map                      as Map
 import qualified Data.Text                     as T
-import           Domain
+import           DConf.Data
 
 renderHeader :: Header
 renderHeader = T.unlines

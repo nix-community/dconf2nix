@@ -1,4 +1,4 @@
-module Domain where
+module DConf.Data where
 
 import           Data.Map                       ( Map )
 import           Data.Text                      ( Text )

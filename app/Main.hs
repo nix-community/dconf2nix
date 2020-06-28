@@ -3,7 +3,7 @@
 module Main where
 
 import qualified Data.Text.IO                  as T
-import           Domain                         ( unNix )
+import           DConf.Data                     ( unNix )
 import           DConf                          ( dconfParser )
 import qualified Nix
 import           System.Environment             ( getArgs )
