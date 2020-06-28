@@ -90,7 +90,7 @@ dconfValue = vList <|> dconf
 ---------------------------------------------------------
 
 vKey :: Parsec String () Key
-vKey = manyTill (choice [alphaNum, char '-']) (char '=')
+vKey = Key <$> manyTill (choice [alphaNum, char '-']) (char '=')
 
 vContent :: Parsec String () (Key, Value)
 vContent = do

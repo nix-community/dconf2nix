@@ -1,5 +1,6 @@
 module Main where
 
+import Domain (unNix)
 import qualified DConf
 import qualified Nix
 --import Text.Parsec (runParser)
@@ -17,9 +18,9 @@ main = do
   iter [] = ""
   iter xs =
     let e  = takeWhile (/= []) xs
-        ys = case DConf.parseEntry xs of
+        ys = case DConf.parseEntry e of
           Nothing -> ""
-          Just v  -> Nix.renderEntry v
+          Just v  -> unNix $ Nix.renderEntry v
         --ys = case runParser DConf.parseEntry' () (show e) e of
           --Left e  -> show e
           --Right v -> Nix.renderEntry v

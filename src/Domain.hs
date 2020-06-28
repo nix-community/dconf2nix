@@ -2,8 +2,9 @@ module Domain where
 
 import Data.Map (Map)
 
--- TODO: make it a newtype
-type Key = String
+newtype Nix = Nix { unNix :: String } deriving Show
+
+newtype Key = Key String deriving (Eq, Ord, Show)
 
 data Value = S String
            | B Bool
