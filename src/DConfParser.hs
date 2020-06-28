@@ -1,5 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
-
 module DConfParser where
 
 import Data.Functor ( (<&>) )
@@ -9,9 +7,7 @@ type Field = String
 data Value = S String | B Bool | I Int | D Double | L [Value] deriving Show
 
 vBool :: Parsec String () Value
-vBool = (string "false" <|> string "true") <&> \case
-  "false" -> B False
-  "true"  -> B True
+vBool = B False <$ string "false" <|> B True <$ string "true"
 
 vDouble :: Parsec String () Value
 vDouble = do
