@@ -56,6 +56,12 @@ in
 }
 ```
 
+You can make changes in the UI and create a dump of your `dconf` file at any time, which you can Nixify so Home Manager can restore the next time you run `home-manager switch`. To create a dump, run the following command:
+
+```shell
+dconf dump / > dconf.settings
+```
+
 ### Run
 
 ```shell
