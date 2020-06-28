@@ -64,10 +64,26 @@ dconf dump / > dconf.settings
 
 ### Run
 
+Once compiled and installed (`cabal new-install`), you can use it as follows:
+
 ```shell
-cabal new-run dconf2nix "./data/dconf.settings" "./output/dconf.nix"
+dconf2nix -i data/dconf.settings -o output/dconf.nix
+```
+
+Type `--help` for some more information.
+
+```shell
+dconf2nix - Convert dconf files to Nix
+
+Usage: dconf2nix (-i|--input ARG) (-o|--output ARG)
+  Convert a dconf file into a Nix file, as expected by Home Manager.
+
+Available options:
+  -i,--input ARG           Path to the dconf file (input)
+  -o,--output ARG          Path to the Nix output file (to be created)
+  -h,--help                Show this help text
 ```
 
 ### Installation
 
-For now, it is only available on Github but I plan to make it available on Nixpkgs as well as in other places for easy installation.
+For now, only the source code is available on Github but I plan to make the binary available on Nixpkgs as well as in other places for easy installation.

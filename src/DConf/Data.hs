@@ -3,6 +3,9 @@ module DConf.Data where
 import           Data.Map                       ( Map )
 import           Data.Text                      ( Text )
 
+newtype InputFilePath = InputFilePath FilePath deriving Show
+newtype OutputFilePath = OutputFilePath FilePath deriving Show
+
 newtype Nix = Nix { unNix :: Text } deriving Show
 
 newtype Key = Key Text deriving (Eq, Ord, Show)

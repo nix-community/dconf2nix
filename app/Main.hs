@@ -1,31 +1,12 @@
-{-# LANGUAGE LambdaCase, OverloadedStrings #-}
+{-# LANGUAGE LambdaCase #-}
 
 module Main where
 
-import qualified Data.Text.IO                  as T
-import           DConf.Data                     ( unNix )
-import           DConf                          ( dconfParser )
-import qualified Nix
-import           System.Environment             ( getArgs )
-import           Text.Parsec                    ( runParser )
-import           Text.Parsec.Text               ( parseFromFile )
+import           CommandLine                    ( Args(..)
+                                                , runArgs
+                                                )
+import           DConf2Nix                      ( dconf2nix )
 
--- TODO: Use optparse-applicative before releasing it as a binary?
 main :: IO ()
-main = getArgs >>= \case
-  [i, o] -> do
-    putStrLn $ "Input: " <> i
-    putStrLn $ "Output: " <> o
-    dconf2nix i o
-  _ -> do
-    putStrLn "Missing `input` and `output` arguments, using default values."
-    dconf2nix "./data/dconf.settings" "./output/dconf.nix"
-
-dconf2nix :: FilePath -> FilePath -> IO ()
-dconf2nix input output = do
-  T.writeFile output Nix.renderHeader
-  parseFromFile dconfParser input >>= \case
-    Left err -> error (show err)
-    Right xs ->
-      traverse (\e -> T.appendFile output (unNix $ Nix.renderEntry e)) xs
-  T.appendFile output "}"
+main = runArgs >>= \case
+  (Args i o) -> dconf2nix i o
