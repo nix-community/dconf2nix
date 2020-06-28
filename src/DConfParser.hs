@@ -4,7 +4,7 @@ import Data.Functor ( (<&>) )
 import Text.Parsec
 
 type Field = String
-data Value = S String | B Bool | I Int | I32 Int | D Double | L [Value] deriving Show
+data Value = S String | B Bool | I Int | I32 Int | D Double | T Value Value | L [Value] deriving Show
 
 vBool :: Parsec String () Value
 vBool = B False <$ string "false" <|> B True <$ string "true"
@@ -27,10 +27,18 @@ vUint32 = do
   n <- many1 digit
   pure . I32 $ read n
 
+vTuple :: Parsec String () Value
+vTuple = try $ do
+  parserTraced "tuple" $ char '('
+  rs <- manyTill (vString `sepBy` (string "," >> spaces)) (char ')')
+  case concat rs of
+    (x:y:_) -> pure $ T x y
+    _       -> parserFail "Not a tuple"
+
 vString :: Parsec String () Value
 vString = try $ do
-  many1 (string "'" >> spaces)
-  S . concat <$> manyTill inputs (try (string "'"))
+  many1 (string "'")
+  S . concat <$> manyTill inputs (string "'")
  where
   tokens    = many1 <$> [alphaNum, char '-', space, char ',', char '@', char '[', char ']', char '#']
   files     = many1 <$> [char ':', char '/', char '.']
@@ -42,15 +50,14 @@ nixHeader = between (char '[') (char ']') vString
 
 -- TODO: Rename
 nixValues :: Parsec String () Value
-nixValues = vBool <|> vInt <|> vDouble <|> vUint32 <|> vString
+nixValues = vBool <|> vInt <|> vDouble <|> vUint32 <|> vString <|> vTuple
 
 vList :: Parsec String () Value
-vList = do
-  string "["
-  rs <- manyTill (nixValues `sepBy` string ", ") (try (string "]"))
-  pure $ L (concat rs)
+vList = try $ do
+  char '['
+  L . concat <$> manyTill (nixValues `sepBy` (string "," >> spaces)) (char ']')
 
-nix = nixValues <|> vList
+nix = vList <|> nixValues
 
 myParser :: IO ()
 myParser = print . show $ runParser nix () "Err msg" "[true 3 false 2.2 asd]"

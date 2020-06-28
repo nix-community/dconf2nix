@@ -31,11 +31,12 @@ entryToNix (Entry h c) =
 valueToNix :: Value -> Nix
 valueToNix raw = valueToNix' raw <> ";"
  where
-  valueToNix' (S v)   = "\"" <> trim (takeWhile (/= '\'') (drop 1 v)) <> "\""
+  valueToNix' (S v)   = "\"" <> trim (takeWhile (/= '\'') v) <> "\""
   valueToNix' (B v)   = (toLower <$> show v)
   valueToNix' (I v)   = show v
   valueToNix' (I32 v) = "\"uint32 " <> show v <> "\""
   valueToNix' (D v)   = show v
+  valueToNix' (T x y) = "mkTuple [ " <> valueToNix' x <> " " <> valueToNix' y <> " ]"
   valueToNix' (L xs)  =
     let ls = concat ((<> " ") <$> (valueToNix' <$> xs))
     in  "[ " <> ls <> "]"

@@ -65,3 +65,4 @@ secondary-color='#000000000000'
 
 [org/gnome/desktop/input-sources]
 current=uint32 0
+sources=[('xkb', 'us')]
