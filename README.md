@@ -109,4 +109,26 @@ You can have a look at my [NixOS configuration files](https://github.com/gvolpe/
 
 For now, a binary can be downloaded from [releases](https://github.com/gvolpe/dconf2nix/releases). You can also get it via [Cachix](https://app.cachix.org/cache/dconf2nix).
 
-In the future, I plan to make the binary available on Nixpkgs as well as in other places for easy installation.
+#### Nix
+
+In the future, I plan to make the binary available on Nixpkgs as well as in other places for easy installation. Until then, here's a derivation you can use:
+
+```nix
+{ pkgs, ... }:
+
+pkgs.stdenv.mkDerivation {
+  name = "dconf2nix";
+
+  src =
+    builtins.fetchTarball {
+      name   = "dconf2nix";
+      url    = "https://github.com/gvolpe/dconf2nix/releases/download/v0.0.1/dconf2nix-0.0.1.tar.gz";
+      sha256 = "0sjjj9z1dhilhpc8pq4154czrb79z9cm044jvn75kxcjv6v5l2m5";
+    };
+
+  installPhase = ''
+    mkdir -p $out/bin
+    cp -r . $out/bin
+  '';
+}
+```
