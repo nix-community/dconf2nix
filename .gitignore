@@ -5,3 +5,4 @@ dist-newstyle/
 dist/
 .ghc.*
 .direnv
+result
