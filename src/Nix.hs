@@ -3,6 +3,7 @@
 {- Nix renderer for DConf entries -}
 module Nix
   ( renderEntry
+  , renderFooter
   , renderHeader
   )
 where
@@ -13,20 +14,28 @@ import           DConf.Data
 
 renderHeader :: Header
 renderHeader = T.unlines
-  [ "{ lib, ... }:"
+  [ "# Generated via dconf2nix: https://github.com/gvolpe/dconf2nix"
+  , "{ lib, ... }:"
   , ""
   , "let"
   , "  mkTuple = lib.hm.gvariant.mkTuple;"
   , "in"
   , "{"
+  , "  dconf.settings = {"
+  ]
+
+renderFooter :: Header
+renderFooter = T.unlines
+  [ "  };"
+  , "}"
   ]
 
 renderEntry :: Entry -> Nix
 renderEntry (Entry h c) =
-  let header = "  \"" <> h <> "\" = {\n"
+  let header = "    \"" <> h <> "\" = {\n"
       body   = Map.toList c >>= \(Key k, v) ->
-        T.unpack $ "    \"" <> k <> "\" = " <> unNix (renderValue v) <> "\n"
-      close = "  };\n\n"
+        T.unpack $ "      \"" <> k <> "\" = " <> unNix (renderValue v) <> "\n"
+      close = "    };\n\n"
   in  Nix $ header <> T.pack body <> close
 
 renderValue :: Value -> Nix

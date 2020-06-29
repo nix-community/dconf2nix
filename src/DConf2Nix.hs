@@ -1,4 +1,4 @@
-{-# LANGUAGE LambdaCase, OverloadedStrings #-}
+{-# LANGUAGE LambdaCase #-}
 
 module DConf2Nix where
 
@@ -15,4 +15,4 @@ dconf2nix (InputFilePath input) (OutputFilePath output) = do
     Right xs  -> do
       T.writeFile output Nix.renderHeader
       traverse (\e -> T.appendFile output (unNix $ Nix.renderEntry e)) xs
-  T.appendFile output "}"
+  T.appendFile output Nix.renderFooter
