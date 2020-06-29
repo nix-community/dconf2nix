@@ -107,4 +107,6 @@ You can have a look at my [NixOS configuration files](https://github.com/gvolpe/
 
 ### Installation
 
-For now, only the source code is available on Github but I plan to make the binary available on Nixpkgs as well as in other places for easy installation.
+For now, a binary can be downloaded from [releases](https://github.com/gvolpe/dconf2nix/releases). You can also get it via [Cachix](https://app.cachix.org/cache/dconf2nix).
+
+In the future, I plan to make the binary available on Nixpkgs as well as in other places for easy installation.
