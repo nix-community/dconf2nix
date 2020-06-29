@@ -33,28 +33,32 @@ let
   mkTuple = lib.hm.gvariant.mkTuple;
 in
 {
-  "org/gnome/desktop/peripherals/mouse" = {
-    "natural-scroll" = false;
-    "speed" = -0.5;
-  };
+  dconf.settings = {
+    "org/gnome/desktop/peripherals/mouse" = {
+      "natural-scroll" = false;
+      "speed" = -0.5;
+    };
 
-  "org/gnome/desktop/peripherals/touchpad" = {
-    "tap-to-click" = false;
-    "two-finger-scrolling-enabled" = true;
-  };
+    "org/gnome/desktop/peripherals/touchpad" = {
+      "tap-to-click" = false;
+      "two-finger-scrolling-enabled" = true;
+    };
 
-  "org/gnome/desktop/input-sources" = {
-    "current" = "uint32 0";
-    "sources" = [ (mkTuple [ "xkb" "us" ]) ];
-    "xkb-options" = [ "terminate:ctrl_alt_bksp" "lv3:ralt_switch" "caps:ctrl_modifier" ];
-  };
+    "org/gnome/desktop/input-sources" = {
+      "current" = "uint32 0";
+      "sources" = [ (mkTuple [ "xkb" "us" ]) ];
+      "xkb-options" = [ "terminate:ctrl_alt_bksp" "lv3:ralt_switch" "caps:ctrl_modifier" ];
+    };
 
-  "org/gnome/desktop/screensaver" = {
-    "picture-uri" = "file:///home/gvolpe/Pictures/nixos.png";
+    "org/gnome/desktop/screensaver" = {
+      "picture-uri" = "file:///home/gvolpe/Pictures/nixos.png";
+    };
   };
 
 }
 ```
+
+It makes use of the Home Manager's [dconf.settings](https://rycee.gitlab.io/home-manager/options.html#opt-dconf.settings) key.
 
 You can make changes in the UI and create a dump of your `dconf` file at any time, which you can Nixify so Home Manager can restore the next time you run `home-manager switch`. To create a dump, run the following command:
 
@@ -83,6 +87,23 @@ Available options:
   -o,--output ARG          Path to the Nix output file (to be created)
   -h,--help                Show this help text
 ```
+
+### Gnome Shell configuration
+
+Once you have your `dconf.nix`, you can import it via Home Manager.
+
+
+```nix
+{
+  programs.home-manager.enable = true;
+
+  imports = [
+    ./programs/gnome/dconf.nix
+  ];
+}
+```
+
+You can have a look at my [NixOS configuration files](https://github.com/gvolpe/nix-config/tree/master/nixos/home) as an example.
 
 ### Installation
 
