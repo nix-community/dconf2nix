@@ -75,6 +75,12 @@ dconf :: Parsec Text () Value
 dconf = choice
   [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString, vTuple, vAny]
 
+-- There is no support for variants in HM yet so we parse them as String
+vListOfVariant :: Parsec Text () Value
+vListOfVariant = try $ do
+  try $ lookAhead (string "[<")
+  S . T.pack <$> manyTill anyToken (try $ lookAhead endOfLine)
+
 vList :: Parsec Text () Value
 vList = try $ do
   char '['
@@ -89,12 +95,11 @@ dconfHeader = do
   where tokens = choice $ many1 <$> [char '/', char '-', alphaNum]
 
 dconfValue :: Parsec Text () Value
-dconfValue = vList <|> dconf
+dconfValue = vListOfVariant <|> vList <|> dconf
 
 vKey :: Parsec Text () Key
 vKey = Key . T.pack <$> manyTill (choice [alphaNum, char '-']) (char '=')
 
--- To debug insert `parserTraced "name" $` before the parser
 entryParser :: Parsec Text () Entry
 entryParser = do
   h  <- dconfHeader <* endOfLine
@@ -102,5 +107,6 @@ entryParser = do
   optional endOfLine
   pure $ Entry h (Map.fromList kv)
 
-dconfParser :: Parsec Text () [Entry]
-dconfParser = manyTill entryParser eof
+dconfParser :: Verbosity -> Parsec Text () [Entry]
+dconfParser Normal  = manyTill entryParser eof
+dconfParser Verbose = parserTraced "dconf" $ dconfParser Normal
