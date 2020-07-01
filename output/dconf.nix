@@ -38,7 +38,11 @@ in
     };
 
     "org/gnome/desktop/wm/keybindings" = {
-      "close" = [ "<Super> w" ];
+      "close" = [ "<Super>w" ];
+      "switch-applications" = "@as []";
+      "switch-applications-backward" = "@as []";
+      "switch-windows" = [ "<Alt>Tab" ];
+      "switch-windows-backward" = [ "<Shift><Alt>Tab" ];
     };
 
     "org/gnome/desktop/wm/preferences" = {

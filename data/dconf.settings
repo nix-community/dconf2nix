@@ -24,13 +24,17 @@ picture-uri=' file:///home/gvolpe/Pictures/nixos.png '
 allow-volume-above-100-percent=true
 event-sounds=true
 
-[ org/gnome/desktop/wm/keybindings ]
-close=[' <Super> w ']
+[org/gnome/desktop/wm/keybindings]
+close=['<Super>w']
+switch-applications=@as []
+switch-applications-backward=@as []
+switch-windows=['<Alt>Tab']
+switch-windows-backward=['<Shift><Alt>Tab']
 
 [ org/gnome/desktop/wm/preferences ]
 button-layout=' close,minimize,maximize:'
 titlebar-font='JetBrainsMono Nerd Font Mono 11'
-workspace-names='@as []'
+workspace-names=@as []
 
 [ca/desrt/dconf-editor]
 saved-pathbar-path='/org/gnome/desktop/input-sources/'
