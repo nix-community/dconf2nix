@@ -69,7 +69,7 @@ vString = try $ do
   inputs    = choice (tokens ++ files ++ shortcuts)
 
 vAny :: Parsec Text () Value
-vAny = S . T.pack <$> manyTill anyChar endOfLine
+vAny = S . T.pack <$> manyTill anyChar (try $ lookAhead endOfLine)
 
 dconf :: Parsec Text () Value
 dconf = choice
