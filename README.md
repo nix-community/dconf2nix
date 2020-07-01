@@ -66,6 +66,8 @@ You can make changes in the UI and create a dump of your `dconf` file at any tim
 dconf dump / > dconf.settings
 ```
 
+> Note: For now, only types supported by Home Manager as specified [here](https://github.com/rycee/home-manager/blob/master/modules/lib/gvariant.nix) are supported. If there's enough interest, we might be able to work on supporting the [full specification](https://developer.gnome.org/glib/stable/gvariant-text.html).
+
 ### Run
 
 Once compiled and installed (`cabal new-install`), you can use it as follows:
@@ -79,12 +81,13 @@ Type `--help` for some more information.
 ```shell
 dconf2nix - Convert dconf files to Nix
 
-Usage: dconf2nix (-i|--input ARG) (-o|--output ARG)
+Usage: dconf2nix (-i|--input ARG) (-o|--output ARG) [-v|--verbose]
   Convert a dconf file into a Nix file, as expected by Home Manager.
 
 Available options:
   -i,--input ARG           Path to the dconf file (input)
   -o,--output ARG          Path to the Nix output file (to be created)
+  -v,--verbose             Verbose mode (debug)
   -h,--help                Show this help text
 ```
 

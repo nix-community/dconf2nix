@@ -8,9 +8,9 @@ import           DConf                          ( dconfParser )
 import qualified Nix
 import           Text.Parsec.Text               ( parseFromFile )
 
-dconf2nix :: InputFilePath -> OutputFilePath -> IO ()
-dconf2nix (InputFilePath input) (OutputFilePath output) = do
-  parseFromFile dconfParser input >>= \case
+dconf2nix :: InputFilePath -> OutputFilePath -> Verbosity -> IO ()
+dconf2nix (InputFilePath input) (OutputFilePath output) v = do
+  parseFromFile (dconfParser v) input >>= \case
     Left  err -> error (show err)
     Right xs  -> do
       T.writeFile output Nix.renderHeader

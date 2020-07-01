@@ -6,6 +6,8 @@ import           Data.Text                      ( Text )
 newtype InputFilePath = InputFilePath FilePath deriving Show
 newtype OutputFilePath = OutputFilePath FilePath deriving Show
 
+data Verbosity = Normal | Verbose
+
 newtype Nix = Nix { unNix :: Text } deriving Show
 
 newtype Key = Key Text deriving (Eq, Ord, Show)

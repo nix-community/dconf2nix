@@ -286,5 +286,12 @@ type-format='category'
 window-position=(345, 79)
 window-size=(1231, 902)
 
+[org/gnome/Weather]
+locations=[<(uint32 2, <('Gdańsk', 'EPGD', true, [(0.94916821905848536, 0.32230414101938371)], [(0.94858644845891815, 0.32579479952337237)])>)>, <(uint32 2, <('Gdynia, Działdowo County, Warmian-Masurian Voivodeship', '', false, [(0.93027949445787339, 0.34699627038777753)], [(0.93861053042695397, 0.35744550775024858)])>)>, <(uint32 2, <('Gdynia, Pomeranian Voivodeship', '', false, [(0.95149239024756216, 0.32358882203124067)], [(0.94858644845891815, 0.32579479952337237)])>)>]
+
+[org/gnome/shell/weather]
+automatic-location=true
+locations=[<(uint32 2, <('Gdańsk', 'EPGD', true, [(0.94916821905848536, 0.32230414101938371)], [(0.94858644845891815, 0.32579479952337237)])>)>, <(uint32 2, <('Gdynia, Działdowo County, Warmian-Masurian Voivodeship', '', false, [(0.93027949445787339, 0.34699627038777753)], [(0.93861053042695397, 0.35744550775024858)])>)>, <(uint32 2, <('Gdynia, Pomeranian Voivodeship', '', false, [(0.95149239024756216, 0.32358882203124067)], [(0.94858644845891815, 0.32579479952337237)])>)>]
+
 [system/locale]
 region='en_US.UTF-8'

@@ -9,4 +9,4 @@ import           DConf2Nix                      ( dconf2nix )
 
 main :: IO ()
 main = runArgs >>= \case
-  (Args i o) -> dconf2nix i o
+  (Args i o v) -> dconf2nix i o v
