@@ -27,15 +27,32 @@ args =
             "Path to the Nix output file (to be created)"
           )
         )
-    <*> flag Normal
-             Verbose
-             (long "verbose" <> short 'v' <> help "Verbose mode (debug)")
+    <*> flag Normal Verbose (long "verbose" <> help "Verbose mode (debug)")
+
+versionInfo :: String
+versionInfo = unlines
+  [ ""
+  , "██████╗  ██████╗ ██████╗ ███╗   ██╗███████╗██████╗ ███╗   ██╗██╗██╗  ██╗"
+  , "██╔══██╗██╔════╝██╔═══██╗████╗  ██║██╔════╝╚════██╗████╗  ██║██║╚██╗██╔╝"
+  , "██║  ██║██║     ██║   ██║██╔██╗ ██║█████╗   █████╔╝██╔██╗ ██║██║ ╚███╔╝ "
+  , "██║  ██║██║     ██║   ██║██║╚██╗██║██╔══╝  ██╔═══╝ ██║╚██╗██║██║ ██╔██╗ "
+  , "██████╔╝╚██████╗╚██████╔╝██║ ╚████║██║     ███████╗██║ ╚████║██║██╔╝ ██╗"
+  , "╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝"
+  , ""
+  , "Version: 0.0.1"
+  , "Maintainer: Gabriel Volpe"
+  , "Source code: https://github.com/gvolpe/dconf2nix"
+  ]
+
+version :: Parser (a -> a)
+version = infoOption versionInfo
+  (long "version" <> short 'v' <> help "Show the current version")
 
 runArgs :: IO Args
 runArgs = execParser opts
  where
   opts = info
-    (args <**> helper)
+    (helper <*> version <*> args)
     (  fullDesc
     <> progDesc
          "Convert a dconf file into a Nix file, as expected by Home Manager."
