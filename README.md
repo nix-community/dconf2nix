@@ -121,25 +121,23 @@ For now, a binary can be downloaded from [releases](https://github.com/gvolpe/dc
 In the future, I plan to make the binary available on Nixpkgs as well as in other places for easy installation. Until then, here's a derivation you can use:
 
 ```nix
-{ stdenv, ... }:
+{ stdenv }:
 
-let
-  version = "v0.0.1";
-in
-  stdenv.mkDerivation {
-    name = "dconf2nix";
+stdenv.mkDerivation rec {
+  name    = "dconf2nix-${version}";
+  version = "v0.0.2";
 
-    src = builtins.fetchurl {
-      url    = "https://github.com/gvolpe/dconf2nix/releases/download/${version}/dconf2nix-linux-x86-64";
-      sha256 = "00icz1nslj6a7cxfx2fpcpvrg6sczcnqfy1pr1585477l2n6d0sn";
-    };
+  src = builtins.fetchurl {
+    url    = "https://github.com/gvolpe/dconf2nix/releases/download/${version}/dconf2nix-linux-x86-64";
+    sha256 = "135xl48aiqlbbcn2q95aj50p2bzfyk87h4jzbnk81qaak5043krp";
+  };
 
-    phases = ["installPhase" "patchPhase"];
+  phases = ["installPhase" "patchPhase"];
 
-    installPhase = ''
-      mkdir -p $out/bin
-      cp $src $out/bin/dconf2nix
-      chmod +x $out/bin/dconf2nix
-    '';
-  }
+  installPhase = ''
+    mkdir -p $out/bin
+    cp $src $out/bin/dconf2nix
+    chmod +x $out/bin/dconf2nix
+  '';
+}
 ```
