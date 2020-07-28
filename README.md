@@ -118,7 +118,13 @@ For now, a binary can be downloaded from [releases](https://github.com/gvolpe/dc
 
 #### Nix
 
-In the future, I plan to make the binary available on Nixpkgs as well as in other places for easy installation. Until then, here's a derivation you can use:
+In the future, I plan to make the binary available on Nixpkgs as well as in other places for easy installation. Until then, you can install it via the following command:
+
+```shell
+nix-env -i -f https://github.com/gvolpe/dconf2nix/archive/v0.0.2.tar.gz
+```
+
+Alternatively, here's a derivation for the binary you can use to avoid compiling it (only for Linux-x86-64):
 
 ```nix
 { stdenv }:
