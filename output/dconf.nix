@@ -6,6 +6,10 @@ let
 in
 {
   dconf.settings = {
+    "org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9" = {
+      "foo" = true;
+    };
+
     "org/gnome/desktop/interface" = {
       "clock-show-weekday" = true;
       "document-font-name" = "JetBrainsMono Nerd Font 11";
