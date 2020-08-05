@@ -63,7 +63,7 @@ vString = try $ do
   many1 (string "'")
   S . T.pack . concat <$> manyTill inputs (string "'")
  where
-  tokens    = many1 <$> [alphaNum, space] ++ (char <$> "-_()[],#@")
+  tokens    = many1 <$> [alphaNum, space] ++ (char <$> "-_()[]{},#@")
   files     = many1 . char <$> ":/."
   shortcuts = many1 . char <$> "<>"
   inputs    = choice (tokens ++ files ++ shortcuts)
