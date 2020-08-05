@@ -1,5 +1,9 @@
 # Revision history for dconf2nix
 
+## 0.4.0 -- 2020-08-05
+
+* #12 Fix error to parse curly braces within a string
+
 ## 0.3.0 -- 2020-08-05
 
 * #6 Fix error to parse colon in headers
