@@ -10,7 +10,7 @@ A convenient converter of [DConf](https://wiki.gnome.org/Projects/dconf) files t
 
 Take it with a grain of salt but on my machine it takes an average of 7.1ms to process a 349 lines configuration and generate a Nix file with 433 lines.
 
-![benchmark](img/benchmark.png)
+![benchmarks](img/benchmarks.png)
 
 ### Introduction
 
