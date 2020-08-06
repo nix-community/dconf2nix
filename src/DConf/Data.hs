@@ -5,6 +5,7 @@ import           Data.Text                      ( Text )
 
 newtype InputFilePath = InputFilePath FilePath deriving Show
 newtype OutputFilePath = OutputFilePath FilePath deriving Show
+newtype ProcessTimeout = ProcessTimeout Int deriving Show
 
 data Verbosity = Normal | Verbose
 

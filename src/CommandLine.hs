@@ -7,6 +7,7 @@ where
 import           Data.Version                   ( showVersion )
 import           DConf.Data                     ( InputFilePath(..)
                                                 , OutputFilePath(..)
+                                                , ProcessTimeout(..)
                                                 , Verbosity(..)
                                                 )
 import           Options.Applicative
@@ -15,6 +16,7 @@ import           Paths_dconf2nix                ( version )
 data Args = Args
   { input :: InputFilePath
   , output :: OutputFilePath
+  , processTimeout :: ProcessTimeout
   , verbose :: Verbosity
   }
 
@@ -27,6 +29,11 @@ args =
     <*> (OutputFilePath <$> strOption
           (long "output" <> short 'o' <> help
             "Path to the Nix output file (to be created)"
+          )
+        )
+    <*> (ProcessTimeout <$> option auto
+          (long "timeout" <> short 't' <> showDefault <> value 5 <> help
+            "Timeout in seconds for the conversion process"
           )
         )
     <*> flag Normal Verbose (long "verbose" <> help "Verbose mode (debug)")
