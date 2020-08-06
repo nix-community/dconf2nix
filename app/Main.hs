@@ -2,11 +2,18 @@
 
 module Main where
 
-import           CommandLine                    ( Args(..)
+import           CommandLine                    ( FileArgs(..)
+                                                , Input(..)
+                                                , StdinArgs(..)
                                                 , runArgs
                                                 )
-import           DConf.Data                     ( ProcessTimeout(..) )
-import           DConf2Nix                      ( dconf2nix )
+import           Data.Foldable                  ( traverse_ )
+import           DConf.Data                     ( ProcessTimeout(..)
+                                                , Verbosity(..)
+                                                )
+import           DConf2Nix                      ( dconf2nixFile
+                                                , dconf2nixStdin
+                                                )
 import           System.Timeout                 ( timeout )
 
 timeoutMessage = unlines
@@ -17,9 +24,14 @@ timeoutMessage = unlines
   , "  ⛔ If the issue persists, run it again using --verbose and report the issue on Github. Sorry 😞."
   ]
 
+dconf2nix :: ProcessTimeout -> IO () -> Maybe String -> IO ()
+dconf2nix (ProcessTimeout t) fa successMsg = timeout (t * 1000000) fa >>= \case
+  Just _  -> traverse_ putStrLn successMsg
+  Nothing -> error timeoutMessage
+
 main :: IO ()
 main = runArgs >>= \case
-  (Args i o (ProcessTimeout t) v) ->
-    timeout (t * 1000000) (dconf2nix i o v) >>= \case
-      Just _  -> putStrLn "🚀 Successfully Nixified! ❄️"
-      Nothing -> error timeoutMessage
+  FileInput (FileArgs i o t v) ->
+    dconf2nix t (dconf2nixFile i o v) (Just "🚀 Successfully Nixified! ❄️")
+  StdinInput (StdinArgs t v)   ->
+    dconf2nix t (dconf2nixStdin v) Nothing

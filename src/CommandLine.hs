@@ -1,5 +1,7 @@
 module CommandLine
-  ( Args(..)
+  ( FileArgs(..)
+  , Input(..)
+  , StdinArgs(..)
   , runArgs
   )
 where
@@ -13,16 +15,35 @@ import           DConf.Data                     ( InputFilePath(..)
 import           Options.Applicative
 import           Paths_dconf2nix                ( version )
 
-data Args = Args
+data Input = FileInput FileArgs | StdinInput StdinArgs
+
+data FileArgs = FileArgs
   { input :: InputFilePath
   , output :: OutputFilePath
   , processTimeout :: ProcessTimeout
   , verbose :: Verbosity
   }
 
-args :: Parser Args
-args =
-  Args
+data StdinArgs = StdinArgs
+  { stdinTimeout :: ProcessTimeout
+  , stdinVerbose :: Verbosity
+  }
+
+timeoutArgs :: Parser ProcessTimeout
+timeoutArgs = ProcessTimeout <$> option
+  auto
+  (long "timeout" <> short 't' <> showDefault <> value 5 <> help
+    "Timeout in seconds for the conversion process"
+  )
+
+verbosityArgs :: Parser Verbosity
+verbosityArgs =
+  flag Normal Verbose (long "verbose" <> help "Verbose mode (debug)")
+
+fileArgs :: Parser Input
+fileArgs =
+  fmap FileInput
+    $   FileArgs
     <$> (InputFilePath <$> strOption
           (long "input" <> short 'i' <> help "Path to the dconf file (input)")
         )
@@ -31,12 +52,11 @@ args =
             "Path to the Nix output file (to be created)"
           )
         )
-    <*> (ProcessTimeout <$> option auto
-          (long "timeout" <> short 't' <> showDefault <> value 5 <> help
-            "Timeout in seconds for the conversion process"
-          )
-        )
-    <*> flag Normal Verbose (long "verbose" <> help "Verbose mode (debug)")
+    <*> timeoutArgs
+    <*> verbosityArgs
+
+stdinArgs :: Parser Input
+stdinArgs = StdinInput <$> (StdinArgs <$> timeoutArgs <*> verbosityArgs)
 
 versionInfo :: String
 versionInfo = unlines
@@ -57,13 +77,13 @@ versionOpt :: Parser (a -> a)
 versionOpt = infoOption versionInfo
   (long "version" <> short 'v' <> help "Show the current version")
 
-runArgs :: IO Args
+runArgs :: IO Input
 runArgs = execParser opts
  where
   opts = info
-    (helper <*> versionOpt <*> args)
+    (helper <*> versionOpt <*> (stdinArgs <|> fileArgs))
     (  fullDesc
     <> progDesc
          "Convert a dconf file into a Nix file, as expected by Home Manager."
-    <> header "dconf2nix - Convert dconf files to Nix"
+    <> header "dconf2nix - Nixify dconf configuration files"
     )
