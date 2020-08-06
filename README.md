@@ -1,5 +1,7 @@
 # dconf2nix
 
+[![CI Status](https://github.com/gvolpe/dconf2nix/workflows/Haskell%20CI/badge.svg)](https://github.com/gvolpe/dconf2nix/actions)
+
 A convenient converter of [DConf](https://wiki.gnome.org/Projects/dconf) files to Nix, as expected by [Home Manager's dconf settings](https://rycee.gitlab.io/home-manager/options.html#opt-dconf.settings). So you can Nixify your [Gnome Shell](https://wiki.gnome.org/Projects/GnomeShell) configuration :wink:
 
 ---
