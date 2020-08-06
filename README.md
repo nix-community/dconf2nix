@@ -6,6 +6,14 @@ A convenient converter of [DConf](https://wiki.gnome.org/Projects/dconf) files t
 
 ---
 
+### Benchmarks
+
+Take it with a grain of salt but on my machine it takes an average of 1.1ms to process a 349 lines configuration and generate a Nix file with 433 lines.
+
+![benchmark](img/benchmark.png)
+
+### Introduction
+
 Given the following `dconf` settings:
 
 ```init
@@ -153,12 +161,6 @@ stdenv.mkDerivation rec {
 ```
 
 Have a look at the [latest releases](https://github.com/gvolpe/dconf2nix/releases) in case the README file gets outdated.
-
-### Benchmarks
-
-Take it with a grain of salt but on my machine it takes an average of 1.1ms to process a 349 lines configuration and generate a Nix file with 433 lines.
-
-![benchmark](img/benchmark.png)
 
 ### Troubleshooting
 
