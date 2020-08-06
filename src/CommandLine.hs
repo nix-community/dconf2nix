@@ -4,11 +4,13 @@ module CommandLine
   )
 where
 
+import           Data.Version                   ( showVersion )
 import           DConf.Data                     ( InputFilePath(..)
                                                 , OutputFilePath(..)
                                                 , Verbosity(..)
                                                 )
 import           Options.Applicative
+import           Paths_dconf2nix                ( version )
 
 data Args = Args
   { input :: InputFilePath
@@ -39,20 +41,20 @@ versionInfo = unlines
   , "██████╔╝╚██████╗╚██████╔╝██║ ╚████║██║     ███████╗██║ ╚████║██║██╔╝ ██╗"
   , "╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝"
   , ""
-  , "Version: 0.0.4"
+  , "Version: " <> showVersion version
   , "Maintainer: Gabriel Volpe"
   , "Source code: https://github.com/gvolpe/dconf2nix"
   ]
 
-version :: Parser (a -> a)
-version = infoOption versionInfo
+versionOpt :: Parser (a -> a)
+versionOpt = infoOption versionInfo
   (long "version" <> short 'v' <> help "Show the current version")
 
 runArgs :: IO Args
 runArgs = execParser opts
  where
   opts = info
-    (helper <*> version <*> args)
+    (helper <*> versionOpt <*> args)
     (  fullDesc
     <> progDesc
          "Convert a dconf file into a Nix file, as expected by Home Manager."
