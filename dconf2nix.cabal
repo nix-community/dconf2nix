@@ -20,6 +20,7 @@ library
                      , DConf.Data
                      , DConf2Nix
                      , Nix
+  other-modules:       Paths_dconf2nix
   build-depends:       base
                      , containers
                      , optparse-applicative
