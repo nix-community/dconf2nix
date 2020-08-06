@@ -120,17 +120,15 @@ You can have a look at my [NixOS configuration files](https://github.com/gvolpe/
 
 ### Installation
 
-For now, a binary can be downloaded from [releases](https://github.com/gvolpe/dconf2nix/releases). You can also get it via [Cachix](https://app.cachix.org/cache/dconf2nix).
-
-#### Nix
-
-In the future, I plan to make the binary available on Nixpkgs as well as in other places for easy installation. Until then, you can install it via the following command:
+The simplest way is to install it via `nix-env`, in which case it will be compiled in your machine.
 
 ```shell
 nix-env -i -f https://github.com/gvolpe/dconf2nix/archive/v0.0.4.tar.gz
 ```
 
-Alternatively, here's a derivation for the binary you can use to avoid compiling it (only for Linux-x86-64):
+You could also get it via [Cachix](https://app.cachix.org/cache/dconf2nix) to reduce the installation time.
+
+Alternatively, here's a derivation for the binary you can use to avoid compiling it (only for Linux-x86-64 for now):
 
 ```nix
 { stdenv }:
@@ -153,6 +151,14 @@ stdenv.mkDerivation rec {
   '';
 }
 ```
+
+Have a look at the [latest releases](https://github.com/gvolpe/dconf2nix/releases) in case the README file gets outdated.
+
+### Benchmarks
+
+Take it with a grain of salt but on my machine, it takes an average of 1.2ms to process a 349 lines configuration and generate a Nix file with 433 lines.
+
+![benchmark](img/benchmark.png)
 
 ### Troubleshooting
 
