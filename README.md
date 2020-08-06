@@ -156,7 +156,7 @@ Have a look at the [latest releases](https://github.com/gvolpe/dconf2nix/release
 
 ### Benchmarks
 
-Take it with a grain of salt but on my machine, it takes an average of 1.2ms to process a 349 lines configuration and generate a Nix file with 433 lines.
+Take it with a grain of salt but on my machine it takes an average of 1.1ms to process a 349 lines configuration and generate a Nix file with 433 lines.
 
 ![benchmark](img/benchmark.png)
 
