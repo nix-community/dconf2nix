@@ -70,7 +70,7 @@ dconf dump / > dconf.settings
 
 ### Run
 
-Once compiled and installed (`cabal new-install`), you can use it as follows:
+Once compiled and installed (via `nix-build` or `cabal new-install`), you can use it as follows:
 
 ```shell
 dconf2nix -i data/dconf.settings -o output/dconf.nix
@@ -81,14 +81,18 @@ Type `--help` for some more information.
 ```shell
 dconf2nix - Convert dconf files to Nix
 
-Usage: dconf2nix (-i|--input ARG) (-o|--output ARG) [-v|--verbose]
+Usage: dconf2nix [-v|--version] (-i|--input ARG) (-o|--output ARG)
+                 [-t|--timeout ARG] [--verbose]
   Convert a dconf file into a Nix file, as expected by Home Manager.
 
 Available options:
+  -h,--help                Show this help text
+  -v,--version             Show the current version
   -i,--input ARG           Path to the dconf file (input)
   -o,--output ARG          Path to the Nix output file (to be created)
-  -v,--verbose             Verbose mode (debug)
-  -h,--help                Show this help text
+  -t,--timeout ARG         Timeout in seconds for the conversion
+                           process (default: 5)
+  --verbose                Verbose mode (debug)
 ```
 
 ### Supported types
@@ -152,4 +156,8 @@ stdenv.mkDerivation rec {
 
 ### Troubleshooting
 
-If you run into some issues, the first thing you should try is to run `dconf2nix` in debug mode by using the `--verbose` flag, copy the first value you see in the console and report the issue. Do also consider the caveats mentioned above in the [Supported Types](#supported-types) section.
+![error](img/error.png)
+
+The default timeout is of 5 seconds. You can see it by running `dconf2nix --help`.
+
+To report an issue, please copy the first value you see in the console when running in `--verbose` mode. That is basically the raw `dconf` value that cannot be parsed. Do also consider the caveats mentioned above in the [Supported Types](#supported-types) section.
