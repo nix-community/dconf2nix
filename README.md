@@ -127,7 +127,7 @@ For now, a binary can be downloaded from [releases](https://github.com/gvolpe/dc
 In the future, I plan to make the binary available on Nixpkgs as well as in other places for easy installation. Until then, you can install it via the following command:
 
 ```shell
-nix-env -i -f https://github.com/gvolpe/dconf2nix/archive/v0.0.2.tar.gz
+nix-env -i -f https://github.com/gvolpe/dconf2nix/archive/v0.0.4.tar.gz
 ```
 
 Alternatively, here's a derivation for the binary you can use to avoid compiling it (only for Linux-x86-64):
@@ -137,11 +137,11 @@ Alternatively, here's a derivation for the binary you can use to avoid compiling
 
 stdenv.mkDerivation rec {
   name    = "dconf2nix-${version}";
-  version = "v0.0.2";
+  version = "v0.0.4";
 
   src = builtins.fetchurl {
     url    = "https://github.com/gvolpe/dconf2nix/releases/download/${version}/dconf2nix-linux-x86-64";
-    sha256 = "135xl48aiqlbbcn2q95aj50p2bzfyk87h4jzbnk81qaak5043krp";
+    sha256 = "175z8pv1aahdr91s4a9mi1401ijsqqg074n3avbh9h6l4gdqx45w";
   };
 
   phases = ["installPhase" "patchPhase"];
