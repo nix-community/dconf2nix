@@ -147,3 +147,7 @@ stdenv.mkDerivation rec {
   '';
 }
 ```
+
+### Troubleshooting
+
+If you run into some issues, the first thing you should try is to run `dconf2nix` in debug mode by using the `--verbose` flag, copy the first value you see in the console and report the issue. Do also consider the caveats mentioned above in the "Supported Types" section.
