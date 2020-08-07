@@ -1,18 +1,16 @@
 cabal-version:       2.4
 
 name:                dconf2nix
-version:             0.0.4
+version:             0.0.5
 synopsis:            Convert dconf files to Nix, as expected by Home Manager.
 description:         A convenient converter of DConf files to Nix, as expected by Home Manager's dconf settings. So you can Nixify your Gnome Shell configuration ;)
 bug-reports:         https://github.com/gvolpe/dconf2nix/issues
--- license:
+license:             Apache-2.0
 license-file:        LICENSE
 author:              gvolpe
 maintainer:          volpegabriel@gmail.com
--- copyright:
--- category:
 build-type:          Simple
-extra-source-files:  CHANGELOG.md, README.md
+extra-source-files:  README.md
 
 library
   exposed-modules:     CommandLine
