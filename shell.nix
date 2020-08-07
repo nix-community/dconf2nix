@@ -13,6 +13,7 @@ in
   {
     my_project = drv;
     shell = haskellPackages.shellFor {
+      name = "ghc-shell-for-dconf2nix";
       packages = p: [drv];
       buildInputs = with haskellPackages; [ brittany hlint cabal-install ];
       shellHook = ''
