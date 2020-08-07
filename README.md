@@ -84,18 +84,28 @@ Once compiled and installed (via `nix-build` or `cabal new-install`), you can us
 dconf2nix -i data/dconf.settings -o output/dconf.nix
 ```
 
+It is also possible to pipe the standard input to `dconf2nix` and expect the result in the standard output:
+
+```shell
+dconf dump / | dconf2nix > dconf.nix
+```
+
 Type `--help` for some more information.
 
 ```shell
-dconf2nix - Convert dconf files to Nix
+dconf2nix - Nixify dconf configuration files
 
-Usage: dconf2nix [-v|--version] (-i|--input ARG) (-o|--output ARG)
-                 [-t|--timeout ARG] [--verbose]
+Usage: dconf2nix [-v|--version]
+                 [[-t|--timeout ARG] [--verbose] | (-i|--input ARG)
+                   (-o|--output ARG) [-t|--timeout ARG] [--verbose]]
   Convert a dconf file into a Nix file, as expected by Home Manager.
 
 Available options:
   -h,--help                Show this help text
   -v,--version             Show the current version
+  -t,--timeout ARG         Timeout in seconds for the conversion
+                           process (default: 5)
+  --verbose                Verbose mode (debug)
   -i,--input ARG           Path to the dconf file (input)
   -o,--output ARG          Path to the Nix output file (to be created)
   -t,--timeout ARG         Timeout in seconds for the conversion
