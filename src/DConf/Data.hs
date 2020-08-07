@@ -22,7 +22,7 @@ data Value = S Text
            | T Value Value
            | TL Value Value -- a tuple within a list
            | L [Value]
-           deriving Show
+           deriving (Eq, Show)
 
 type Header = Text
 type Content = Map Key Value
@@ -30,4 +30,4 @@ type Content = Map Key Value
 data Entry = Entry
   { header :: Header
   , content :: Content
-  } deriving Show
+  } deriving (Eq, Show)
