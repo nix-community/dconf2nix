@@ -141,7 +141,7 @@ You can have a look at my [NixOS configuration files](https://github.com/gvolpe/
 The simplest way is to install it via `nix-env`, in which case it will be compiled in your machine.
 
 ```shell
-nix-env -i -f https://github.com/gvolpe/dconf2nix/archive/v0.0.4.tar.gz
+nix-env -i -f https://github.com/gvolpe/dconf2nix/archive/v0.0.5.tar.gz
 ```
 
 You could also get it via [Cachix](https://app.cachix.org/cache/dconf2nix) to reduce the installation time.
@@ -153,11 +153,11 @@ Alternatively, here's a derivation for the binary you can use to avoid compiling
 
 stdenv.mkDerivation rec {
   name    = "dconf2nix-${version}";
-  version = "v0.0.4";
+  version = "v0.0.5";
 
   src = builtins.fetchurl {
     url    = "https://github.com/gvolpe/dconf2nix/releases/download/${version}/dconf2nix-linux-x86-64";
-    sha256 = "175z8pv1aahdr91s4a9mi1401ijsqqg074n3avbh9h6l4gdqx45w";
+    sha256 = "1hidf1vwsi8hmmf3vv4n1dvqs5wyk9xhly7bdckxqkqsq2gb44dg";
   };
 
   phases = ["installPhase" "patchPhase"];
