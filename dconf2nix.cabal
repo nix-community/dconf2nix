@@ -32,6 +32,7 @@ test-Suite dconf2nix-tests
   hs-source-dirs:      test
   main-is:             Main.hs
   other-modules:       DConfTest
+                     , DConf2NixTest
   build-depends:       base
                      , containers
                      , dconf2nix
