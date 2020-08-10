@@ -179,3 +179,21 @@ Have a look at the [latest releases](https://github.com/gvolpe/dconf2nix/release
 The default timeout is of 5 seconds. You can see it by running `dconf2nix --help`.
 
 To report an issue, please copy the first value you see in the console when running in `--verbose` mode. That is basically the raw `dconf` value that cannot be parsed. Do also consider the caveats mentioned above in the [Supported Types](#supported-types) section.
+
+### Development
+
+To compile and run the tests locally.
+
+```shell
+cabal new-configure
+cabal new-run dconf2nix-tests
+```
+
+To generate the static binary.
+
+```shell
+cabal new-configure --disable-executable-dynamic --ghc-option=-optl=-static --ghc-option=-optl=-pthread
+nix-build
+```
+
+If everything goes well, the binary should be under `result/bin/`.
