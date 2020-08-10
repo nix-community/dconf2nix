@@ -1,6 +1,6 @@
 let
   pkgs = import ./pkgs.nix;
-  drv  = import ./default.nix;
+  drv  = import ./default.nix { inherit pkgs; };
 
   inherit (pkgs) haskellPackages;
 in
