@@ -138,15 +138,21 @@ You can have a look at my [NixOS configuration files](https://github.com/gvolpe/
 
 ### Installation
 
-The simplest way is to install it via `nix-env`, in which case it will be compiled in your machine.
+The simplest way is to install it via `nix-env`.
 
 ```shell
-nix-env -i -f https://github.com/gvolpe/dconf2nix/archive/v0.0.5.tar.gz
+nix-env -i dconf2nix
 ```
 
-You could also get it via [Cachix](https://app.cachix.org/cache/dconf2nix) to reduce the installation time.
+Or if you want to pull the latest `master`.
 
-Alternatively, here's a derivation for the binary you can use to avoid compiling it (only for Linux-x86-64 for now):
+```shell
+nix-env -i -f https://github.com/gvolpe/dconf2nix/archive/master.tar.gz
+```
+
+You could also use [Cachix](https://app.cachix.org/cache/dconf2nix) to reduce the installation time.
+
+Alternatively, here's a derivation for the binary you can use to avoid compiling it (only for Linux-x86-64 for now).
 
 ```nix
 { stdenv }:
