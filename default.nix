@@ -1,3 +1,6 @@
-{ pkgs ? import ./pkgs.nix }:
+{ packages ? import ./pkgs.nix { inherit compiler; }, compiler ? "ghc883" }:
 
-pkgs.haskellPackages.callCabal2nix "dconf2nix" ./. {}
+let
+  inherit (packages) hp;
+in
+  hp.callCabal2nix "dconf2nix" ./. {}

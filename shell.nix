@@ -1,15 +1,19 @@
 let
-  pkgs = import ./pkgs.nix;
-  drv  = import ./default.nix { inherit pkgs; };
+  packages = import ./pkgs.nix {};
+  inherit (packages) pkgs hp;
 
-  inherit (pkgs) haskellPackages;
+  drv  = hp.callCabal2nix "dconf2nix" ./. {};
 in
   {
     my_project = drv;
-    shell = haskellPackages.shellFor {
+    shell = hp.shellFor {
       name = "ghc-shell-for-dconf2nix";
       packages = p: [drv];
-      buildInputs = with haskellPackages; [ brittany hlint cabal-install ];
+      buildInputs = with hp; [
+        brittany
+        cabal-install
+        hlint
+      ];
       shellHook = ''
         export NIX_GHC="$(which ghc)"
         export NIX_GHCPKG="$(which ghc-pkg)"

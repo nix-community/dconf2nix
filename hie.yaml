@@ -1,1 +1,8 @@
-cradle: {cabal: {component: "lib:dconf2nix"}}
+cradle:
+  cabal:
+    - path: "./src"
+      component: "lib:dconf2nix"
+    - path: "./app"
+      component: "exe:dconf2nix"
+    - path: "./test"
+      component: "test:dconf2nix-tests"
