@@ -34,7 +34,7 @@ renderEntry :: Entry -> Nix
 renderEntry (Entry h c) =
   let header = "    \"" <> h <> "\" = {\n"
       body   = Map.toList c >>= \(Key k, v) ->
-        T.unpack $ "      \"" <> k <> "\" = " <> unNix (renderValue v) <> "\n"
+        T.unpack $ "      " <> k <> " = " <> unNix (renderValue v) <> "\n"
       close = "    };\n\n"
   in  Nix $ header <> T.pack body <> close
 
