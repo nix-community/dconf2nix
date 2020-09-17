@@ -1,4 +1,4 @@
-{ packages ? import ./pkgs.nix { inherit compiler; }, compiler ? "ghc883" }:
+{ packages ? import ./pkgs.nix { inherit compiler; }, compiler ? "ghc884" }:
 
 let
   inherit (packages) hp;

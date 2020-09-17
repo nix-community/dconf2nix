@@ -1,4 +1,4 @@
-{ compiler ? "ghc883" }:
+{ compiler ? "ghc884" }:
 
 let
   pkgs = import (
