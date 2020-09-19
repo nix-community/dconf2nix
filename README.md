@@ -84,7 +84,7 @@ The easiest way is to pipe the standard input to `dconf2nix` and expect the resu
 dconf dump / | dconf2nix > dconf.nix
 ```
 
-If you have an input file instead, you can run the following command instead:
+If you have an input file instead, you can run the following command:
 
 ```shell
 dconf2nix -i data/dconf.settings -o output/dconf.nix
@@ -118,7 +118,7 @@ Available options:
 
 #### Custom root
 
-By default, `dconf2nix` expects the root to be `/`. If you want to create a dump of a custom root, you can use the `--root` flag:
+By default, `dconf2nix` expects the root to be `/`. If you want to create a dump of a custom root, you can use the `--root` flag. For example:
 
 ```shell
 dconf dump /system/locale/ | dconf2nix --root system/locale > dconf.nix
