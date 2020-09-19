@@ -129,7 +129,7 @@ This will generate an output similar to the one below.
 ```nix
 {
   dconf.settings = {
-    "system/locale/" = {
+    "system/locale" = {
       region = "en_US.UTF-8";
     };
 
