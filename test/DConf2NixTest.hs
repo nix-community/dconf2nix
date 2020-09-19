@@ -8,7 +8,6 @@ where
 import           Data.IORef
 import qualified Data.Text                     as T
 import qualified Data.Text.IO                  as T
-import           Data.Text                      ( Text )
 import           DConf                          ( dconfParser )
 import           DConf2Nix                      ( handler )
 import           DConf.Data
@@ -22,7 +21,7 @@ baseProperty :: FilePath -> FilePath -> Root -> Property
 baseProperty i o root = property $ do
   input  <- evalIO $ T.readFile i
   output <- evalIO $ T.readFile o
-  ref    <- evalIO $ newIORef ("" :: Text)
+  ref    <- evalIO $ newIORef T.empty
   evalIO $ handler (writer ref) (writer ref) root (entries input)
   result <- evalIO $ readIORef ref
   result === output
@@ -34,7 +33,7 @@ dconf2nix :: Property
 dconf2nix =
   let input  = "data/dconf.settings"
       output = "output/dconf.nix"
-      root   = Root ""
+      root   = Root T.empty
   in  baseProperty input output root
 
 prop_dconf2nix_custom_root :: Property

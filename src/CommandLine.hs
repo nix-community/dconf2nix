@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module CommandLine
   ( FileArgs(..)
   , Input(..)
@@ -8,6 +6,7 @@ module CommandLine
   )
 where
 
+import qualified Data.Text                     as T
 import           Data.Version                   ( showVersion )
 import           DConf.Data
 import           Options.Applicative
@@ -30,7 +29,8 @@ data StdinArgs = StdinArgs
   }
 
 timeoutArgs :: Parser ProcessTimeout
-timeoutArgs = ProcessTimeout <$> option auto
+timeoutArgs = ProcessTimeout <$> option
+  auto
   (long "timeout" <> short 't' <> showDefault <> value 5 <> help
     "Timeout in seconds for the conversion process"
   )
@@ -41,7 +41,9 @@ verbosityArgs =
 
 rootArgs :: Parser Root
 rootArgs = Root <$> strOption
-  (long "root" <> short 'r' <> value "" <> help "Custom root path. e.g.: system/locale/")
+  (long "root" <> short 'r' <> value T.empty <> help
+    "Custom root path. e.g.: system/locale/"
+  )
 
 fileArgs :: Parser Input
 fileArgs = fmap FileInput $ FileArgs
