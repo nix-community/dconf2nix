@@ -47,5 +47,15 @@ dconf2nixCustomRoot =
       root   = Root "ca/desrt/dconf-editor"
   in  baseProperty input output root
 
+prop_dconf2nix_root :: Property
+prop_dconf2nix_root = withTests (10 :: TestLimit) dconf2nixRoot
+
+dconf2nixRoot :: Property
+dconf2nixRoot =
+  let input  = "data/root.settings"
+      output = "output/root.nix"
+      root   = Root "org/gnome/desktop/peripherals"
+  in  baseProperty input output root
+
 dconf2nixTests :: Group
 dconf2nixTests = $$(discover)

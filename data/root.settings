@@ -1,0 +1,7 @@
+[mouse]
+natural-scroll=false
+speed=-0.5
+
+[touchpad]
+tap-to-click=false
+two-finger-scrolling-enabled=true
