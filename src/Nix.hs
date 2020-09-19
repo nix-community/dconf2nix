@@ -25,14 +25,14 @@ renderHeader = T.unlines
   ]
 
 renderFooter :: Header
-renderFooter = T.unlines
-  [ "  };"
-  , "}"
-  ]
+renderFooter = T.unlines ["  };", "}"]
 
-renderEntry :: Entry -> Nix
-renderEntry (Entry h c) =
-  let header = "    \"" <> h <> "\" = {\n"
+normalizeRoot :: T.Text -> T.Text
+normalizeRoot = T.dropWhile (== '/') . T.dropWhileEnd (== '/')
+
+renderEntry :: Entry -> Root -> Nix
+renderEntry (Entry h c) (Root root) =
+  let header = "    \"" <> normalizeRoot root <> h <> "\" = {\n"
       body   = Map.toList c >>= \(Key k, v) ->
         T.unpack $ "      " <> k <> " = " <> unNix (renderValue v) <> "\n"
       close = "    };\n\n"

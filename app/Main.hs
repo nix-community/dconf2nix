@@ -31,7 +31,7 @@ dconf2nix (ProcessTimeout t) fa successMsg = timeout (t * 1000000) fa >>= \case
 
 main :: IO ()
 main = runArgs >>= \case
-  FileInput (FileArgs i o t v) ->
-    dconf2nix t (dconf2nixFile i o v) (Just "🚀 Successfully Nixified! ❄️")
-  StdinInput (StdinArgs t v)   ->
-    dconf2nix t (dconf2nixStdin v) Nothing
+  FileInput (FileArgs i o r t v) ->
+    dconf2nix t (dconf2nixFile i o r v) (Just "🚀 Successfully Nixified! ❄️")
+  StdinInput (StdinArgs r t v)   ->
+    dconf2nix t (dconf2nixStdin r v) Nothing
