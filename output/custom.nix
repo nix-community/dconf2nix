@@ -6,7 +6,7 @@ let
 in
 {
   dconf.settings = {
-    "ca/desrt/dconf-editor/" = {
+    "ca/desrt/dconf-editor" = {
       saved-pathbar-path = "/org/gnome/desktop/input-sources/";
       saved-view = "/org/gnome/desktop/input-sources/";
       window-height = 709;

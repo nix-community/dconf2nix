@@ -32,14 +32,14 @@ normalizeRoot r | T.null r           = r
                 | T.isSuffixOf "/" r = T.dropWhile (== '/') r
                 | otherwise          = T.dropWhile (== '/') r <> "/"
 
-normalizeHeader :: Header -> Header
-normalizeHeader "/" = ""
-normalizeHeader h   = h
+normalizeHeader :: Header -> Root -> Header
+normalizeHeader "/" (Root r) = T.dropWhileEnd (== '/') (normalizeRoot r) <> ""
+normalizeHeader h   (Root r) = normalizeRoot r <> h
 
 renderEntry :: Entry -> Root -> Nix
-renderEntry (Entry h c) (Root root) =
+renderEntry (Entry h c) root =
   let header =
-          "    \"" <> normalizeRoot root <> normalizeHeader h <> "\" = {\n"
+          "    \"" <> normalizeHeader h root <> "\" = {\n"
       body = Map.toList c >>= \(Key k, v) ->
         T.unpack $ "      " <> k <> " = " <> unNix (renderValue v) <> "\n"
       close = "    };\n\n"
