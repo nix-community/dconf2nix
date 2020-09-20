@@ -30,9 +30,9 @@ testInput = T.unlines
 
 testOutput :: Entry
 testOutput = Entry
-  { header  = "org/gnome/desktop/peripherals/mouse"
-  , content = M.fromList
-                [(Key "natural-scroll", B False), (Key "speed", D (-0.5))]
+  { entryHeader  = "org/gnome/desktop/peripherals/mouse"
+  , entryContent = M.fromList
+                     [(Key "natural-scroll", B False), (Key "speed", D (-0.5))]
   }
 
 dconfParserTests :: Group

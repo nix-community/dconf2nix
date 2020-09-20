@@ -11,6 +11,8 @@ data Verbosity = Normal | Verbose
 
 newtype Nix = Nix { unNix :: Text } deriving Show
 
+newtype Root = Root Text deriving (Eq, Show)
+
 newtype Key = Key Text deriving (Eq, Ord, Show)
 
 data Value = S Text
@@ -28,6 +30,6 @@ type Header = Text
 type Content = Map Key Value
 
 data Entry = Entry
-  { header :: Header
-  , content :: Content
+  { entryHeader :: Header
+  , entryContent :: Content
   } deriving (Eq, Show)
