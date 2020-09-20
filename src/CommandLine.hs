@@ -29,8 +29,7 @@ data StdinArgs = StdinArgs
   }
 
 timeoutArgs :: Parser ProcessTimeout
-timeoutArgs = ProcessTimeout <$> option
-  auto
+timeoutArgs = ProcessTimeout <$> option auto
   (long "timeout" <> short 't' <> showDefault <> value 5 <> help
     "Timeout in seconds for the conversion process"
   )

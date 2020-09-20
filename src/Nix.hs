@@ -29,18 +29,18 @@ renderFooter = T.unlines ["  };", "}"]
 
 normalizeRoot :: T.Text -> T.Text
 normalizeRoot r | T.null r           = r
-                | T.isSuffixOf "/" r = T.dropWhile (== '/') r
-                | otherwise          = T.dropWhile (== '/') r <> "/"
+                | T.isSuffixOf "/" r = f r
+                | otherwise          = f r <> "/"
+  where f = T.dropWhile (== '/')
 
 normalizeHeader :: Header -> Root -> Header
-normalizeHeader "/" (Root r) = T.dropWhileEnd (== '/') (normalizeRoot r) <> ""
+normalizeHeader "/" (Root r) = T.dropWhileEnd (== '/') (normalizeRoot r)
 normalizeHeader h   (Root r) = normalizeRoot r <> h
 
 renderEntry :: Entry -> Root -> Nix
 renderEntry (Entry h c) root =
-  let header =
-          "    \"" <> normalizeHeader h root <> "\" = {\n"
-      body = Map.toList c >>= \(Key k, v) ->
+  let header = "    \"" <> normalizeHeader h root <> "\" = {\n"
+      body   = Map.toList c >>= \(Key k, v) ->
         T.unpack $ "      " <> k <> " = " <> unNix (renderValue v) <> "\n"
       close = "    };\n\n"
   in  Nix $ header <> T.pack body <> close

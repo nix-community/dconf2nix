@@ -46,13 +46,13 @@ dconf2nixCustomRoot =
       root   = Root "ca/desrt/dconf-editor"
   in  baseProperty input output root
 
-prop_dconf2nix_root :: Property
-prop_dconf2nix_root = withTests (10 :: TestLimit) dconf2nixRoot
+prop_dconf2nix_custom_nested_root :: Property
+prop_dconf2nix_custom_nested_root = withTests (10 :: TestLimit) dconf2nixCustomNestedRoot
 
-dconf2nixRoot :: Property
-dconf2nixRoot =
-  let input  = "data/root.settings"
-      output = "output/root.nix"
+dconf2nixCustomNestedRoot :: Property
+dconf2nixCustomNestedRoot =
+  let input  = "data/nested.settings"
+      output = "output/nested.nix"
       root   = Root "org/gnome/desktop/peripherals"
   in  baseProperty input output root
 
