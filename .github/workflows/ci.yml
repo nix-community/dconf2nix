@@ -1,4 +1,5 @@
 name: Haskell CI
+
 on:
   pull_request:
   push:
@@ -15,4 +16,4 @@ jobs:
         with:
           name: dconf2nix
           signingKey: "${{ secrets.CACHIX_SIGNING_KEY }}"
-      - run: nix-build
+      - run: nix-shell --run "nix-build-uncached default.nix" ci.nix
