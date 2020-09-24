@@ -10,9 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     steps:
-      - uses: "actions/checkout@v2.1.0"
-      - uses: "nixbuild/nix-quick-install-action@v2"
-      - uses: "cachix/cachix-action@v6"
+      - uses: actions/checkout@v2.1.0
+      - uses: cachix/install-nix-action@v11
+        with:
+          skip_adding_nixpkgs_channel: true
+      - uses: cachix/cachix-action@v6
         with:
           name: dconf2nix
           signingKey: "${{ secrets.CACHIX_SIGNING_KEY }}"
