@@ -176,27 +176,30 @@ nix-env -i -f https://github.com/gvolpe/dconf2nix/archive/master.tar.gz
 
 You could also use [Cachix](https://app.cachix.org/cache/dconf2nix) to reduce the installation time.
 
-Alternatively, here's a derivation for the binary you can use to avoid compiling it (only for Linux-x86-64 for now).
+Alternatively, here's an overlay for the binary you can use to avoid compiling it (only for Linux-x86-64).
 
 ```nix
-{ stdenv }:
+self: super:
 
-stdenv.mkDerivation rec {
-  name    = "dconf2nix-${version}";
-  version = "v0.0.5";
+rec {
+  dconf2nix = super.dconf2nix.overrideAttrs (
+    old: rec {
+      version = "v0.0.6";
 
-  src = builtins.fetchurl {
-    url    = "https://github.com/gvolpe/dconf2nix/releases/download/${version}/dconf2nix-linux-x86-64";
-    sha256 = "1hidf1vwsi8hmmf3vv4n1dvqs5wyk9xhly7bdckxqkqsq2gb44dg";
-  };
+      src = builtins.fetchurl {
+        url    = "https://github.com/gvolpe/dconf2nix/releases/download/${version}/dconf2nix-linux-x86-64";
+        sha256 = "1bh78hfgy4wnfdq184ck5yw72szllzl5sm7a3a4y46byq0xxklcd";
+      };
 
-  phases = ["installPhase" "patchPhase"];
+      phases = ["installPhase" "patchPhase"];
 
-  installPhase = ''
-    mkdir -p $out/bin
-    cp $src $out/bin/dconf2nix
-    chmod +x $out/bin/dconf2nix
-  '';
+      installPhase = ''
+        mkdir -p $out/bin
+        cp $src $out/bin/dconf2nix
+        chmod +x $out/bin/dconf2nix
+      '';
+    }
+  );
 }
 ```
 
