@@ -63,7 +63,7 @@ vString = try $ do
   many1 (string "'")
   S . T.pack . concat <$> manyTill inputs (string "'")
  where
-  tokens    = many1 <$> [alphaNum, space] ++ (char <$> "-_()[]{},#@")
+  tokens    = many1 <$> [alphaNum, space] ++ (char <$> "+-_()[]{},#@\\")
   files     = many1 . char <$> ":/."
   shortcuts = many1 . char <$> "<>"
   inputs    = choice (tokens ++ files ++ shortcuts)
@@ -78,7 +78,7 @@ dconf = choice
 -- There is no support for variants in HM yet so we parse them as String
 vListOfVariant :: Parsec Text () Value
 vListOfVariant = try $ do
-  try $ lookAhead (string "[<")
+  try (lookAhead $ string "[<") <|> try (lookAhead $ string "[{")
   S . T.pack <$> manyTill anyToken (try $ lookAhead endOfLine)
 
 vList :: Parsec Text () Value
