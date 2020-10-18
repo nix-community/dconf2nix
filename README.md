@@ -4,6 +4,18 @@
 
 A convenient converter of [DConf](https://wiki.gnome.org/Projects/dconf) files to Nix, as expected by [Home Manager's dconf settings](https://rycee.gitlab.io/home-manager/options.html#opt-dconf.settings). So you can Nixify your [Gnome Shell](https://wiki.gnome.org/Projects/GnomeShell) configuration :wink:
 
+<!--ts-->
+* [Benchmarks](#benchmarks)
+* [Introduction](#introduction)
+* [Run](#run)
+  * [Custom root](#custom-root)
+* [Supported types](#supported-types)
+* [Gnome Shell configuration](#gnome-shell-configuration)
+* [Installation](#installation)
+* [Troubleshooting](#troubleshooting)
+* [Development](#development)
+<!--te-->
+
 ---
 
 ### Benchmarks

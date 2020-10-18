@@ -1,5 +1,5 @@
 let
-  packages = import ./pkgs.nix {};
+  packages = import nix/pkgs.nix {};
   inherit (packages) pkgs hp;
 
   drv  = hp.callCabal2nix "dconf2nix" ./. {};

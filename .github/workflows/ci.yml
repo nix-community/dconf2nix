@@ -16,4 +16,4 @@ jobs:
         with:
           name: dconf2nix
           signingKey: "${{ secrets.CACHIX_SIGNING_KEY }}"
-      - run: nix-shell --run "nix-build-uncached default.nix" ci.nix
+      - run: nix-shell --run "nix-build-uncached default.nix" nix/ci.nix
