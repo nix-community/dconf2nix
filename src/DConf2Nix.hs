@@ -1,5 +1,8 @@
+{-# LANGUAGE LambdaCase #-}
+
 module DConf2Nix where
 
+import           Data.Foldable                  ( traverse_ )
 import qualified Data.Text                     as T
 import qualified Data.Text.IO                  as T
 import           DConf.Data
@@ -11,14 +14,16 @@ import           Text.Parsec                    ( ParseError
                                                 )
 
 dconf2nixFile :: InputFilePath -> OutputFilePath -> Root -> Verbosity -> IO ()
-dconf2nixFile (InputFilePath input) (OutputFilePath output) root v = do
-  parsed <- parseFromFile (dconfParser v) input
-  handler (T.writeFile output) (T.appendFile output) root parsed
+dconf2nixFile (InputFilePath input) (OutputFilePath output) root v =
+  let run   = handler (T.writeFile output) (T.appendFile output) root
+      parse = parseFromFile (dconfParser v) input
+  in  run =<< parse
 
 dconf2nixStdin :: Root -> Verbosity -> IO ()
-dconf2nixStdin root v = do
-  input <- T.getContents
-  handler T.putStr T.putStr root $ runParser (dconfParser v) () "<stdin>" input
+dconf2nixStdin root v =
+  let run   = handler T.putStr T.putStr root
+      parse = runParser (dconfParser v) () "<stdin>"
+  in  run . parse =<< T.getContents
 
 handler
   :: (T.Text -> IO ())
@@ -26,10 +31,9 @@ handler
   -> Root
   -> Either ParseError [Entry]
   -> IO ()
-handler writer appender root parsed = do
-  case parsed of
-    Left  err -> error $ show err
-    Right xs  -> do
-      writer Nix.renderHeader
-      traverse (\e -> appender (unNix $ Nix.renderEntry e root)) xs
-  appender Nix.renderFooter
+handler writer appender root = \case
+  Left  err -> error $ show err
+  Right xs  -> do
+    writer Nix.renderHeader
+    traverse_ (\e -> appender (unNix $ Nix.renderEntry e root)) xs
+    appender Nix.renderFooter
