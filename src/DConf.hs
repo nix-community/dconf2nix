@@ -75,11 +75,17 @@ dconf :: Parsec Text () Value
 dconf = choice
   [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString, vTuple, vAny]
 
--- There is no support for variants in HM yet so we parse them as String
+-- There is no support for variants in HM yet so we parse them as a string
 vListOfVariant :: Parsec Text () Value
-vListOfVariant = try $ do
-  try (lookAhead $ string "[<") <|> try (lookAhead $ string "[{")
-  S . T.pack <$> manyTill anyToken (try $ lookAhead endOfLine)
+vListOfVariant =
+  let variant1 = try $ do
+        try (lookAhead $ string "[<") <|> try (lookAhead $ string "[{")
+        manyTill anyToken (try $ lookAhead endOfLine)
+      variant2 = try $ do
+        try (lookAhead $ string "\"[<") <|> try (lookAhead $ string "\"[{")
+        char '"'
+        manyTill anyToken (try $ lookAhead $ string "\"") <* char '"'
+  in  S . T.pack <$> (variant1 <|> variant2)
 
 vList :: Parsec Text () Value
 vList = try $ do
