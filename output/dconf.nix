@@ -47,8 +47,8 @@ in
 
     "org/gnome/desktop/wm/keybindings" = {
       close = [ "<Super>w" ];
-      switch-applications = "@as []";
-      switch-applications-backward = "@as []";
+      switch-applications = [];
+      switch-applications-backward = [];
       switch-windows = [ "<Alt>Tab" ];
       switch-windows-backward = [ "<Shift><Alt>Tab" ];
     };
@@ -56,7 +56,7 @@ in
     "org/gnome/desktop/wm/preferences" = {
       button-layout = "close,minimize,maximize:";
       titlebar-font = "JetBrainsMono Nerd Font Mono 11";
-      workspace-names = "@as []";
+      workspace-names = [];
     };
 
     "ca/desrt/dconf-editor" = {

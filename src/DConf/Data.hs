@@ -15,15 +15,16 @@ newtype Root = Root Text deriving (Eq, Show)
 
 newtype Key = Key Text deriving (Eq, Ord, Show)
 
-data Value = S Text
-           | B Bool
-           | I Int
-           | I32 Int
-           | I64 Int
-           | D Double
-           | T Value Value
-           | TL Value Value -- a tuple within a list
-           | L [Value]
+data Value = S Text         -- String
+           | B Bool         -- Bool
+           | I Int          -- Int
+           | I32 Int        -- Int32
+           | I64 Int        -- Int64
+           | D Double       -- Double
+           | T Value Value  -- Tuple
+           | TL Value Value -- Tuple within a list
+           | L [Value]      -- List of values
+           | EmptyList      -- Empty list (aka '@as []')
            deriving (Eq, Show)
 
 type Header = Text

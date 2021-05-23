@@ -64,3 +64,4 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (TL x y) = "(" <> renderValue' (T x y) <> ")"
   renderValue' (L xs) =
     let ls = T.concat ((<> " ") <$> (renderValue' <$> xs)) in "[ " <> ls <> "]"
+  renderValue' EmptyList = "[]"
