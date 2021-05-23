@@ -88,6 +88,10 @@ vList = try $ do
     ((vTupleInList <|> dconf) `sepBy` (string "," >> spaces))
     (char ']')
 
+vEmptyList :: Parsec Text () Value
+vEmptyList =
+  EmptyList <$ try (string "@as []")
+
 dconfHeader :: Parsec Text () Header
 dconfHeader = do
   many1 (char '[') <* spaces
@@ -95,7 +99,7 @@ dconfHeader = do
   where tokens = choice $ many1 <$> [char '/', char '-', char ':', alphaNum]
 
 dconfValue :: Parsec Text () Value
-dconfValue = vListOfVariant <|> vList <|> dconf
+dconfValue = vListOfVariant <|> vList <|> vEmptyList <|> dconf
 
 vKey :: Parsec Text () Key
 vKey = Key . T.pack <$> manyTill (choice [alphaNum, char '-']) (char '=')
