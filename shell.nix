@@ -12,6 +12,7 @@ in
       buildInputs = with hp; [
         brittany
         cabal-install
+        haskell-language-server
         hlint
       ];
       shellHook = ''
