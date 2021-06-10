@@ -1,0 +1,3 @@
+[org/gnome/shell/extensions/sound-output-device-chooser]
+hide-on-single-device=true
+ports-settings='{"version":2,"ports":[]}'

@@ -37,12 +37,15 @@ normalizeHeader :: Header -> Root -> Header
 normalizeHeader "/" (Root r) = T.dropWhileEnd (== '/') (normalizeRoot r)
 normalizeHeader h   (Root r) = normalizeRoot r <> h
 
+mkSpaces :: Int -> T.Text
+mkSpaces = T.pack . (flip replicate ' ')
+
 renderEntry :: Entry -> Root -> Nix
 renderEntry (Entry h c) root =
-  let header = "    \"" <> normalizeHeader h root <> "\" = {\n"
+  let header = mkSpaces 4 <> "\"" <> normalizeHeader h root <> "\" = {\n"
       body   = Map.toList c >>= \(Key k, v) ->
-        T.unpack $ "      " <> k <> " = " <> unNix (renderValue v) <> "\n"
-      close = "    };\n\n"
+        T.unpack $ mkSpaces 6 <> k <> " = " <> unNix (renderValue v) <> "\n"
+      close = mkSpaces 4 <> "};\n\n"
   in  Nix $ header <> T.pack body <> close
 
 renderValue :: Value -> Nix
@@ -65,3 +68,5 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (L xs) =
     let ls = T.concat ((<> " ") <$> (renderValue' <$> xs)) in "[ " <> ls <> "]"
   renderValue' EmptyList = "[]"
+  renderValue' (Json v) =
+    "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"
