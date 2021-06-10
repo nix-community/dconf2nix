@@ -24,6 +24,7 @@ data Value = S Text         -- String
            | T Value Value  -- Tuple
            | TL Value Value -- Tuple within a list
            | L [Value]      -- List of values
+           | Json Text      -- Json value
            | EmptyList      -- Empty list (aka '@as []')
            deriving (Eq, Show)
 
