@@ -58,11 +58,12 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (I32 v) = "\"uint32 " <> T.pack (show v) <> "\""
   renderValue' (I64 v) = "\"int64 " <> T.pack (show v) <> "\""
   renderValue' (T x y) =
-    let wrapInt x | x < 0     = "(" <> T.pack (show x) <> ")"
-                  | otherwise = T.pack $ show x
+    let wrapNegNumber x | x < 0     = "(" <> T.pack (show x) <> ")"
+                        | otherwise = T.pack $ show x
+        mkTuple x' y' =  "mkTuple [ " <> wrapNegNumber x' <> " " <> wrapNegNumber y' <> " ]"
     in  case (x, y) of
-          (I x', I y') ->
-            "mkTuple [ " <> wrapInt x' <> " " <> wrapInt y' <> " ]"
+          (I x', I y') -> mkTuple x' y'
+          (D x', D y') -> mkTuple x' y'
           _ -> "mkTuple [ " <> renderValue' x <> " " <> renderValue' y <> " ]"
   renderValue' (TL x y) = "(" <> renderValue' (T x y) <> ")"
   renderValue' (L xs) =
