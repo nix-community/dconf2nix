@@ -17,7 +17,7 @@ vBool :: Parsec Text () Value
 vBool = B False <$ string "false" <|> B True <$ string "true"
 
 vDouble :: Parsec Text () Value
-vDouble = do
+vDouble = try $ do
   s <- option "" $ string "-"
   n <- many1 digit
   d <- string "."
@@ -31,16 +31,14 @@ vInt = try $ do
   pure . I $ read (s <> n)
 
 vUint32 :: Parsec Text () Value
-vUint32 = do
+vUint32 = try $ do
   many1 (string "uint32 ") >> spaces
-  n <- many1 digit
-  pure . I32 $ read n
+  I32 . read <$> many1 digit
 
 vInt64 :: Parsec Text () Value
-vInt64 = do
+vInt64 = try $ do
   many1 (string "int64 ") >> spaces
-  n <- many1 digit
-  pure . I64 $ read n
+  I64 . read <$> many1 digit
 
 vTuple :: Parsec Text () Value
 vTuple = try $ do
