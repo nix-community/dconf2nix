@@ -1,0 +1,8 @@
+[org/gnome/evince]
+document-directory="@ms 'file:///home/user/Downloads'"
+
+[empty/double/quotes]
+foo-bar=""
+
+[empty/single/quotes]
+foo-bar=''
