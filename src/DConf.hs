@@ -60,18 +60,14 @@ vEmptyString = S "" <$ (try (string "''") <|> try (string "\"\""))
 
 vString :: Parsec Text () Value
 vString = try $ do
-  single <|> double
+  S . T.pack . concat <$> (single <|> double)
  where
-  single    = do
-    many1 (string "'")
-    S . T.pack . concat <$> manyTill inputs (string "'")
-  double    = do
-    many1 (char '"')
-    S . T.pack . concat <$> manyTill (inputs <|> string "'") (char '"')
-  tokens    = many1 <$> [alphaNum, space] ++ (char <$> "+-_()[]{},#@\\")
-  files     = many1 . char <$> ":/."
-  shortcuts = many1 . char <$> "<>"
-  inputs    = choice (tokens ++ files ++ shortcuts)
+  single = many1 (string "'") *> manyTill inputs (string "'")
+  double = many1 (char '"') *> manyTill (inputs <|> string "'") (char '"')
+  tokens = many1 <$> [alphaNum, space] ++ (char <$> "+-_()[]{},#@\\")
+  files  = many1 . char <$> ":/."
+  shorts = many1 . char <$> "<>"
+  inputs = choice (tokens ++ files ++ shorts)
 
 vAny :: Parsec Text () Value
 vAny = S . T.pack <$> manyTill anyChar (try $ lookAhead endOfLine)
