@@ -17,9 +17,8 @@ renderHeader = T.unlines
   [ "# Generated via dconf2nix: https://github.com/gvolpe/dconf2nix"
   , "{ lib, ... }:"
   , ""
-  , "let"
-  , "  mkTuple = lib.hm.gvariant.mkTuple;"
-  , "in"
+  , "with lib.hm.gvariant;"
+  , ""
   , "{"
   , "  dconf.settings = {"
   ]
@@ -55,8 +54,8 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (B   v) = T.toLower . T.pack $ show v
   renderValue' (I   v) = T.pack $ show v
   renderValue' (D   v) = T.pack $ show v
-  renderValue' (I32 v) = "\"uint32 " <> T.pack (show v) <> "\""
-  renderValue' (I64 v) = "\"int64 " <> T.pack (show v) <> "\""
+  renderValue' (I32 v) = "mkUint32 " <> T.pack (show v)
+  renderValue' (I64 v) = "mkInt64 " <> T.pack (show v)
   renderValue' (T x y) =
     let wrapNegNumber x | x < 0     = "(" <> T.pack (show x) <> ")"
                         | otherwise = T.pack $ show x

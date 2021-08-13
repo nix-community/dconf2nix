@@ -1,9 +1,8 @@
 # Generated via dconf2nix: https://github.com/gvolpe/dconf2nix
 { lib, ... }:
 
-let
-  mkTuple = lib.hm.gvariant.mkTuple;
-in
+with lib.hm.gvariant;
+
 {
   dconf.settings = {
     "org/virt-manager/virt-manager/urls" = {
@@ -97,7 +96,7 @@ in
     };
 
     "org/gnome/desktop/input-sources" = {
-      current = "uint32 0";
+      current = mkUint32 0;
       sources = [ (mkTuple [ "xkb" "us" ]) ];
       xkb-options = [ "terminate:ctrl_alt_bksp" "lv3:ralt_switch" "caps:ctrl_modifier" ];
     };
@@ -173,7 +172,7 @@ in
     };
 
     "org/gnome/desktop/session" = {
-      idle-delay = "uint32 0";
+      idle-delay = mkUint32 0;
     };
 
     "org/gnome/desktop/sound" = {
@@ -339,7 +338,7 @@ in
     };
 
     "org/gnome/software" = {
-      check-timestamp = "int64 1592897410";
+      check-timestamp = mkInt64 1592897410;
     };
 
     "org/gnome/system/location" = {
