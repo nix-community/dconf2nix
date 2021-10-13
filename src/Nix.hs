@@ -47,10 +47,19 @@ renderEntry (Entry h c) root =
       close = mkSpaces 4 <> "};\n\n"
   in  Nix $ header <> T.pack body <> close
 
+escapeQuotes :: T.Text -> T.Text
+escapeQuotes = T.replace "\"" "\\\""
+
+strip :: T.Text -> T.Text
+strip t | T.isPrefixOf "'" t = strip $ f (T.drop 1 t)
+        | T.isSuffixOf "'" t = f (T.dropEnd 1 t)
+        | otherwise          = f t
+  where f = T.strip
+
 renderValue :: Value -> Nix
 renderValue raw = Nix $ renderValue' raw <> ";"
  where
-  renderValue' (S   v) = "\"" <> T.strip v <> "\""
+  renderValue' (S   v) = "\"" <> escapeQuotes (strip v) <> "\""
   renderValue' (B   v) = T.toLower . T.pack $ show v
   renderValue' (I   v) = T.pack $ show v
   renderValue' (D   v) = T.pack $ show v
@@ -59,7 +68,8 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (T x y) =
     let wrapNegNumber x | x < 0     = "(" <> T.pack (show x) <> ")"
                         | otherwise = T.pack $ show x
-        mkTuple x' y' =  "mkTuple [ " <> wrapNegNumber x' <> " " <> wrapNegNumber y' <> " ]"
+        mkTuple x' y' =
+            "mkTuple [ " <> wrapNegNumber x' <> " " <> wrapNegNumber y' <> " ]"
     in  case (x, y) of
           (I x', I y') -> mkTuple x' y'
           (D x', D y') -> mkTuple x' y'

@@ -96,5 +96,15 @@ dconf2nixClocks =
 prop_dconf2nix_clocks :: Property
 prop_dconf2nix_clocks = withTests (10 :: TestLimit) dconf2nixClocks
 
+dconf2nixKeybindings :: Property
+dconf2nixKeybindings =
+  let input  = "data/keybindings.settings"
+      output = "output/keybindings.nix"
+      root   = Root T.empty
+  in  baseProperty input output root
+
+prop_dconf2nix_keybindings :: Property
+prop_dconf2nix_keybindings = withTests (10 :: TestLimit) dconf2nixKeybindings
+
 dconf2nixTests :: Group
 dconf2nixTests = $$(discover)
