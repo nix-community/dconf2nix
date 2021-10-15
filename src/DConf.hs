@@ -21,7 +21,7 @@ vDouble = try $ do
   s <- option "" $ string "-"
   n <- many1 digit
   d <- string "."
-  e <- many1 digit
+  e <- many1 (digit <|> oneOf "eEdD-")
   pure . D $ read (s <> n <> d <> e)
 
 vInt :: Parsec Text () Value

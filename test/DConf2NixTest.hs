@@ -106,5 +106,15 @@ dconf2nixKeybindings =
 prop_dconf2nix_keybindings :: Property
 prop_dconf2nix_keybindings = withTests (10 :: TestLimit) dconf2nixKeybindings
 
+dconf2nixScientificNotation :: Property
+dconf2nixScientificNotation =
+  let input  = "data/scientific-notation.settings"
+      output = "output/scientific-notation.nix"
+      root   = Root T.empty
+  in  baseProperty input output root
+
+prop_dconf2nix_scientific_notation :: Property
+prop_dconf2nix_scientific_notation = withTests (10 :: TestLimit) dconf2nixScientificNotation
+
 dconf2nixTests :: Group
 dconf2nixTests = $$(discover)
