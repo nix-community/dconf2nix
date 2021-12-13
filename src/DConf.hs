@@ -62,7 +62,7 @@ vString = try $ do
  where
   single = many1 (string "'") *> manyTill inputs (string "'")
   double = many1 (char '"') *> manyTill (inputs <|> string "'") (char '"')
-  tokens = many1 <$> [alphaNum, space] ++ (char <$> "&+-_()[]{},#@\\")
+  tokens = many1 <$> [alphaNum, space] ++ (char <$> "!&+-_()[]{},#@\\")
   files  = many1 . char <$> ":/."
   shorts = many1 . char <$> "<>"
   inputs = choice (tokens ++ files ++ shorts)

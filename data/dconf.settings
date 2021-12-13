@@ -312,3 +312,7 @@ nxkb-options=['terminate:ctrl_alt_bksp']
 
 [issue28/org/gnome/clocks]
 world-clocks=[{'location': <(uint32 2, <('Houston', 'KHOU', false, [(0.51727195705981943, -1.6629933445314968)], [(0.51727195705981943, -1.6629933445314968)])>)>}, {'location': <(uint32 2, <('Singapore', 'WSAP', true, [(0.023852838928353343, 1.8136879868485383)], [(0.022568084612667797, 1.8126262332513803)])>)>}]
+
+[org/gnome/shell/extensions/arcmenu]
+hot-corners='Disabled'
+recently-installed-apps=['RollerCoaster Tycoon 3 Platinum!.desktop', 'RollerCoaster Tycoon Deluxe.desktop', 'RollerCoaster Tycoon 2 Triple Thrill Pack.desktop', 'American Truck Simulator.desktop', 'Halo The Master Chief Collection.desktop', 'Bejeweled 3.desktop']
