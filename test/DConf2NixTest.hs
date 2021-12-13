@@ -47,7 +47,8 @@ dconf2nixCustomRoot =
   in  baseProperty input output root
 
 prop_dconf2nix_custom_nested_root :: Property
-prop_dconf2nix_custom_nested_root = withTests (10 :: TestLimit) dconf2nixCustomNestedRoot
+prop_dconf2nix_custom_nested_root =
+  withTests (10 :: TestLimit) dconf2nixCustomNestedRoot
 
 dconf2nixCustomNestedRoot :: Property
 dconf2nixCustomNestedRoot =
@@ -114,7 +115,19 @@ dconf2nixScientificNotation =
   in  baseProperty input output root
 
 prop_dconf2nix_scientific_notation :: Property
-prop_dconf2nix_scientific_notation = withTests (10 :: TestLimit) dconf2nixScientificNotation
+prop_dconf2nix_scientific_notation =
+  withTests (10 :: TestLimit) dconf2nixScientificNotation
+
+dconf2nixEscapedQuotes :: Property
+dconf2nixEscapedQuotes =
+  let input  = "data/escaped-quotes.settings"
+      output = "output/escaped-quotes.nix"
+      root   = Root T.empty
+  in  baseProperty input output root
+
+prop_dconf2nix_escaped_quotes :: Property
+prop_dconf2nix_escaped_quotes =
+  withTests (10 :: TestLimit) dconf2nixEscapedQuotes
 
 dconf2nixTests :: Group
 dconf2nixTests = $$(discover)

@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ViewPatterns #-}
 
 {- Nix renderer for DConf entries -}
 module Nix
@@ -8,6 +9,7 @@ module Nix
   )
 where
 
+import           Control.Monad                  ( (>=>) )
 import qualified Data.Map                      as Map
 import qualified Data.Text                     as T
 import           DConf.Data
@@ -37,7 +39,7 @@ normalizeHeader "/" (Root r) = T.dropWhileEnd (== '/') (normalizeRoot r)
 normalizeHeader h   (Root r) = normalizeRoot r <> h
 
 mkSpaces :: Int -> T.Text
-mkSpaces = T.pack . (flip replicate ' ')
+mkSpaces = T.pack . flip replicate ' '
 
 renderEntry :: Entry -> Root -> Nix
 renderEntry (Entry h c) root =
@@ -47,19 +49,16 @@ renderEntry (Entry h c) root =
       close = mkSpaces 4 <> "};\n\n"
   in  Nix $ header <> T.pack body <> close
 
-escapeQuotes :: T.Text -> T.Text
-escapeQuotes = T.replace "\"" "\\\""
-
 strip :: T.Text -> T.Text
-strip t | T.isPrefixOf "'" t = strip $ f (T.drop 1 t)
-        | T.isSuffixOf "'" t = f (T.dropEnd 1 t)
-        | otherwise          = f t
-  where f = T.strip
+strip (T.stripPrefix "'" >=> T.stripSuffix "'" -> Just t) =
+  strip $ T.replace "\"" "\\\"" t
+strip (T.stripPrefix "\"" >=> T.stripSuffix "\"" -> Just t) = strip t
+strip t = T.strip t
 
 renderValue :: Value -> Nix
 renderValue raw = Nix $ renderValue' raw <> ";"
  where
-  renderValue' (S   v) = "\"" <> escapeQuotes (strip v) <> "\""
+  renderValue' (S   v) = "\"" <> strip v <> "\""
   renderValue' (B   v) = T.toLower . T.pack $ show v
   renderValue' (I   v) = T.pack $ show v
   renderValue' (D   v) = T.pack $ show v

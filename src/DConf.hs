@@ -1,4 +1,5 @@
 {-# LANGUAGE LambdaCase, OverloadedStrings #-}
+{-# LANGUAGE KindSignatures, RankNTypes #-}
 
 {- Parser combinators for dconf files (Gnome Shell) -}
 module DConf
@@ -12,6 +13,13 @@ import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import           DConf.Data
 import           Text.Parsec
+
+type Parser
+  =  forall s (m :: * -> *) t u a end
+   . Stream s m t
+  => ParsecT s u m a
+  -> ParsecT s u m end
+  -> ParsecT s u m [a]
 
 vBool :: Parsec Text () Value
 vBool = B False <$ string "false" <|> B True <$ string "true"
@@ -43,7 +51,7 @@ vInt64 = try $ do
 vTuple :: Parsec Text () Value
 vTuple = try $ do
   char '('
-  rs <- manyTill (dconf `sepBy` (string "," >> spaces)) (char ')')
+  rs <- manyTill (dconf manyTill `sepBy` (string "," >> spaces)) (char ')')
   case concat rs of
     (x : y : _) -> pure $ T x y
     _           -> fail "Not a tuple"
@@ -56,13 +64,13 @@ vTupleInList = vTuple <&> \case
 vEmptyString :: Parsec Text () Value
 vEmptyString = S "" <$ (try (string "''") <|> try (string "\"\""))
 
-vString :: Parsec Text () Value
-vString = try $ do
+vString :: Parser -> Parsec Text () Value
+vString parser = try $ do
   S . T.pack . concat <$> (single <|> double)
  where
-  single = many1 (string "'") *> manyTill inputs (string "'")
-  double = many1 (char '"') *> manyTill (inputs <|> string "'") (char '"')
-  tokens = many1 <$> [alphaNum, space] ++ (char <$> "!&+-_()[]{},#@\\")
+  single = many1 (string "'") *> parser inputs (string "'")
+  double = many1 (char '"') *> parser (inputs <|> string "'") (char '"')
+  tokens = many1 <$> [alphaNum, space] ++ (char <$> "$!&+-_()[]{},#@\\")
   files  = many1 . char <$> ":/."
   shorts = many1 . char <$> "<>"
   inputs = choice (tokens ++ files ++ shorts)
@@ -70,9 +78,9 @@ vString = try $ do
 vAny :: Parsec Text () Value
 vAny = S . T.pack <$> manyTill anyChar (try $ lookAhead endOfLine)
 
-dconf :: Parsec Text () Value
-dconf = choice
-  [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString, vTuple, vAny]
+dconf :: Parser -> Parsec Text () Value
+dconf p = choice
+  [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString p, vTuple, vAny]
 
 -- There is no support for variants in HM yet so we parse them as a string
 vListOfVariant :: Parsec Text () Value
@@ -90,7 +98,7 @@ vList :: Parsec Text () Value
 vList = try $ do
   char '['
   L . concat <$> manyTill
-    ((vTupleInList <|> dconf) `sepBy` (string "," >> spaces))
+    ((vTupleInList <|> dconf manyTill) `sepBy` (string "," >> spaces))
     (char ']')
 
 vJson :: Parsec Text () Value
@@ -101,8 +109,7 @@ vJson = try $ do
   Json (T.pack js) <$ char '\''
 
 vEmptyList :: Parsec Text () Value
-vEmptyList =
-  EmptyList <$ try (string "@as []")
+vEmptyList = EmptyList <$ try (string "@as []")
 
 dconfHeader :: Parsec Text () Header
 dconfHeader = do
@@ -111,7 +118,7 @@ dconfHeader = do
   where tokens = choice $ many1 <$> [char '/', char '-', char ':', alphaNum]
 
 dconfValue :: Parsec Text () Value
-dconfValue = vListOfVariant <|> vList <|> vEmptyList <|> vJson <|> dconf
+dconfValue = vListOfVariant <|> vList <|> vEmptyList <|> vJson <|> dconf endBy
 
 vKey :: Parsec Text () Key
 vKey = Key . T.pack <$> manyTill (choice [alphaNum, char '-']) (char '=')
