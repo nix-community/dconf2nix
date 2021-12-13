@@ -6,3 +6,10 @@ foo-bar=""
 
 [empty/single/quotes]
 foo-bar=''
+
+[org/gnome/shell/extensions/arcmenu]
+arc-menu-placement='DTP'
+available-placement=[false, true, false]
+simple-command="sh -c notify-send $(date)"
+escaped-double-quotes="sh -c 'notify-send \"$(date)\"'"
+single-quotes-command='sh -c "notify-send $(date)"'
