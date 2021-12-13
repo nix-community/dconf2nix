@@ -21,7 +21,7 @@ timeoutMessage = unlines
   , ""
   , "  💡 You can try increasing the timeout using --timeout."
   , ""
-  , "  ⛔ If the issue persists, run it again using --verbose and report the issue on Github. Sorry 😞."
+  , "  ⛔ If the issue persists, run it again using --verbose and report the issue on Github, indicating dconf2nix's version. Sorry 😞."
   ]
 
 dconf2nix :: ProcessTimeout -> IO () -> Maybe String -> IO ()
