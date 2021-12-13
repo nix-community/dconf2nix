@@ -118,5 +118,16 @@ prop_dconf2nix_scientific_notation :: Property
 prop_dconf2nix_scientific_notation =
   withTests (10 :: TestLimit) dconf2nixScientificNotation
 
+dconf2nixHeaders :: Property
+dconf2nixHeaders =
+  let input  = "data/headers.settings"
+      output = "output/headers.nix"
+      root   = Root T.empty
+  in  baseProperty input output root
+
+prop_dconf2nix_headers :: Property
+prop_dconf2nix_headers =
+  withTests (10 :: TestLimit) dconf2nixHeaders
+
 dconf2nixTests :: Group
 dconf2nixTests = $$(discover)

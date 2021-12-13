@@ -36,7 +36,7 @@ normalizeRoot r | T.null r           = r
 
 normalizeHeader :: Header -> Root -> Header
 normalizeHeader "/" (Root r) = T.dropWhileEnd (== '/') (normalizeRoot r)
-normalizeHeader h   (Root r) = normalizeRoot r <> h
+normalizeHeader h   (Root r) = normalizeRoot r <> T.replace "." "/" h
 
 mkSpaces :: Int -> T.Text
 mkSpaces = T.pack . flip replicate ' '
