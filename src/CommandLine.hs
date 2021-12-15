@@ -73,7 +73,7 @@ versionInfo = unlines
   , "╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝"
   , ""
   , "Version: " <> showVersion version
-  , "Maintainer: Gabriel Volpe"
+  , "Maintainer: Gabriel Volpe (https://gvolpe.com)"
   , "Source code: https://github.com/gvolpe/dconf2nix"
   ]
 
