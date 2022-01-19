@@ -115,7 +115,7 @@ dconfHeader :: Parsec Text () Header
 dconfHeader = do
   many1 (char '[') <* spaces
   T.pack . concat <$> manyTill tokens (string " ]" <|> string "]")
-  where tokens = choice $ many1 <$> [oneOf "/.-:",  alphaNum]
+  where tokens = choice $ many1 <$> [oneOf "/.-:_",  alphaNum]
 
 dconfValue :: Parsec Text () Value
 dconfValue = vListOfVariant <|> vList <|> vEmptyList <|> vJson <|> dconf endBy

@@ -19,5 +19,9 @@ with lib.hm.gvariant;
       window-geometry = "{'account_name': (30, 26, 694, 1182)}";
     };
 
+    "org/gnome/shell/extensions/bluetooth_battery_indicator" = {
+      hide-indicator = true;
+    };
+
   };
 }
