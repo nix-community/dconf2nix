@@ -316,3 +316,6 @@ world-clocks=[{'location': <(uint32 2, <('Houston', 'KHOU', false, [(0.517271957
 [org/gnome/shell/extensions/arcmenu]
 hot-corners='Disabled'
 recently-installed-apps=['RollerCoaster Tycoon 3 Platinum!.desktop', 'RollerCoaster Tycoon Deluxe.desktop', 'RollerCoaster Tycoon 2 Triple Thrill Pack.desktop', 'American Truck Simulator.desktop', 'Halo The Master Chief Collection.desktop', 'Bejeweled 3.desktop']
+
+[org/gnome/evolution-data-server/calendar/list-of-equal]
+reminders-snoozed=['=']

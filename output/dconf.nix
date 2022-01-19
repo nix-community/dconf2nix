@@ -392,5 +392,9 @@ with lib.hm.gvariant;
       recently-installed-apps = [ "RollerCoaster Tycoon 3 Platinum!.desktop" "RollerCoaster Tycoon Deluxe.desktop" "RollerCoaster Tycoon 2 Triple Thrill Pack.desktop" "American Truck Simulator.desktop" "Halo The Master Chief Collection.desktop" "Bejeweled 3.desktop" ];
     };
 
+    "org/gnome/evolution-data-server/calendar/list-of-equal" = {
+      reminders-snoozed = [ "=" ];
+    };
+
   };
 }
