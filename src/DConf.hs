@@ -98,7 +98,7 @@ vList :: Parsec Text () Value
 vList = try $ do
   char '['
   L . concat <$> manyTill
-    ((vTupleInList <|> dconf manyTill) `sepBy` (string "," >> spaces))
+    ((vTupleInList <|> vJson <|> dconf manyTill) `sepBy` (string "," >> spaces))
     (char ']')
 
 vJson :: Parsec Text () Value

@@ -12,5 +12,14 @@ with lib.hm.gvariant;
       '';
     };
 
+    "org/gnome/shell/extensions/list-of-json" = {
+      devices = [ ''
+        {"_model":{},"name":"FakeName","isConnected":false,"isPaired":true,"mac":"00:16:00:29:00:83","isDefault":false,"active":true,"icon":"audio-headphones-symbolic"}
+      '' ];
+      foo = [ ''
+        {"_model":{}}
+      '' ];
+    };
+
   };
 }
