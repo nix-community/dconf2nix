@@ -1,0 +1,62 @@
+name: Bug Report
+description: Create a report to help us improve
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please try to fill out all fields to the best of your ability :pray:
+  - type: dropdown
+    id: bug-type
+    attributes:
+      label: Type of bug
+      multiple: false
+      options:
+        - Fail to parse with error message
+        - Timeout at parsing input
+        - Other (please describe in additional context)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Run `dconf2nix --version` to get it.
+      placeholder: 0.0.1
+    validations:
+      required: true
+  - type: checkboxes
+    id: master-test
+    attributes:
+      label: Did you test against master?
+      description: Make sure you at least test it using the latest official release or even better against master. See if there are new commits / PRs fixing your issue first.
+      options:
+        - label: Yes
+          required: false
+  - type: textarea
+    id: error-message
+    attributes:
+      label: Error message (if not timeout)
+      description: The error message you get while parsing your input.
+      placeholder: Enter the dconf input here (ideally just the problematic part).
+    validations:
+      required: false
+  - type: textarea
+    id: dconf-input
+    attributes:
+      label: DConf input
+      description: The DConf input you are trying to convert.
+      placeholder: |
+        [org/gnome/shell/extensions/bluetooth]
+        hide-indicator=true
+      value: |
+      render: ini
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other other context about the problem here.
+    validations:
+      required: false
