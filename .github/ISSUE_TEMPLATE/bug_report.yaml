@@ -37,14 +37,20 @@ body:
     attributes:
       label: Error message (if not timeout)
       description: The error message you get while parsing your input.
-      placeholder: Enter the dconf input here (ideally just the problematic part).
+      placeholder: |
+        dconf2nix: "<stdin>" (line 1, column 38):
+        unexpected "_"
+        expecting letter or digit, " ]" or "]"
+        CallStack (from HasCallStack):
+          error, called at src/DConf2Nix.hs:35:16 in dconf2nix-0.0.11-5IC5PdwirMmE518swqY2Y3:DConf2Nix
+      render: shell
     validations:
       required: false
   - type: textarea
     id: dconf-input
     attributes:
       label: DConf input
-      description: The DConf input you are trying to convert.
+      description: The DConf input you are trying to convert (ideally, try to minimize it to the problematic part).
       placeholder: |
         [foo/bar/my-input]
         bug=true
