@@ -11,9 +11,9 @@ body:
       label: Type of bug
       multiple: false
       options:
-        - Fail to parse with error message
-        - Timeout at parsing input
-        - Other (please describe in additional context)
+        - Parsing error
+        - Timeout
+        - Other (please add details in additional context)
     validations:
       required: true
   - type: input
@@ -21,7 +21,7 @@ body:
     attributes:
       label: Version
       description: Run `dconf2nix --version` to get it.
-      placeholder: 0.0.1
+      placeholder: 0.0.10
     validations:
       required: true
   - type: checkboxes
@@ -30,7 +30,7 @@ body:
       label: Did you test against master?
       description: Make sure you at least test it using the latest official release or even better against master. See if there are new commits / PRs fixing your issue first.
       options:
-        - label: Certainly.
+        - label: Certainly
           required: false
   - type: textarea
     id: error-message
