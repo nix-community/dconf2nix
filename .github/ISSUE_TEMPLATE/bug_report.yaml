@@ -31,7 +31,7 @@ body:
       label: Did you test against master?
       description: Make sure you at least test it using the latest official release or even better against master. See if there are new commits / PRs fixing your issue first.
       options:
-        - label: Yes
+        - label: Yes, I did.
           required: false
   - type: textarea
     id: error-message
