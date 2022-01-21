@@ -48,7 +48,7 @@ body:
       placeholder: |
         [org/gnome/shell/extensions/bluetooth]
         hide-indicator=true
-      value: |
+      value: ""
       render: ini
     validations:
       required: false
