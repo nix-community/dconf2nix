@@ -46,9 +46,6 @@ body:
       label: DConf input
       description: The DConf input you are trying to convert.
       placeholder: |
-        [org/gnome/shell/extensions/bluetooth]
-        hide-indicator=true
-      value: |
         [foo/bar/my-input]
         bug=true
       render: ini
