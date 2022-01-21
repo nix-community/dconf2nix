@@ -30,7 +30,7 @@ body:
       label: Did you test against master?
       description: Make sure you at least test it using the latest official release or even better against master. See if there are new commits / PRs fixing your issue first.
       options:
-        - label: Yes, I did.
+        - label: Certainly.
           required: false
   - type: textarea
     id: error-message
@@ -48,7 +48,9 @@ body:
       placeholder: |
         [org/gnome/shell/extensions/bluetooth]
         hide-indicator=true
-      value: ""
+      value: |
+        [foo/bar/my-input]
+        bug=true
       render: ini
     validations:
       required: false
