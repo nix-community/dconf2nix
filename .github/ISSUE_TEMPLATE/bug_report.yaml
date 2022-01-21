@@ -4,8 +4,7 @@ labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: |
-        Thanks for taking the time to fill out this bug report! Please try to fill out all fields to the best of your ability :pray:
+      value: "Thanks for taking the time to fill out this bug report! Please try to fill out all fields to the best of your ability :pray:"
   - type: dropdown
     id: bug-type
     attributes:
