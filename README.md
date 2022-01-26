@@ -159,18 +159,26 @@ Due to the lack of support, `dconf2nix` parses dictionaries and list of variants
 
 Once you have your `dconf.nix`, you can import it via Home Manager.
 
-
 ```nix
 {
   programs.home-manager.enable = true;
 
   imports = [
-    ./programs/gnome/dconf.nix
+    ./dconf.nix
   ];
 }
 ```
 
-You can have a look at my [NixOS configuration files](https://github.com/gvolpe/nix-config/tree/master/nixos/home) as an example.
+If you are using the Home Manager module for NixOS you can import it like so:
+
+```nix
+{
+  home-manager.users.joe = { pkgs, ... }: {
+    imports = [ ./dconf.nix ];
+	# ...
+  };
+}
+```
 
 ### Installation
 
