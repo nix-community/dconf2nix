@@ -231,10 +231,10 @@ Have a look at the [latest releases](https://github.com/gvolpe/dconf2nix/release
 
 The default timeout is of 5 seconds. You can see it by running `dconf2nix --help`.
 
-To find which section caused the error you can download [d2n_util.sh](https://github.com/broccoli5/Scripts/blob/main/d2n_util.sh) (made by [Broccoli](https://github.com/broccoli5)):
+To find which section caused the error you can download [d2n_util.sh](https://github.com/broccoli5/Scripts/blob/main/bin/d2n_util.sh) (made by [Broccoli](https://github.com/broccoli5)):
 
 ```sh
-curl https://raw.githubusercontent.com/broccoli5/Scripts/main/d2n_util.sh > d2n_util.sh && chmod +x d2n_util.sh
+curl https://raw.githubusercontent.com/broccoli5/Scripts/main/bin/d2n_util.sh > d2n_util.sh && chmod +x d2n_util.sh
 ```
 
 You can then run: `dconf dump / | ./d2n_util.sh -t` to create the sections and automaticaly test them. When creating a issue include both, the sections which failed the test and the errors from "d2n.log". For more options run `./d2n_util.sh -h`
