@@ -70,7 +70,7 @@ vString parser = try $ do
  where
   single = many1 (string "'") *> parser inputs (string "'")
   double = many1 (char '"') *> parser (inputs <|> string "'") (char '"')
-  tokens = many1 <$> [alphaNum, space] ++ (char <$> "=$!&+-_()[]{},#@\\")
+  tokens = many1 <$> [alphaNum, space] ++ (char <$> "=$!&+-_()[]{}|,#@\\")
   files  = many1 . char <$> ":/."
   shorts = many1 . char <$> "<>"
   inputs = choice (tokens ++ files ++ shorts)
