@@ -4,3 +4,6 @@ saved-view='/org/gnome/desktop/input-sources/'
 window-height=709
 window-is-maximized=false
 window-width=785
+
+[foo]
+services=['service1|wg-quick@wg0.service', 'service2|wg-quick@wg1.service']

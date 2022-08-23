@@ -13,5 +13,9 @@ with lib.hm.gvariant;
       window-width = 785;
     };
 
+    "ca/desrt/dconf-editor/foo" = {
+      services = [ "service1|wg-quick@wg0.service" "service2|wg-quick@wg1.service" ];
+    };
+
   };
 }
