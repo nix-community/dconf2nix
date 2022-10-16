@@ -12,6 +12,7 @@ import qualified Data.Map                      as Map
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import           DConf.Data
+import           Text.Emoji                     ( emojis )
 import           Text.Parsec
 
 type Parser
@@ -48,21 +49,29 @@ vInt64 = try $ do
   many1 (string "int64 ") >> spaces
   I64 . read <$> many1 digit
 
-vTuple :: Parsec Text () Value
-vTuple = try $ do
+vTuple :: EmojiSupport -> Parsec Text () Value
+vTuple es = try $ do
   char '('
-  rs <- manyTill (dconf manyTill `sepBy` (string "," >> spaces)) (char ')')
+  rs <- manyTill (dconf es manyTill `sepBy` (string "," >> spaces)) (char ')')
   case concat rs of
     (x : y : _) -> pure $ T x y
     _           -> fail "Not a tuple"
 
-vTupleInList :: Parsec Text () Value
-vTupleInList = vTuple <&> \case
+vTupleInList :: EmojiSupport -> Parsec Text () Value
+vTupleInList es = vTuple es <&> \case
   T x y -> TL x y
   a     -> a
 
 vEmptyString :: Parsec Text () Value
 vEmptyString = S "" <$ (try (string "''") <|> try (string "\"\""))
+
+vEmoji :: Parsec Text () Value
+vEmoji =
+  let e = T.head . snd <$> emojis
+      f = choice $ char <$> e
+      s = many1 (string "'") *> f <* (string "'")
+      d = many1 (char '"') *> f <* (char '"')
+  in  Emo <$> try (s <|> d)
 
 vString :: Parser -> Parsec Text () Value
 vString parser = try $ do
@@ -78,9 +87,11 @@ vString parser = try $ do
 vAny :: Parsec Text () Value
 vAny = S . T.pack <$> manyTill anyChar (try $ lookAhead endOfLine)
 
-dconf :: Parser -> Parsec Text () Value
-dconf p = choice
-  [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString p, vTuple, vAny]
+dconf :: EmojiSupport -> Parser -> Parsec Text () Value
+dconf Enabled p = choice
+  [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vEmoji, vString p, vTuple Enabled, vAny]
+dconf Disabled p = choice
+  [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString p, vTuple Disabled, vAny]
 
 -- There is no support for variants in HM yet so we parse them as a string
 vListOfVariant :: Parsec Text () Value
@@ -94,11 +105,11 @@ vListOfVariant =
         manyTill anyToken (try $ lookAhead $ string "\"") <* char '"'
   in  S . T.pack <$> (variant1 <|> variant2)
 
-vList :: Parsec Text () Value
-vList = try $ do
+vList :: EmojiSupport -> Parsec Text () Value
+vList es = try $ do
   char '['
   L . concat <$> manyTill
-    ((vTupleInList <|> vJson <|> dconf manyTill) `sepBy` (string "," >> spaces))
+    ((vTupleInList es <|> vJson <|> dconf es manyTill) `sepBy` (string "," >> spaces))
     (char ']')
 
 vJson :: Parsec Text () Value
@@ -117,19 +128,19 @@ dconfHeader = do
   T.pack . concat <$> manyTill tokens (string " ]" <|> string "]")
   where tokens = choice $ many1 <$> [oneOf "/.-:_",  alphaNum]
 
-dconfValue :: Parsec Text () Value
-dconfValue = vListOfVariant <|> vList <|> vEmptyList <|> vJson <|> dconf endBy
+dconfValue :: EmojiSupport -> Parsec Text () Value
+dconfValue es = vListOfVariant <|> vList es <|> vEmptyList <|> vJson <|> dconf es endBy
 
 vKey :: Parsec Text () Key
 vKey = Key . T.pack <$> manyTill (choice [alphaNum, char '-']) (char '=')
 
-entryParser :: Parsec Text () Entry
-entryParser = do
+entryParser :: EmojiSupport -> Parsec Text () Entry
+entryParser es = do
   h  <- dconfHeader <* endOfLine
-  kv <- many1 ((,) <$> vKey <*> (dconfValue <* endOfLine))
+  kv <- many1 ((,) <$> vKey <*> (dconfValue es <* endOfLine))
   optional endOfLine
   pure $ Entry h (Map.fromList kv)
 
-dconfParser :: Verbosity -> Parsec Text () [Entry]
-dconfParser Normal  = manyTill entryParser eof
-dconfParser Verbose = parserTraced "dconf" $ dconfParser Normal
+dconfParser :: EmojiSupport -> Verbosity -> Parsec Text () [Entry]
+dconfParser es Normal  = manyTill (entryParser es) eof
+dconfParser es Verbose = parserTraced "dconf" $ dconfParser es Normal

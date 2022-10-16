@@ -13,16 +13,16 @@ import           Text.Parsec                    ( ParseError
                                                 , runParser
                                                 )
 
-dconf2nixFile :: InputFilePath -> OutputFilePath -> Root -> Verbosity -> IO ()
-dconf2nixFile (InputFilePath input) (OutputFilePath output) root v =
+dconf2nixFile :: InputFilePath -> OutputFilePath -> Root -> EmojiSupport -> Verbosity -> IO ()
+dconf2nixFile (InputFilePath input) (OutputFilePath output) root es v =
   let run   = handler (T.writeFile output) (T.appendFile output) root
-      parse = parseFromFile (dconfParser v) input
+      parse = parseFromFile (dconfParser es v) input
   in  run =<< parse
 
-dconf2nixStdin :: Root -> Verbosity -> IO ()
-dconf2nixStdin root v =
+dconf2nixStdin :: Root -> EmojiSupport -> Verbosity -> IO ()
+dconf2nixStdin root es v =
   let run   = handler T.putStr T.putStr root
-      parse = runParser (dconfParser v) () "<stdin>"
+      parse = runParser (dconfParser es v) () "<stdin>"
   in  run . parse =<< T.getContents
 
 handler
