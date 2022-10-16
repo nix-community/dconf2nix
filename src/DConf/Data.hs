@@ -7,6 +7,7 @@ newtype InputFilePath = InputFilePath FilePath deriving Show
 newtype OutputFilePath = OutputFilePath FilePath deriving Show
 newtype ProcessTimeout = ProcessTimeout Int deriving Show
 
+data EmojiSupport = Enabled | Disabled
 data Verbosity = Normal | Verbose
 
 newtype Nix = Nix { unNix :: Text } deriving Show
@@ -21,6 +22,7 @@ data Value = S Text         -- String
            | I32 Int        -- Int32
            | I64 Int        -- Int64
            | D Double       -- Double
+           | Emo Char       -- Emoji (Unicode char)
            | T Value Value  -- Tuple
            | TL Value Value -- Tuple within a list
            | L [Value]      -- List of values
