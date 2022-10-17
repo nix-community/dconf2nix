@@ -132,6 +132,17 @@ prop_dconf2nix_headers :: Property
 prop_dconf2nix_headers =
   withTests (10 :: TestLimit) dconf2nixHeaders
 
+dconf2nixTuples :: Property
+dconf2nixTuples =
+  let input  = "data/tuples.settings"
+      output = "output/tuples.nix"
+      root   = Root T.empty
+  in  baseProperty' input output root
+
+prop_dconf2nix_tuples :: Property
+prop_dconf2nix_tuples =
+  withTests (10 :: TestLimit) dconf2nixTuples
+
 dconf2nixEmoji :: Property
 dconf2nixEmoji =
   let input  = "data/emoji.settings"

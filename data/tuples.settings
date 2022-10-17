@@ -1,0 +1,6 @@
+[org/gnome/tuples]
+t2=(true, 'woman')
+t3=(false, 'man', -2)
+t4=('hello', 22, 'world', true)
+n1=(false, ('xkb', 'us'), 'nested')
+n2=('hi', (true, 'us', (-787, 'lvl')), 'super-nested')
