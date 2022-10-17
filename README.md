@@ -9,6 +9,7 @@ A convenient converter of [DConf](https://wiki.gnome.org/Projects/dconf) files t
 * [Introduction](#introduction)
 * [Run](#run)
   * [Custom root](#custom-root)
+  * [Emoji support](#emoji-support)
 * [Supported types](#supported-types)
 * [Gnome Shell configuration](#gnome-shell-configuration)
 * [Installation](#installation)
@@ -108,9 +109,9 @@ Type `--help` for some more information.
 dconf2nix - Nixify dconf configuration files
 
 Usage: dconf2nix [-v|--version]
-                 [[-r|--root ARG] [-t|--timeout ARG] [--verbose] |
+                 [[-r|--root ARG] [-t|--timeout ARG] [-e|--emoji] [--verbose] |
                    (-i|--input ARG) (-o|--output ARG) [-r|--root ARG]
-                   [-t|--timeout ARG] [--verbose]]
+                   [-t|--timeout ARG] [-e|--emoji] [--verbose]]
   Convert a dconf file into a Nix file, as expected by Home Manager.
 
 Available options:
@@ -119,12 +120,14 @@ Available options:
   -r,--root ARG            Custom root path. e.g.: system/locale/
   -t,--timeout ARG         Timeout in seconds for the conversion
                            process (default: 5)
+  -e,--emoji               Enable emoji support (adds a bit of overhead)
   --verbose                Verbose mode (debug)
   -i,--input ARG           Path to the dconf file (input)
   -o,--output ARG          Path to the Nix output file (to be created)
   -r,--root ARG            Custom root path. e.g.: system/locale/
   -t,--timeout ARG         Timeout in seconds for the conversion
                            process (default: 5)
+  -e,--emoji               Enable emoji support (adds a bit of overhead)
   --verbose                Verbose mode (debug)
 ```
 
@@ -148,6 +151,26 @@ This will generate an output similar to the one below.
   };
 }
 ```
+
+#### Emoji support
+
+Emojis are supported since version `0.0.12`, and it needs to be explicitly enabled, as these add a little parsing overhead via the [emojis](https://hackage.haskell.org/package/emojis) package.
+
+The following `dconf` input.
+
+```ini
+[ org/gnome/Characters ]
+recent-characters=['💡']
+some-other-character=['🤓']
+```
+
+Can be parsed as follows.
+
+```console 
+$ dconf2nix -i data/emoji.settings -o output/emoji.nix --emoji
+```
+
+Failing to pass the `--emoji` flag will result in a timeout error.
 
 ### Supported types
 
@@ -182,48 +205,19 @@ If you are using the Home Manager module for NixOS you can import it like so:
 
 ### Installation
 
-The simplest way is to install it via `nix-env`.
+`dconf2nix` is available on [nixpkgs](https://github.com/NixOS/nixpkgs) and can be installed as any other package. It can also be used without installing. For example, with flakes.
 
-```shell
-nix-env -i dconf2nix
+```console 
+$ nix run nixpkgs#dconf2nix -- --version
+<<< DCONF2NIX >>>
+Version: 0.0.12
+Maintainer: Gabriel Volpe (https://gvolpe.com)
+Source code: https://github.com/gvolpe/dconf2nix
 ```
 
-Or if you want to pull the latest `master`.
+To build it from source, it is recommend to use [Cachix](https://app.cachix.org/cache/dconf2nix) to reduce the compilation time.
 
-```shell
-nix-env -i -f https://github.com/gvolpe/dconf2nix/archive/master.tar.gz
-```
-
-You could also use [Cachix](https://app.cachix.org/cache/dconf2nix) to reduce the installation time.
-
-Alternatively, here's an overlay for the binary you can use to avoid compiling it (only for Linux-x86-64).
-
-```nix
-self: super:
-
-rec {
-  dconf2nix = super.dconf2nix.overrideAttrs (
-    old: rec {
-      version = "v0.0.6";
-
-      src = builtins.fetchurl {
-        url    = "https://github.com/gvolpe/dconf2nix/releases/download/${version}/dconf2nix-linux-x86-64";
-        sha256 = "1bh78hfgy4wnfdq184ck5yw72szllzl5sm7a3a4y46byq0xxklcd";
-      };
-
-      phases = ["installPhase" "patchPhase"];
-
-      installPhase = ''
-        mkdir -p $out/bin
-        cp $src $out/bin/dconf2nix
-        chmod +x $out/bin/dconf2nix
-      '';
-    }
-  );
-}
-```
-
-Have a look at the [latest releases](https://github.com/gvolpe/dconf2nix/releases) in case the README file gets outdated.
+Have a look at the [latest releases](https://github.com/gvolpe/dconf2nix/releases) for more information.
 
 ### Troubleshooting
 
@@ -237,7 +231,7 @@ To find which section caused the error you can download [d2n_util.sh](https://gi
 curl https://raw.githubusercontent.com/broccoli5/Scripts/main/bin/d2n_util.sh > d2n_util.sh && chmod +x d2n_util.sh
 ```
 
-You can then run: `dconf dump / | ./d2n_util.sh -t` to create the sections and automaticaly test them. When creating a issue include both, the sections which failed the test and the errors from "d2n.log". For more options run `./d2n_util.sh -h`
+You can then run: `dconf dump / | ./d2n_util.sh -t` to create the sections and automatically test them. When creating a issue include both, the sections which failed the test and the errors from "d2n.log". For more options run `./d2n_util.sh -h`
 
 Do also consider the caveats mentioned above in the [Supported Types](#supported-types) section.
 
