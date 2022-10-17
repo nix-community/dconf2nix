@@ -17,6 +17,9 @@ import           Text.Parsec                    ( runParser )
 prop_dconf2nix :: Property
 prop_dconf2nix = withTests (10 :: TestLimit) dconf2nix
 
+baseProperty' :: FilePath -> FilePath -> Root -> Property
+baseProperty' i o root = baseProperty i o root Disabled
+
 baseProperty :: FilePath -> FilePath -> Root -> EmojiSupport -> Property
 baseProperty i o root es = property $ do
   input  <- evalIO $ T.readFile i
@@ -34,7 +37,7 @@ dconf2nix =
   let input  = "data/dconf.settings"
       output = "output/dconf.nix"
       root   = Root T.empty
-  in  baseProperty input output root Disabled
+  in  baseProperty' input output root
 
 prop_dconf2nix_custom_root :: Property
 prop_dconf2nix_custom_root = withTests (10 :: TestLimit) dconf2nixCustomRoot
@@ -44,7 +47,7 @@ dconf2nixCustomRoot =
   let input  = "data/custom.settings"
       output = "output/custom.nix"
       root   = Root "ca/desrt/dconf-editor"
-  in  baseProperty input output root Disabled
+  in  baseProperty' input output root
 
 prop_dconf2nix_custom_nested_root :: Property
 prop_dconf2nix_custom_nested_root =
@@ -55,14 +58,14 @@ dconf2nixCustomNestedRoot =
   let input  = "data/nested.settings"
       output = "output/nested.nix"
       root   = Root "org/gnome/desktop/peripherals"
-  in  baseProperty input output root Disabled
+  in  baseProperty' input output root
 
 dconf2nixIndexer :: Property
 dconf2nixIndexer =
   let input  = "data/indexer.settings"
       output = "output/indexer.nix"
       root   = Root T.empty
-  in  baseProperty input output root Disabled
+  in  baseProperty' input output root
 
 prop_dconf2nix_indexer :: Property
 prop_dconf2nix_indexer = withTests (10 :: TestLimit) dconf2nixIndexer
@@ -72,7 +75,7 @@ dconf2nixNegative =
   let input  = "data/negative.settings"
       output = "output/negative.nix"
       root   = Root T.empty
-  in  baseProperty input output root Disabled
+  in  baseProperty' input output root
 
 prop_dconf2nix_negative :: Property
 prop_dconf2nix_negative = withTests (10 :: TestLimit) dconf2nixNegative
@@ -82,7 +85,7 @@ dconf2nixJson =
   let input  = "data/json.settings"
       output = "output/json.nix"
       root   = Root T.empty
-  in  baseProperty input output root Disabled
+  in  baseProperty' input output root
 
 prop_dconf2nix_json :: Property
 prop_dconf2nix_json = withTests (10 :: TestLimit) dconf2nixJson
@@ -92,7 +95,7 @@ dconf2nixClocks =
   let input  = "data/clocks.settings"
       output = "output/clocks.nix"
       root   = Root T.empty
-  in  baseProperty input output root Disabled
+  in  baseProperty' input output root
 
 prop_dconf2nix_clocks :: Property
 prop_dconf2nix_clocks = withTests (10 :: TestLimit) dconf2nixClocks
@@ -102,7 +105,7 @@ dconf2nixKeybindings =
   let input  = "data/keybindings.settings"
       output = "output/keybindings.nix"
       root   = Root T.empty
-  in  baseProperty input output root Disabled
+  in  baseProperty' input output root
 
 prop_dconf2nix_keybindings :: Property
 prop_dconf2nix_keybindings = withTests (10 :: TestLimit) dconf2nixKeybindings
@@ -112,7 +115,7 @@ dconf2nixScientificNotation =
   let input  = "data/scientific-notation.settings"
       output = "output/scientific-notation.nix"
       root   = Root T.empty
-  in  baseProperty input output root Disabled
+  in  baseProperty' input output root
 
 prop_dconf2nix_scientific_notation :: Property
 prop_dconf2nix_scientific_notation =
@@ -123,7 +126,7 @@ dconf2nixHeaders =
   let input  = "data/headers.settings"
       output = "output/headers.nix"
       root   = Root T.empty
-  in  baseProperty input output root Disabled
+  in  baseProperty' input output root
 
 prop_dconf2nix_headers :: Property
 prop_dconf2nix_headers =

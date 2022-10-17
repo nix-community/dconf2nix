@@ -87,11 +87,15 @@ vString parser = try $ do
 vAny :: Parsec Text () Value
 vAny = S . T.pack <$> manyTill anyChar (try $ lookAhead endOfLine)
 
+emojiParser :: EmojiSupport -> [Parsec Text () Value]
+emojiParser Enabled  = [vEmoji]
+emojiParser Disabled = []
+
 dconf :: EmojiSupport -> Parser -> Parsec Text () Value
-dconf Enabled p = choice
-  [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vEmoji, vString p, vTuple Enabled, vAny]
-dconf Disabled p = choice
-  [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString, vString p, vTuple Disabled, vAny]
+dconf es p =
+  let xs = [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString]
+      ys = [vString p, vTuple es, vAny]
+  in  choice (xs ++ emojiParser es ++ ys)
 
 -- There is no support for variants in HM yet so we parse them as a string
 vListOfVariant :: Parsec Text () Value
