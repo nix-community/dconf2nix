@@ -65,18 +65,20 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (Emo v) = "\"" <> T.singleton v <> "\""
   renderValue' (I32 v) = "mkUint32 " <> T.pack (show v)
   renderValue' (I64 v) = "mkInt64 " <> T.pack (show v)
-  renderValue' (T x y) =
+  renderValue' (T  xs) =
     let wrapNegNumber x | x < 0     = "(" <> T.pack (show x) <> ")"
                         | otherwise = T.pack $ show x
-        mkTuple x' y' =
-            "mkTuple [ " <> wrapNegNumber x' <> " " <> wrapNegNumber y' <> " ]"
-    in  case (x, y) of
-          (I x', I y') -> mkTuple x' y'
-          (D x', D y') -> mkTuple x' y'
-          _ -> "mkTuple [ " <> renderValue' x <> " " <> renderValue' y <> " ]"
-  renderValue' (TL x y) = "(" <> renderValue' (T x y) <> ")"
+        f :: Value -> T.Text
+        f (I x) = wrapNegNumber x
+        f (D x) = wrapNegNumber x
+        f (T v) = "(" <> renderValue' (T v) <> ")"
+        f v     = renderValue' v
+    in  "mkTuple [ " <> T.intercalate " " (f <$> xs) <> " ]"
   renderValue' (L xs) =
-    let ls = T.concat ((<> " ") <$> (renderValue' <$> xs)) in "[ " <> ls <> "]"
+    let f :: Value -> T.Text
+        f (T v) = "(" <> renderValue' (T v) <> ")"
+        f v     = renderValue' v
+    in  "[ " <> T.intercalate " " (f <$> xs) <> " ]"
   renderValue' EmptyList = "[]"
   renderValue' (Json v) =
     "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"

@@ -23,8 +23,7 @@ data Value = S Text         -- String
            | I64 Int        -- Int64
            | D Double       -- Double
            | Emo Char       -- Emoji (Unicode char)
-           | T Value Value  -- Tuple
-           | TL Value Value -- Tuple within a list
+           | T [Value]      -- Tuple of n-arity
            | L [Value]      -- List of values
            | Json Text      -- Json value
            | EmptyList      -- Empty list (aka '@as []')

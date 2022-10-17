@@ -1,4 +1,4 @@
-{-# LANGUAGE LambdaCase, OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE KindSignatures, RankNTypes #-}
 
 {- Parser combinators for dconf files (Gnome Shell) -}
@@ -54,13 +54,8 @@ vTuple es = try $ do
   char '('
   rs <- manyTill (dconf es manyTill `sepBy` (string "," >> spaces)) (char ')')
   case concat rs of
-    (x : y : _) -> pure $ T x y
-    _           -> fail "Not a tuple"
-
-vTupleInList :: EmojiSupport -> Parsec Text () Value
-vTupleInList es = vTuple es <&> \case
-  T x y -> TL x y
-  a     -> a
+    xs@(_ : _ : _) -> pure $ T xs
+    _              -> fail "Not a tuple"
 
 vEmptyString :: Parsec Text () Value
 vEmptyString = S "" <$ (try (string "''") <|> try (string "\"\""))
@@ -69,8 +64,8 @@ vEmoji :: Parsec Text () Value
 vEmoji =
   let e = T.head . snd <$> emojis
       f = choice $ char <$> e
-      s = many1 (string "'") *> f <* (string "'")
-      d = many1 (char '"') *> f <* (char '"')
+      s = many1 (string "'") *> f <* string "'"
+      d = many1 (char '"') *> f <* char '"'
   in  Emo <$> try (s <|> d)
 
 vString :: Parser -> Parsec Text () Value
@@ -113,7 +108,7 @@ vList :: EmojiSupport -> Parsec Text () Value
 vList es = try $ do
   char '['
   L . concat <$> manyTill
-    ((vTupleInList es <|> vJson <|> dconf es manyTill) `sepBy` (string "," >> spaces))
+    ((vJson <|> dconf es manyTill) `sepBy` (string "," >> spaces))
     (char ']')
 
 vJson :: Parsec Text () Value
