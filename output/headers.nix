@@ -16,7 +16,9 @@ with lib.hm.gvariant;
     "uk/co/ibboard/cawbird" = {
       round-avatars = false;
       startup-accounts = [ "account_name" ];
-      window-geometry = "{'account_name': (30, 26, 694, 1182)}";
+      window-geometry = {
+        account_name = mkTuple [ 30 26 694 1182 ];
+      };
     };
 
     "org/gnome/shell/extensions/bluetooth_battery_indicator" = {

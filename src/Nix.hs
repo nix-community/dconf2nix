@@ -9,7 +9,6 @@ module Nix
   )
 where
 
-import           Control.Monad                  ( (>=>) )
 import qualified Data.Map                      as Map
 import qualified Data.Text                     as T
 import           DConf.Data
@@ -49,36 +48,37 @@ renderEntry (Entry h c) root =
       close = mkSpaces 4 <> "};\n\n"
   in  Nix $ header <> T.pack body <> close
 
-strip :: T.Text -> T.Text
-strip (T.stripPrefix "'" >=> T.stripSuffix "'" -> Just t) =
-  strip $ T.replace "\"" "\\\"" t
-strip (T.stripPrefix "\"" >=> T.stripSuffix "\"" -> Just t) = strip t
-strip t = T.strip t
-
 renderValue :: Value -> Nix
 renderValue raw = Nix $ renderValue' raw <> ";"
  where
-  renderValue' (S   v) = "\"" <> strip v <> "\""
+  needsParen :: Value -> Bool
+  needsParen (I x) = x < 0
+  needsParen (D x) = x < 0
+  needsParen (I32 _) = True
+  needsParen (T _) = True
+  needsParen (V _) = True
+  needsParen _ = False
+
+  renderItem :: Value -> T.Text
+  renderItem v | needsParen v = "(" <> renderValue' v <> ")"
+  renderItem v = renderValue' v
+
+  renderList :: [Value] -> T.Text
+  renderList [] = "[]"
+  renderList xs = let
+    in "[ " <> T.intercalate " " (renderItem <$> xs) <> " ]"
+
+  renderValue' (S   v) = T.pack $ show v
   renderValue' (B   v) = T.toLower . T.pack $ show v
   renderValue' (I   v) = T.pack $ show v
   renderValue' (D   v) = T.pack $ show v
   renderValue' (Emo v) = "\"" <> T.singleton v <> "\""
   renderValue' (I32 v) = "mkUint32 " <> T.pack (show v)
   renderValue' (I64 v) = "mkInt64 " <> T.pack (show v)
-  renderValue' (T  xs) =
-    let wrapNegNumber x | x < 0     = "(" <> T.pack (show x) <> ")"
-                        | otherwise = T.pack $ show x
-        f :: Value -> T.Text
-        f (I x) = wrapNegNumber x
-        f (D x) = wrapNegNumber x
-        f (T v) = "(" <> renderValue' (T v) <> ")"
-        f v     = renderValue' v
-    in  "mkTuple [ " <> T.intercalate " " (f <$> xs) <> " ]"
-  renderValue' (L xs) =
-    let f :: Value -> T.Text
-        f (T v) = "(" <> renderValue' (T v) <> ")"
-        f v     = renderValue' v
-    in  "[ " <> T.intercalate " " (f <$> xs) <> " ]"
-  renderValue' EmptyList = "[]"
+  renderValue' (L  xs) = renderList xs
+  renderValue' (T  xs) = "mkTuple " <> renderList xs
+  renderValue' (V  xs) = "mkVariant " <> renderList xs
   renderValue' (Json v) =
     "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"
+  renderValue' (R kvs) =
+    "{\n" <> mconcat (fmap (\(k,v) -> mkSpaces 8 <> k <> " = " <> renderValue' v <> ";\n") kvs) <> mkSpaces 6 <> "}"

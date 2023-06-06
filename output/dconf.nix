@@ -15,13 +15,13 @@ with lib.hm.gvariant;
 
     "org/gnome/desktop/interface" = {
       clock-show-weekday = true;
-      document-font-name = "JetBrainsMono Nerd Font 11";
+      document-font-name = " JetBrainsMono Nerd Font 11 ";
       enable-hot-corners = false;
-      font-name = "JetBrainsMono Nerd Font 11";
-      gtk-im-module = "gtk-im-context-simple";
-      gtk-theme = "Adwaita-dark";
-      icon-theme = "Adwaita";
-      monospace-font-name = "JetBrainsMono Nerd Font 10";
+      font-name = " JetBrainsMono Nerd Font 11 ";
+      gtk-im-module = " gtk-im-context-simple ";
+      gtk-theme = " Adwaita-dark ";
+      icon-theme = " Adwaita ";
+      monospace-font-name = " JetBrainsMono Nerd Font 10 ";
       show-battery-percentage = true;
     };
 
@@ -36,7 +36,7 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/desktop/screensaver" = {
-      picture-uri = "file:///home/gvolpe/Pictures/nixos.png";
+      picture-uri = " file:///home/gvolpe/Pictures/nixos.png ";
     };
 
     "org/gnome/desktop/sound" = {
@@ -53,7 +53,7 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/desktop/wm/preferences" = {
-      button-layout = "close,minimize,maximize:";
+      button-layout = " close,minimize,maximize:";
       titlebar-font = "JetBrainsMono Nerd Font Mono 11";
       workspace-names = [];
     };
@@ -98,7 +98,7 @@ with lib.hm.gvariant;
     "org/gnome/desktop/input-sources" = {
       current = mkUint32 0;
       sources = [ (mkTuple [ "xkb" "us" ]) ];
-      xkb-options = [ "terminate:ctrl_alt_bksp" "lv3:ralt_switch" "caps:ctrl_modifier" ];
+      xkb-options = [ " terminate:ctrl_alt_bksp " " lv3:ralt_switch " " caps:ctrl_modifier " ];
     };
 
     "org/gnome/desktop/interface" = {
@@ -286,7 +286,7 @@ with lib.hm.gvariant;
 
     "org/gnome/shell/extensions/dash-to-dock" = {
       dock-fixed = false;
-      dock-position = "BOTTOM";
+      dock-position = " BOTTOM ";
     };
 
     "org/gnome/shell/extensions/dash-to-dock" = {
@@ -334,7 +334,7 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell/world-clocks" = {
-      locations = "@av []";
+      locations = [];
     };
 
     "org/gnome/software" = {
@@ -361,12 +361,12 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/Weather" = {
-      locations = "[<(uint32 2, <('Gdańsk', 'EPGD', true, [(0.94916821905848536, 0.32230414101938371)], [(0.94858644845891815, 0.32579479952337237)])>)>, <(uint32 2, <('Gdynia, Działdowo County, Warmian-Masurian Voivodeship', '', false, [(0.93027949445787339, 0.34699627038777753)], [(0.93861053042695397, 0.35744550775024858)])>)>, <(uint32 2, <('Gdynia, Pomeranian Voivodeship', '', false, [(0.95149239024756216, 0.32358882203124067)], [(0.94858644845891815, 0.32579479952337237)])>)>]";
+      locations = [ (mkVariant [ (mkUint32 2) (mkVariant [ "Gda\324sk" "EPGD" true [ (mkTuple [ 0.9491682190584854 0.3223041410193837 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Dzia\322dowo County, Warmian-Masurian Voivodeship" "" false [ (mkTuple [ 0.9302794944578734 0.34699627038777753 ]) ] [ (mkTuple [ 0.938610530426954 0.3574455077502486 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Pomeranian Voivodeship" "" false [ (mkTuple [ 0.9514923902475622 0.3235888220312407 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) ];
     };
 
     "org/gnome/shell/weather" = {
       automatic-location = true;
-      locations = "[<(uint32 2, <('Gdańsk', 'EPGD', true, [(0.94916821905848536, 0.32230414101938371)], [(0.94858644845891815, 0.32579479952337237)])>)>, <(uint32 2, <('Gdynia, Działdowo County, Warmian-Masurian Voivodeship', '', false, [(0.93027949445787339, 0.34699627038777753)], [(0.93861053042695397, 0.35744550775024858)])>)>, <(uint32 2, <('Gdynia, Pomeranian Voivodeship', '', false, [(0.95149239024756216, 0.32358882203124067)], [(0.94858644845891815, 0.32579479952337237)])>)>]";
+      locations = [ (mkVariant [ (mkUint32 2) (mkVariant [ "Gda\324sk" "EPGD" true [ (mkTuple [ 0.9491682190584854 0.3223041410193837 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Dzia\322dowo County, Warmian-Masurian Voivodeship" "" false [ (mkTuple [ 0.9302794944578734 0.34699627038777753 ]) ] [ (mkTuple [ 0.938610530426954 0.3574455077502486 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Pomeranian Voivodeship" "" false [ (mkTuple [ 0.9514923902475622 0.3235888220312407 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) ];
     };
 
     "system/locale" = {
@@ -374,7 +374,7 @@ with lib.hm.gvariant;
     };
 
     "issue28/desktop/ibus/panel/emoji" = {
-      favorites = [ "\8211" "\8594" "\8593" "\8595" "\8482" "\\u00ad" "\176" "\\v" "\160" "\171" "\8451" ];
+      favorites = [ "8211" "8594" "8593" "8595" "8482" "\\u00ad" "176" "\\v" "160" "171" "8451" ];
     };
 
     "issue28/org/gnome/desktop/input-sources" = {
@@ -384,7 +384,11 @@ with lib.hm.gvariant;
     };
 
     "issue28/org/gnome/clocks" = {
-      world-clocks = "[{'location': <(uint32 2, <('Houston', 'KHOU', false, [(0.51727195705981943, -1.6629933445314968)], [(0.51727195705981943, -1.6629933445314968)])>)>}, {'location': <(uint32 2, <('Singapore', 'WSAP', true, [(0.023852838928353343, 1.8136879868485383)], [(0.022568084612667797, 1.8126262332513803)])>)>}]";
+      world-clocks = [ {
+        location = mkVariant [ (mkUint32 2) (mkVariant [ "Houston" "KHOU" false [ (mkTuple [ 0.5172719570598194 (-1.6629933445314968) ]) ] [ (mkTuple [ 0.5172719570598194 (-1.6629933445314968) ]) ] ]) ];
+      } {
+        location = mkVariant [ (mkUint32 2) (mkVariant [ "Singapore" "WSAP" true [ (mkTuple [ 2.3852838928353343e-2 1.8136879868485383 ]) ] [ (mkTuple [ 2.2568084612667797e-2 1.8126262332513803 ]) ] ]) ];
+      } ];
     };
 
     "org/gnome/shell/extensions/arcmenu" = {
