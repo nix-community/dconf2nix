@@ -5,7 +5,6 @@ import           Data.Text                      ( Text )
 
 newtype InputFilePath = InputFilePath FilePath deriving Show
 newtype OutputFilePath = OutputFilePath FilePath deriving Show
-newtype ProcessTimeout = ProcessTimeout Int deriving Show
 
 data EmojiSupport = Enabled | Disabled
 data Verbosity = Normal | Verbose
