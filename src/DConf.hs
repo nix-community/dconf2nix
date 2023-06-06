@@ -77,8 +77,20 @@ vString = T.pack <$> (single <|> double)
   double = bracket "\"" "\"" $ inputs "\""
   lchar :: [Char] -> Parsec Text () Char
   lchar extra = charExcept $ "\r\n" <> extra
+  octal = do
+    isOctal <- optionMaybe $ char '8'
+    let
+      base = case isOctal of
+        Just _ -> 8
+        Nothing -> 10
+    a <- digit
+    b <- digit
+    c <- digit
+    return $ chr $ (digitToInt a * base * base) + (digitToInt b * base) + digitToInt c
   qchar :: Parsec Text () Char
-  qchar = char '\\' >> anyChar
+  qchar = do
+    _ <- char '\\'
+    octal <|> anyChar
   inputs :: [Char] -> Parsec Text () String
   inputs extra = many $ qchar <|> lchar extra
 

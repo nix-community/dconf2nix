@@ -374,7 +374,7 @@ with lib.hm.gvariant;
     };
 
     "issue28/desktop/ibus/panel/emoji" = {
-      favorites = [ "8211" "8594" "8593" "8595" "8482" "\\u00ad" "176" "\\v" "160" "171" "8451" ];
+      favorites = [ "\137" "\396" "\395" "\397" "\322" "\\u00ad" "\176" "\\v" "\160" "\171" "\297" ];
     };
 
     "issue28/org/gnome/desktop/input-sources" = {
