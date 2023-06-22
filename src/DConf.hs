@@ -7,20 +7,26 @@ module DConf
   )
 where
 
-import           Data.Functor                   ( (<&>) )
 import qualified Data.Map                      as Map
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import           DConf.Data
 import           Text.Emoji                     ( emojis )
 import           Text.Parsec
+import           Data.Char
 
-type Parser
-  =  forall s (m :: * -> *) t u a end
-   . Stream s m t
-  => ParsecT s u m a
-  -> ParsecT s u m end
-  -> ParsecT s u m [a]
+charExcept :: [Char] -> Parsec Text () Char
+charExcept cc = satisfy $ \c -> not $ elem c cc
+
+bracket :: String -> String -> Parsec Text () a -> Parsec Text () a
+bracket s1 s2 pa = do
+  _ <- string s1
+  a <- pa
+  _ <- string s2
+  return a
+
+commaSeparated :: Parsec Text () a -> Parsec Text () [a]
+commaSeparated pa = sepBy pa $ string "," >> spaces
 
 vBool :: Parsec Text () Value
 vBool = B False <$ string "false" <|> B True <$ string "true"
@@ -50,15 +56,11 @@ vInt64 = try $ do
   I64 . read <$> many1 digit
 
 vTuple :: EmojiSupport -> Parsec Text () Value
-vTuple es = try $ do
-  char '('
-  rs <- manyTill (dconf es manyTill `sepBy` (string "," >> spaces)) (char ')')
-  case concat rs of
+vTuple es = do
+  rs <- bracket "(" ")" $ commaSeparated $ value es
+  case rs of
     xs@(_ : _ : _) -> pure $ T xs
     _              -> fail "Not a tuple"
-
-vEmptyString :: Parsec Text () Value
-vEmptyString = S "" <$ (try (string "''") <|> try (string "\"\""))
 
 vEmoji :: Parsec Text () Value
 vEmoji =
@@ -68,75 +70,87 @@ vEmoji =
       d = many1 (char '"') *> f <* char '"'
   in  Emo <$> try (s <|> d)
 
-vString :: Parser -> Parsec Text () Value
-vString parser = try $ do
-  S . T.pack . concat <$> (single <|> double)
+vString :: Parsec Text () Text
+vString = T.pack <$> (single <|> double)
  where
-  single = many1 (string "'") *> parser inputs (string "'")
-  double = many1 (char '"') *> parser (inputs <|> string "'") (char '"')
-  tokens = many1 <$> [alphaNum, space] ++ (char <$> "=$!&+-_()[]{}|,#@\\")
-  files  = many1 . char <$> ":/."
-  shorts = many1 . char <$> "<>"
-  inputs = choice (tokens ++ files ++ shorts)
-
-vAny :: Parsec Text () Value
-vAny = S . T.pack <$> manyTill anyChar (try $ lookAhead endOfLine)
+  single = bracket "'" "'" $ inputs "'"
+  double = bracket "\"" "\"" $ inputs "\""
+  lchar :: [Char] -> Parsec Text () Char
+  lchar extra = charExcept $ "\r\n" <> extra
+  octal = do
+    isOctal <- optionMaybe $ char '8'
+    let
+      base = case isOctal of
+        Just _ -> 8
+        Nothing -> 10
+    a <- digit
+    b <- digit
+    c <- digit
+    return $ chr $ (digitToInt a * base * base) + (digitToInt b * base) + digitToInt c
+  qchar :: Parsec Text () Char
+  qchar = do
+    _ <- char '\\'
+    octal <|> anyChar
+  inputs :: [Char] -> Parsec Text () String
+  inputs extra = many $ qchar <|> lchar extra
 
 emojiParser :: EmojiSupport -> [Parsec Text () Value]
 emojiParser Enabled  = [vEmoji]
 emojiParser Disabled = []
 
-dconf :: EmojiSupport -> Parser -> Parsec Text () Value
-dconf es p =
-  let xs = [vBool, vInt, vDouble, vUint32, vInt64, vEmptyString]
-      ys = [vString p, vTuple es, vAny]
+value :: EmojiSupport -> Parsec Text () Value
+value es =
+  let xs = [vTyped es, vRecord es, vList es, vJson, vBool, vInt, vDouble, vUint32, vInt64]
+      ys = [fmap S vString, vTuple es, vVariant es]
   in  choice (xs ++ emojiParser es ++ ys)
 
--- There is no support for variants in HM yet so we parse them as a string
-vListOfVariant :: Parsec Text () Value
-vListOfVariant =
-  let variant1 = try $ do
-        try (lookAhead $ string "[<") <|> try (lookAhead $ string "[{")
-        manyTill anyToken (try $ lookAhead endOfLine)
-      variant2 = try $ do
-        try (lookAhead $ string "\"[<") <|> try (lookAhead $ string "\"[{")
-        char '"'
-        manyTill anyToken (try $ lookAhead $ string "\"") <* char '"'
-  in  S . T.pack <$> (variant1 <|> variant2)
+vVariant :: EmojiSupport -> Parsec Text () Value
+vVariant es = fmap V $ bracket "<(" ")>" $ commaSeparated $ value es
 
 vList :: EmojiSupport -> Parsec Text () Value
-vList es = try $ do
-  char '['
-  L . concat <$> manyTill
-    ((vJson <|> dconf es manyTill) `sepBy` (string "," >> spaces))
-    (char ']')
+vList es = fmap L $ bracket "[" "]" $ commaSeparated $ value es
+
+vTyped :: EmojiSupport -> Parsec Text () Value
+vTyped es = do
+  _ <- char '@'
+  _ <- anyChar
+  _ <- anyChar
+  _ <- spaces
+  value es
 
 vJson :: Parsec Text () Value
-vJson = try $ do
-  try (lookAhead $ string "'{")
-  char '\''
-  js <- manyTill anyToken (try $ lookAhead $ char '\'')
-  Json (T.pack js) <$ char '\''
+vJson = try $ bracket "'" "'" $ do
+  _ <- lookAhead $ string "{"
+  js <- many (charExcept "\r\n\'")
+  pure $ Json (T.pack js)
 
-vEmptyList :: Parsec Text () Value
-vEmptyList = EmptyList <$ try (string "@as []")
+vRecord :: EmojiSupport -> Parsec Text () Value
+vRecord es = fmap R $ bracket "{" "}" $ commaSeparated $ do
+  k <- vString
+  _ <- char ':'
+  _ <- spaces
+  v <- value es
+  return (k,v)
 
 dconfHeader :: Parsec Text () Header
-dconfHeader = do
-  many1 (char '[') <* spaces
-  T.pack . concat <$> manyTill tokens (string " ]" <|> string "]")
-  where tokens = choice $ many1 <$> [oneOf "/.-:_",  alphaNum]
+dconfHeader = bracket "[" "]" $ do
+  _ <- spaces
+  h <- many1 $ satisfy $ \c -> isAlphaNum c || elem c ("/.-:_" :: [Char])
+  _ <- spaces
+  return $ T.pack h
 
-dconfValue :: EmojiSupport -> Parsec Text () Value
-dconfValue es = vListOfVariant <|> vList es <|> vEmptyList <|> vJson <|> dconf es endBy
-
-vKey :: Parsec Text () Key
-vKey = Key . T.pack <$> manyTill (choice [alphaNum, char '-']) (char '=')
+kvLine :: EmojiSupport -> Parsec Text () (Key,Value)
+kvLine es = do
+  k <- many1 $ satisfy $ \c -> isAlphaNum c || c == '-'
+  _ <- char '='
+  v <- value es
+  _ <- endOfLine
+  return (Key $ T.pack k,v)
 
 entryParser :: EmojiSupport -> Parsec Text () Entry
 entryParser es = do
   h  <- dconfHeader <* endOfLine
-  kv <- many1 ((,) <$> vKey <*> (dconfValue es <* endOfLine))
+  kv <- many1 $ kvLine es
   optional endOfLine
   pure $ Entry h (Map.fromList kv)
 

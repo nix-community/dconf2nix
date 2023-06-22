@@ -5,7 +5,6 @@ import           Data.Text                      ( Text )
 
 newtype InputFilePath = InputFilePath FilePath deriving Show
 newtype OutputFilePath = OutputFilePath FilePath deriving Show
-newtype ProcessTimeout = ProcessTimeout Int deriving Show
 
 data EmojiSupport = Enabled | Disabled
 data Verbosity = Normal | Verbose
@@ -25,8 +24,9 @@ data Value = S Text         -- String
            | Emo Char       -- Emoji (Unicode char)
            | T [Value]      -- Tuple of n-arity
            | L [Value]      -- List of values
+           | V [Value]      -- Variant
+           | R [(Text,Value)] -- Record
            | Json Text      -- Json value
-           | EmptyList      -- Empty list (aka '@as []')
            deriving (Eq, Show)
 
 type Header = Text

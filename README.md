@@ -108,25 +108,20 @@ Type `--help` for some more information.
 ```shell
 dconf2nix - Nixify dconf configuration files
 
-Usage: dconf2nix [-v|--version]
-                 [[-r|--root ARG] [-t|--timeout ARG] [-e|--emoji] [--verbose] |
-                   (-i|--input ARG) (-o|--output ARG) [-r|--root ARG]
-                   [-t|--timeout ARG] [-e|--emoji] [--verbose]]
+Usage: dconf2nix [-v|--version] 
+                 [[-r|--root ARG] [-e|--emoji] [--verbose] | (-i|--input ARG)
+                   (-o|--output ARG) [-r|--root ARG] [-e|--emoji] [--verbose]]
   Convert a dconf file into a Nix file, as expected by Home Manager.
 
 Available options:
   -h,--help                Show this help text
   -v,--version             Show the current version
   -r,--root ARG            Custom root path. e.g.: system/locale/
-  -t,--timeout ARG         Timeout in seconds for the conversion
-                           process (default: 5)
   -e,--emoji               Enable emoji support (adds a bit of overhead)
   --verbose                Verbose mode (debug)
   -i,--input ARG           Path to the dconf file (input)
   -o,--output ARG          Path to the Nix output file (to be created)
   -r,--root ARG            Custom root path. e.g.: system/locale/
-  -t,--timeout ARG         Timeout in seconds for the conversion
-                           process (default: 5)
   -e,--emoji               Enable emoji support (adds a bit of overhead)
   --verbose                Verbose mode (debug)
 ```
@@ -221,11 +216,7 @@ Have a look at the [latest releases](https://github.com/gvolpe/dconf2nix/release
 
 ### Troubleshooting
 
-![error](img/error.png)
-
-The default timeout is of 5 seconds. You can see it by running `dconf2nix --help`.
-
-Do also consider the caveats mentioned above in the [Supported Types](#supported-types) section.
+Do consider the caveats mentioned above in the [Supported Types](#supported-types) section.
 
 ### Development
 

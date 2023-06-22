@@ -18,23 +18,15 @@ data FileArgs = FileArgs
   { fileInput :: InputFilePath
   , fileOutput :: OutputFilePath
   , fileRoot :: Root
-  , fileTimeout :: ProcessTimeout
   , fileEmojiSupport :: EmojiSupport
   , fileVerbosity :: Verbosity
   }
 
 data StdinArgs = StdinArgs
   { stdinRoot :: Root
-  , stdinTimeout :: ProcessTimeout
   , stdinEmojiSupport :: EmojiSupport
   , stdinVerbosity :: Verbosity
   }
-
-timeoutArgs :: Parser ProcessTimeout
-timeoutArgs = ProcessTimeout <$> option auto
-  (long "timeout" <> short 't' <> showDefault <> value 5 <> help
-    "Timeout in seconds for the conversion process"
-  )
 
 verbosityArgs :: Parser Verbosity
 verbosityArgs =
@@ -61,13 +53,12 @@ fileArgs = fmap FileInput $ FileArgs
           )
         )
     <*> rootArgs
-    <*> timeoutArgs
     <*> emojiArgs
     <*> verbosityArgs
 
 stdinArgs :: Parser Input
 stdinArgs =
-  StdinInput <$> (StdinArgs <$> rootArgs <*> timeoutArgs <*> emojiArgs <*> verbosityArgs)
+  StdinInput <$> (StdinArgs <$> rootArgs <*> emojiArgs <*> verbosityArgs)
 
 versionInfo :: String
 versionInfo = unlines
