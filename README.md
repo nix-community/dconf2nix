@@ -52,9 +52,7 @@ You will get the following output when running `dconf2nix`:
 ```nix
 { lib, ... }:
 
-let
-  mkTuple = lib.hm.gvariant.mkTuple;
-in
+with lib.hm.gvariant;
 {
   dconf.settings = {
     "org/gnome/desktop/peripherals/mouse" = {
@@ -68,7 +66,7 @@ in
     };
 
     "org/gnome/desktop/input-sources" = {
-      current = "uint32 0";
+      current = mkUint32 0;
       sources = [ (mkTuple [ "xkb" "us" ]) ];
       xkb-options = [ "terminate:ctrl_alt_bksp" "lv3:ralt_switch" "caps:ctrl_modifier" ];
     };
