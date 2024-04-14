@@ -10,7 +10,6 @@ in
       name = "ghc-shell-for-dconf2nix";
       packages = p: [drv];
       buildInputs = with hp; [
-        brittany
         cabal-install
         haskell-language-server
         hlint
