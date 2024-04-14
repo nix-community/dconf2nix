@@ -18,7 +18,7 @@ prop_simple_parser = withTests (100 :: TestLimit) simpleParser
 
 simpleParser :: Property
 simpleParser =
-  let entries = runParser (dconfParser Disabled Normal) () "<test>" testInput
+  let entries = runParser (dconfParser Normal) () "<test>" testInput
   in  property $ entries === Right [testOutput]
 
 testInput :: Text

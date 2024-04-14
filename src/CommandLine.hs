@@ -18,23 +18,17 @@ data FileArgs = FileArgs
   { fileInput :: InputFilePath
   , fileOutput :: OutputFilePath
   , fileRoot :: Root
-  , fileEmojiSupport :: EmojiSupport
   , fileVerbosity :: Verbosity
   }
 
 data StdinArgs = StdinArgs
   { stdinRoot :: Root
-  , stdinEmojiSupport :: EmojiSupport
   , stdinVerbosity :: Verbosity
   }
 
 verbosityArgs :: Parser Verbosity
 verbosityArgs =
   flag Normal Verbose (long "verbose" <> help "Verbose mode (debug)")
-
-emojiArgs :: Parser EmojiSupport
-emojiArgs =
-  flag Disabled Enabled (long "emoji" <> short 'e' <> help "Enable emoji support (adds a bit of overhead)")
 
 rootArgs :: Parser Root
 rootArgs = Root <$> strOption
@@ -53,12 +47,11 @@ fileArgs = fmap FileInput $ FileArgs
           )
         )
     <*> rootArgs
-    <*> emojiArgs
     <*> verbosityArgs
 
 stdinArgs :: Parser Input
 stdinArgs =
-  StdinInput <$> (StdinArgs <$> rootArgs <*> emojiArgs <*> verbosityArgs)
+  StdinInput <$> (StdinArgs <$> rootArgs <*> verbosityArgs)
 
 versionInfo :: String
 versionInfo = unlines

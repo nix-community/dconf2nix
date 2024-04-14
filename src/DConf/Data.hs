@@ -6,7 +6,6 @@ import           Data.Text                      ( Text )
 newtype InputFilePath = InputFilePath FilePath deriving Show
 newtype OutputFilePath = OutputFilePath FilePath deriving Show
 
-data EmojiSupport = Enabled | Disabled
 data Verbosity = Normal | Verbose
 
 newtype Nix = Nix { unNix :: Text } deriving Show
@@ -21,7 +20,6 @@ data Value = S Text         -- String
            | I32 Int        -- Int32
            | I64 Int        -- Int64
            | D Double       -- Double
-           | Emo Char       -- Emoji (Unicode char)
            | T [Value]      -- Tuple of n-arity
            | L [Value]      -- List of values
            | V [Value]      -- Variant

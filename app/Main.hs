@@ -13,7 +13,7 @@ import           DConf2Nix                      ( dconf2nixFile
 
 main :: IO ()
 main = runArgs >>= \case
-  FileInput (FileArgs i o r e v) ->
-    dconf2nixFile i o r e v
-  StdinInput (StdinArgs r e v)   ->
-    dconf2nixStdin r e v
+  FileInput (FileArgs i o r v) ->
+    dconf2nixFile i o r v
+  StdinInput (StdinArgs r v)   ->
+    dconf2nixStdin r v

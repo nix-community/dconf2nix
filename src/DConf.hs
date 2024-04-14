@@ -11,7 +11,6 @@ import qualified Data.Map                      as Map
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import           DConf.Data
-import           Text.Emoji                     ( emojis )
 import           Text.Parsec
 import           Data.Char
 
@@ -55,20 +54,12 @@ vInt64 = try $ do
   many1 (string "int64 ") >> spaces
   I64 . read <$> many1 digit
 
-vTuple :: EmojiSupport -> Parsec Text () Value
-vTuple es = do
-  rs <- bracket "(" ")" $ commaSeparated $ value es
+vTuple :: Parsec Text () Value
+vTuple = do
+  rs <- bracket "(" ")" $ commaSeparated $ value
   case rs of
     xs@(_ : _ : _) -> pure $ T xs
     _              -> fail "Not a tuple"
-
-vEmoji :: Parsec Text () Value
-vEmoji =
-  let e = T.head . snd <$> emojis
-      f = choice $ char <$> e
-      s = many1 (string "'") *> f <* string "'"
-      d = many1 (char '"') *> f <* char '"'
-  in  Emo <$> try (s <|> d)
 
 vString :: Parsec Text () Text
 vString = T.pack <$> (single <|> double)
@@ -94,29 +85,23 @@ vString = T.pack <$> (single <|> double)
   inputs :: [Char] -> Parsec Text () String
   inputs extra = many $ qchar <|> lchar extra
 
-emojiParser :: EmojiSupport -> [Parsec Text () Value]
-emojiParser Enabled  = [vEmoji]
-emojiParser Disabled = []
+value :: Parsec Text () Value
+value = choice
+  [vTyped, vRecord, vList, vJson, vBool, vInt, vDouble, vUint32, vInt64, fmap S vString, vTuple, vVariant]
 
-value :: EmojiSupport -> Parsec Text () Value
-value es =
-  let xs = [vTyped es, vRecord es, vList es, vJson, vBool, vInt, vDouble, vUint32, vInt64]
-      ys = [fmap S vString, vTuple es, vVariant es]
-  in  choice (xs ++ emojiParser es ++ ys)
+vVariant :: Parsec Text () Value
+vVariant = fmap V $ bracket "<(" ")>" $ commaSeparated $ value
 
-vVariant :: EmojiSupport -> Parsec Text () Value
-vVariant es = fmap V $ bracket "<(" ")>" $ commaSeparated $ value es
+vList :: Parsec Text () Value
+vList = fmap L $ bracket "[" "]" $ commaSeparated $ value
 
-vList :: EmojiSupport -> Parsec Text () Value
-vList es = fmap L $ bracket "[" "]" $ commaSeparated $ value es
-
-vTyped :: EmojiSupport -> Parsec Text () Value
-vTyped es = do
+vTyped :: Parsec Text () Value
+vTyped = do
   _ <- char '@'
   _ <- anyChar
   _ <- anyChar
   _ <- spaces
-  value es
+  value
 
 vJson :: Parsec Text () Value
 vJson = try $ bracket "'" "'" $ do
@@ -124,12 +109,12 @@ vJson = try $ bracket "'" "'" $ do
   js <- many (charExcept "\r\n\'")
   pure $ Json (T.pack js)
 
-vRecord :: EmojiSupport -> Parsec Text () Value
-vRecord es = fmap R $ bracket "{" "}" $ commaSeparated $ do
+vRecord :: Parsec Text () Value
+vRecord = fmap R $ bracket "{" "}" $ commaSeparated $ do
   k <- vString
   _ <- char ':'
   _ <- spaces
-  v <- value es
+  v <- value
   return (k,v)
 
 dconfHeader :: Parsec Text () Header
@@ -139,21 +124,21 @@ dconfHeader = bracket "[" "]" $ do
   _ <- spaces
   return $ T.pack h
 
-kvLine :: EmojiSupport -> Parsec Text () (Key,Value)
-kvLine es = do
+kvLine :: Parsec Text () (Key,Value)
+kvLine = do
   k <- many1 $ satisfy $ \c -> isAlphaNum c || c == '-'
   _ <- char '='
-  v <- value es
+  v <- value
   _ <- endOfLine
   return (Key $ T.pack k,v)
 
-entryParser :: EmojiSupport -> Parsec Text () Entry
-entryParser es = do
+entryParser :: Parsec Text () Entry
+entryParser = do
   h  <- dconfHeader <* endOfLine
-  kv <- many1 $ kvLine es
+  kv <- many1 $ kvLine
   optional endOfLine
   pure $ Entry h (Map.fromList kv)
 
-dconfParser :: EmojiSupport -> Verbosity -> Parsec Text () [Entry]
-dconfParser es Normal  = manyTill (entryParser es) eof
-dconfParser es Verbose = parserTraced "dconf" $ dconfParser es Normal
+dconfParser :: Verbosity -> Parsec Text () [Entry]
+dconfParser Normal  = manyTill entryParser eof
+dconfParser Verbose = parserTraced "dconf" $ dconfParser Normal

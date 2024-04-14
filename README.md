@@ -9,7 +9,6 @@ A convenient converter of [DConf](https://wiki.gnome.org/Projects/dconf) files t
 * [Introduction](#introduction)
 * [Run](#run)
   * [Custom root](#custom-root)
-  * [Emoji support](#emoji-support)
 * [Supported types](#supported-types)
 * [Gnome Shell configuration](#gnome-shell-configuration)
 * [Installation](#installation)
@@ -107,20 +106,18 @@ Type `--help` for some more information.
 dconf2nix - Nixify dconf configuration files
 
 Usage: dconf2nix [-v|--version] 
-                 [[-r|--root ARG] [-e|--emoji] [--verbose] | (-i|--input ARG)
-                   (-o|--output ARG) [-r|--root ARG] [-e|--emoji] [--verbose]]
+                 [[-r|--root ARG] [--verbose] | (-i|--input ARG)
+                   (-o|--output ARG) [-r|--root ARG] [--verbose]]
   Convert a dconf file into a Nix file, as expected by Home Manager.
 
 Available options:
   -h,--help                Show this help text
   -v,--version             Show the current version
   -r,--root ARG            Custom root path. e.g.: system/locale/
-  -e,--emoji               Enable emoji support (adds a bit of overhead)
   --verbose                Verbose mode (debug)
   -i,--input ARG           Path to the dconf file (input)
   -o,--output ARG          Path to the Nix output file (to be created)
   -r,--root ARG            Custom root path. e.g.: system/locale/
-  -e,--emoji               Enable emoji support (adds a bit of overhead)
   --verbose                Verbose mode (debug)
 ```
 
@@ -144,26 +141,6 @@ This will generate an output similar to the one below.
   };
 }
 ```
-
-#### Emoji support
-
-Emojis are supported since version `0.0.12`, and it needs to be explicitly enabled, as these add a little parsing overhead via the [emojis](https://hackage.haskell.org/package/emojis) package.
-
-The following `dconf` input.
-
-```ini
-[ org/gnome/Characters ]
-recent-characters=['💡']
-some-other-character=['🤓']
-```
-
-Can be parsed as follows.
-
-```console 
-$ dconf2nix -i data/emoji.settings -o output/emoji.nix --emoji
-```
-
-Failing to pass the `--emoji` flag will result in a timeout error.
 
 ### Supported types
 

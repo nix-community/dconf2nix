@@ -21,7 +21,6 @@ library
   other-modules:       Paths_dconf2nix
   build-depends:       base
                      , containers
-                     , emojis
                      , optparse-applicative
                      , parsec
                      , text

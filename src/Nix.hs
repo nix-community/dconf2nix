@@ -72,7 +72,6 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (B   v) = T.toLower . T.pack $ show v
   renderValue' (I   v) = T.pack $ show v
   renderValue' (D   v) = T.pack $ show v
-  renderValue' (Emo v) = "\"" <> T.singleton v <> "\""
   renderValue' (I32 v) = "mkUint32 " <> T.pack (show v)
   renderValue' (I64 v) = "mkInt64 " <> T.pack (show v)
   renderValue' (L  xs) = renderList xs
