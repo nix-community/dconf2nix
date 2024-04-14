@@ -303,7 +303,7 @@ locations=[<(uint32 2, <('Gdańsk', 'EPGD', true, [(0.94916821905848536, 0.32230
 region='en_US.UTF-8'
 
 [issue28/desktop/ibus/panel/emoji]
-favorites=['\8211', '\8594', '\8593', '\8595', '\8482', '\\u00ad', '\176', '\\v', '\160', '\171', '\8451']
+favorites=['–', '→', '↑', '↓', '™', '\u00ad', '°', '\v', ' ', '«', '℃']
 
 [issue28/org/gnome/desktop/input-sources]
 mru-sources=[('xkb', 'us+altgr-intl'), ('ibus', 'mozc-jp')]

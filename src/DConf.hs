@@ -7,7 +7,10 @@ module DConf
   )
 where
 
+import           Control.Monad                  ( replicateM )
+import           Data.Ix                        ( inRange )
 import qualified Data.Map                      as Map
+import           Data.Maybe                     ( catMaybes )
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
 import           DConf.Data
@@ -66,24 +69,43 @@ vString = T.pack <$> (single <|> double)
  where
   single = bracket "'" "'" $ inputs "'"
   double = bracket "\"" "\"" $ inputs "\""
+
   lchar :: [Char] -> Parsec Text () Char
-  lchar extra = charExcept $ "\r\n" <> extra
-  octal = do
-    isOctal <- optionMaybe $ char '8'
-    let
-      base = case isOctal of
-        Just _ -> 8
-        Nothing -> 10
-    a <- digit
-    b <- digit
-    c <- digit
-    return $ chr $ (digitToInt a * base * base) + (digitToInt b * base) + digitToInt c
-  qchar :: Parsec Text () Char
+  lchar extra = charExcept $ "\r\n\\" <> extra
+
+  fromHexDigit :: Char -> Int
+  fromHexDigit n | inRange ('A', 'F') n = ord n - ord 'A' + 0xA
+  fromHexDigit n | inRange ('a', 'f') n = ord n - ord 'a' + 0xA
+  fromHexDigit n | inRange ('0', '9') n = ord n - ord '0'
+  fromHexDigit n = error $ "Expected a hexadecimal digit, '" ++ n : "' given"
+
+  hexNum :: Int -> Parsec Text () Int
+  hexNum l = do
+    digits <- replicateM l (fromHexDigit <$> hexDigit)
+    return $ foldl (\acc d -> 16 * acc + d) 0 digits
+
+  qchar :: Parsec Text () (Maybe Char)
   qchar = do
     _ <- char '\\'
-    octal <|> anyChar
+    (
+      -- Unicode escapes of the form `\uxxxx` and `\Uxxxxxxxx` are supported, in hexadecimal.
+      (char 'u' *> (Just <$> (chr <$> hexNum 4)))
+      <|> (char 'U' *> (Just <$> (chr <$> hexNum 8)))
+      -- The usual control sequence escapes `\a`, `\b`, `\f`, `\n`, `\r`, `\t` and `\v` are supported.
+      <|> (char 'a' *> pure (Just '\a'))
+      <|> (char 'b' *> pure (Just '\b'))
+      <|> (char 'f' *> pure (Just '\f'))
+      <|> (char 'n' *> pure (Just '\n'))
+      <|> (char 'r' *> pure (Just '\r'))
+      <|> (char 't' *> pure (Just '\t'))
+      <|> (char 'v' *> pure (Just '\v'))
+      -- Additionally, a `\` before a newline character causes the newline to be ignored.
+      <|> (char '\n' *> pure Nothing)
+      -- Finally, any other character following `\` is copied literally (for example, `\"` or `\\`)
+      <|> (Just <$> anyChar))
+
   inputs :: [Char] -> Parsec Text () String
-  inputs extra = many $ qchar <|> lchar extra
+  inputs extra = catMaybes <$> (many $ qchar <|> (Just <$> lchar extra))
 
 value :: Parsec Text () Value
 value = choice

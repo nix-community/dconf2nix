@@ -361,12 +361,12 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/Weather" = {
-      locations = [ (mkVariant [ (mkUint32 2) (mkVariant [ "Gda\324sk" "EPGD" true [ (mkTuple [ 0.9491682190584854 0.3223041410193837 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Dzia\322dowo County, Warmian-Masurian Voivodeship" "" false [ (mkTuple [ 0.9302794944578734 0.34699627038777753 ]) ] [ (mkTuple [ 0.938610530426954 0.3574455077502486 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Pomeranian Voivodeship" "" false [ (mkTuple [ 0.9514923902475622 0.3235888220312407 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) ];
+      locations = [ (mkVariant [ (mkUint32 2) (mkVariant [ "Gdańsk" "EPGD" true [ (mkTuple [ 0.9491682190584854 0.3223041410193837 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Działdowo County, Warmian-Masurian Voivodeship" "" false [ (mkTuple [ 0.9302794944578734 0.34699627038777753 ]) ] [ (mkTuple [ 0.938610530426954 0.3574455077502486 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Pomeranian Voivodeship" "" false [ (mkTuple [ 0.9514923902475622 0.3235888220312407 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) ];
     };
 
     "org/gnome/shell/weather" = {
       automatic-location = true;
-      locations = [ (mkVariant [ (mkUint32 2) (mkVariant [ "Gda\324sk" "EPGD" true [ (mkTuple [ 0.9491682190584854 0.3223041410193837 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Dzia\322dowo County, Warmian-Masurian Voivodeship" "" false [ (mkTuple [ 0.9302794944578734 0.34699627038777753 ]) ] [ (mkTuple [ 0.938610530426954 0.3574455077502486 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Pomeranian Voivodeship" "" false [ (mkTuple [ 0.9514923902475622 0.3235888220312407 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) ];
+      locations = [ (mkVariant [ (mkUint32 2) (mkVariant [ "Gdańsk" "EPGD" true [ (mkTuple [ 0.9491682190584854 0.3223041410193837 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Działdowo County, Warmian-Masurian Voivodeship" "" false [ (mkTuple [ 0.9302794944578734 0.34699627038777753 ]) ] [ (mkTuple [ 0.938610530426954 0.3574455077502486 ]) ] ]) ]) (mkVariant [ (mkUint32 2) (mkVariant [ "Gdynia, Pomeranian Voivodeship" "" false [ (mkTuple [ 0.9514923902475622 0.3235888220312407 ]) ] [ (mkTuple [ 0.9485864484589182 0.32579479952337237 ]) ] ]) ]) ];
     };
 
     "system/locale" = {
@@ -374,7 +374,7 @@ with lib.hm.gvariant;
     };
 
     "issue28/desktop/ibus/panel/emoji" = {
-      favorites = [ "\137" "\396" "\395" "\397" "\322" "\\u00ad" "\176" "\\v" "\160" "\171" "\297" ];
+      favorites = [ "–" "→" "↑" "↓" "™" "­" "°" "" " " "«" "℃" ];
     };
 
     "issue28/org/gnome/desktop/input-sources" = {

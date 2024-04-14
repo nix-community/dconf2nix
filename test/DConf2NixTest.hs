@@ -140,6 +140,17 @@ prop_dconf2nix_tuples :: Property
 prop_dconf2nix_tuples =
   withTests (10 :: TestLimit) dconf2nixTuples
 
+dconf2nixUnicode :: Property
+dconf2nixUnicode =
+  let input  = "data/unicode.settings"
+      output = "output/unicode.nix"
+      root   = Root T.empty
+  in  baseProperty input output root
+
+prop_dconf2nix_unicode :: Property
+prop_dconf2nix_unicode =
+  withTests (10 :: TestLimit) dconf2nixUnicode
+
 dconf2nixEmoji :: Property
 dconf2nixEmoji =
   let input  = "data/emoji.settings"

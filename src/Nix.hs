@@ -9,6 +9,7 @@ module Nix
   )
 where
 
+import           Data.Function                  ( (&) )
 import qualified Data.Map                      as Map
 import qualified Data.Text                     as T
 import           DConf.Data
@@ -68,7 +69,7 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderList xs = let
     in "[ " <> T.intercalate " " (renderItem <$> xs) <> " ]"
 
-  renderValue' (S   v) = T.pack $ show v
+  renderValue' (S   v) = renderString v
   renderValue' (B   v) = T.toLower . T.pack $ show v
   renderValue' (I   v) = T.pack $ show v
   renderValue' (D   v) = T.pack $ show v
@@ -81,3 +82,13 @@ renderValue raw = Nix $ renderValue' raw <> ";"
     "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"
   renderValue' (R kvs) =
     "{\n" <> mconcat (fmap (\(k,v) -> mkSpaces 8 <> k <> " = " <> renderValue' v <> ";\n") kvs) <> mkSpaces 6 <> "}"
+
+renderString :: T.Text -> T.Text
+renderString text = "\"" <> escaped <> "\""
+  where
+    escaped =
+      text
+        & T.replace "\\" "\\\\"
+        & T.replace "\n" "\\n"
+        & T.replace "$" "\\$"
+        & T.replace "\"" "\\\""
