@@ -21,6 +21,7 @@ data Value = S Text         -- String
            | I64 Int        -- Int64
            | D Double       -- Double
            | T [Value]      -- Tuple of n-arity
+           | Ty String Value -- Typed value
            | L [Value]      -- List of values
            | V Value        -- Variant
            | R [(Text,Value)] -- Record

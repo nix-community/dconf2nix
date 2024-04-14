@@ -13,7 +13,7 @@ with lib.hm.gvariant;
       string = mkVariant "#polari";
       true = mkVariant true;
       tuple = mkVariant (mkTuple [ (mkUint32 2) "ABC" ]);
-      typed = mkVariant [];
+      typed = mkVariant (mkArray "i" []);
       uint32 = mkVariant (mkUint32 2);
       variant = mkVariant (mkVariant 7);
     };

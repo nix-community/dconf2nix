@@ -127,13 +127,37 @@ vVariant = fmap V $ bracket "<" ">" value
 vList :: Parsec Text () Value
 vList = fmap L $ bracket "[" "]" $ commaSeparated $ value
 
+-- https://gitlab.gnome.org/GNOME/glib/-/blob/4607dd77a1944c6b29dff1e76c195f28a8ca12af/docs/reference/glib/gvariant-specification-1.0.rst#type-strings
+typeString :: Parsec Text () String
+typeString = baseType <|> containerType
+  where
+    baseType = choice (map string ["b", "y", "n", "q", "i", "u", "x", "t", "h", "d", "s", "o", "g"])
+    containerType = variantType <|> maybeType <|> arrayType <|> tupleType <|> dictEntryType
+    types = many typeString
+    variantType = string "v"
+    arrayType = do
+      a <- string "a"
+      t <- typeString
+      return (a ++ t)
+    maybeType = do
+      m <- string "m"
+      t <- typeString
+      return (m ++ t)
+    tupleType = do
+      tt <- bracket "(" ")" types
+      return ("(" ++ concat tt ++ ")")
+    dictEntryType = bracket "{" "}" $ do
+      k <- baseType
+      v <- typeString
+      return ("{" ++ k ++ v ++ "}")
+
 vTyped :: Parsec Text () Value
 vTyped = do
   _ <- char '@'
-  _ <- anyChar
-  _ <- anyChar
+  t <- typeString
   _ <- spaces
-  value
+  v <- value
+  return (Ty t v)
 
 vJson :: Parsec Text () Value
 vJson = try $ bracket "'" "'" $ do

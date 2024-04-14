@@ -57,6 +57,9 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   needsParen (D x) = x < 0
   needsParen (I32 _) = True
   needsParen (T _) = True
+  -- will be rendered as @[]@
+  needsParen (Ty "as" (L [])) = False
+  needsParen (Ty _ _) = True
   needsParen (V _) = True
   needsParen _ = False
 
@@ -77,6 +80,12 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (I64 v) = "mkInt64 " <> T.pack (show v)
   renderValue' (L  xs) = renderList xs
   renderValue' (T  xs) = "mkTuple " <> renderList xs
+  -- In home-manager, @mkValue []@ emits @\@as []@
+  renderValue' (Ty "as" (L [])) = renderList []
+  -- In home-manager, arrays are always typed when using @mkArray@.
+  renderValue' (Ty ('a':t) (L v)) = "mkArray " <> T.pack (show t) <> " " <> renderList v
+  -- TODO: add mkTyped to h-m
+  renderValue' (Ty t v) = "mkTyped " <> T.pack (show t) <> " " <> renderItem v
   renderValue' (V   v) = "mkVariant " <> renderItem v
   renderValue' (Json v) =
     "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"

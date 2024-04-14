@@ -140,6 +140,17 @@ prop_dconf2nix_tuples :: Property
 prop_dconf2nix_tuples =
   withTests (10 :: TestLimit) dconf2nixTuples
 
+dconf2nixTyped :: Property
+dconf2nixTyped =
+  let input  = "data/typed.settings"
+      output = "output/typed.nix"
+      root   = Root T.empty
+  in  baseProperty input output root
+
+prop_dconf2nix_typed :: Property
+prop_dconf2nix_typed =
+  withTests (10 :: TestLimit) dconf2nixTyped
+
 dconf2nixUnicode :: Property
 dconf2nixUnicode =
   let input  = "data/unicode.settings"

@@ -1,0 +1,10 @@
+[typed]
+empty-dict=@a{sv} {}
+empty-array-dict=@a{sv} []
+just-str=@ms 'hello'
+ui32=uint32 7
+at-u=@u 5
+empty-arr=@a(dd) []
+just-empty-str=@ms ""
+doubletime=uint32 uint32 7
+var-empty-arr=<@ai []>
