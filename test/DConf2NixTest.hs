@@ -151,6 +151,17 @@ prop_dconf2nix_unicode :: Property
 prop_dconf2nix_unicode =
   withTests (10 :: TestLimit) dconf2nixUnicode
 
+dconf2nixVariant :: Property
+dconf2nixVariant =
+  let input  = "data/variant.settings"
+      output = "output/variant.nix"
+      root   = Root T.empty
+  in  baseProperty input output root
+
+prop_dconf2nix_variant :: Property
+prop_dconf2nix_variant =
+  withTests (10 :: TestLimit) dconf2nixVariant
+
 dconf2nixEmoji :: Property
 dconf2nixEmoji =
   let input  = "data/emoji.settings"

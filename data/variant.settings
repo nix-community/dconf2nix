@@ -1,0 +1,11 @@
+[foo]
+int32=<0>
+true=<true>
+false=<false>
+uint32=<uint32 2>
+tuple=<(uint32 2, 'ABC')>
+array=<[1, 2, 3]>
+string=<'#polari'>
+variant=<<7>>
+in-array=[<5>, <6>]
+typed=<@ai []>

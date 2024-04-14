@@ -77,7 +77,7 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (I64 v) = "mkInt64 " <> T.pack (show v)
   renderValue' (L  xs) = renderList xs
   renderValue' (T  xs) = "mkTuple " <> renderList xs
-  renderValue' (V  xs) = "mkVariant " <> renderList xs
+  renderValue' (V   v) = "mkVariant " <> renderItem v
   renderValue' (Json v) =
     "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"
   renderValue' (R kvs) =

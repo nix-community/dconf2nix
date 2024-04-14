@@ -22,7 +22,7 @@ data Value = S Text         -- String
            | D Double       -- Double
            | T [Value]      -- Tuple of n-arity
            | L [Value]      -- List of values
-           | V [Value]      -- Variant
+           | V Value        -- Variant
            | R [(Text,Value)] -- Record
            | Json Text      -- Json value
            deriving (Eq, Show)

@@ -112,7 +112,7 @@ value = choice
   [vTyped, vRecord, vList, vJson, vBool, vInt, vDouble, vUint32, vInt64, fmap S vString, vTuple, vVariant]
 
 vVariant :: Parsec Text () Value
-vVariant = fmap V $ bracket "<(" ")>" $ commaSeparated $ value
+vVariant = fmap V $ bracket "<" ">" value
 
 vList :: Parsec Text () Value
 vList = fmap L $ bracket "[" "]" $ commaSeparated $ value
