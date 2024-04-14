@@ -27,8 +27,22 @@ bracket s1 s2 pa = do
   _ <- string s2
   return a
 
+comma :: Parsec Text () ()
+comma = string "," >> spaces
+
 commaSeparated :: Parsec Text () a -> Parsec Text () [a]
-commaSeparated pa = sepBy pa $ string "," >> spaces
+commaSeparated pa = sepBy pa comma
+
+-- Like 'sepEndBy' but the separator can only appear at the end when there is just a single item.
+sepOneEndBy :: Show a => Parsec Text () a -> Parsec Text () sep -> Parsec Text () [a]
+sepOneEndBy p sep =
+  do
+    { x <- p
+    ; _ <- sep
+    ; xs <- sepBy p sep
+    ; return (x:xs)
+    }
+    <|> return []
 
 vBool :: Parsec Text () Value
 vBool = B False <$ string "false" <|> B True <$ string "true"
@@ -58,11 +72,7 @@ vInt64 = try $ do
   I64 . read <$> many1 digit
 
 vTuple :: Parsec Text () Value
-vTuple = do
-  rs <- bracket "(" ")" $ commaSeparated $ value
-  case rs of
-    xs@(_ : _ : _) -> pure $ T xs
-    _              -> fail "Not a tuple"
+vTuple = T <$> (bracket "(" ")" $ sepOneEndBy value comma)
 
 vString :: Parsec Text () Text
 vString = T.pack <$> (single <|> double)

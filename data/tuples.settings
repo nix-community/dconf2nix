@@ -1,4 +1,7 @@
 [org/gnome/tuples]
+t0=()
+t1=(5,)
+t1-sp=(5, )
 t2=(true, 'woman')
 t3=(false, 'man', -2)
 t4=('hello', 22, 'world', true)
