@@ -71,8 +71,8 @@ versionInfo = unlines
   , "╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝"
   , ""
   , "Version: " <> showVersion version
-  , "Maintainer: Gabriel Volpe (https://gvolpe.com)"
-  , "Source code: https://github.com/gvolpe/dconf2nix"
+  , "Maintainers: Nix Community"
+  , "Source code: https://github.com/nix-community/dconf2nix"
   ]
 
 versionOpt :: Parser (a -> a)

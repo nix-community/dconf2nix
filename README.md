@@ -1,6 +1,6 @@
 # dconf2nix
 
-[![CI Status](https://github.com/gvolpe/dconf2nix/workflows/Haskell%20CI/badge.svg)](https://github.com/gvolpe/dconf2nix/actions)
+[![CI Status](https://github.com/nix-commmunity/dconf2nix/workflows/Haskell%20CI/badge.svg)](https://github.com/nix-commmunity/dconf2nix/actions)
 
 A convenient converter of [DConf](https://wiki.gnome.org/Projects/dconf) files to Nix, as expected by [Home Manager's dconf settings](https://rycee.gitlab.io/home-manager/options.html#opt-dconf.settings). So you can Nixify your [Gnome Shell](https://wiki.gnome.org/Projects/GnomeShell) configuration :wink:
 
@@ -204,13 +204,13 @@ If you are using the Home Manager module for NixOS you can import it like so:
 $ nix run nixpkgs#dconf2nix -- --version
 <<< DCONF2NIX >>>
 Version: 0.0.12
-Maintainer: Gabriel Volpe (https://gvolpe.com)
-Source code: https://github.com/gvolpe/dconf2nix
+Maintainers: Nix Community
+Source code: https://github.com/nix-commmunity/dconf2nix
 ```
 
 To build it from source, it is recommend to use [Cachix](https://app.cachix.org/cache/dconf2nix) to reduce the compilation time.
 
-Have a look at the [latest releases](https://github.com/gvolpe/dconf2nix/releases) for more information.
+Have a look at the [latest releases](https://github.com/nix-commmunity/dconf2nix/releases) for more information.
 
 ### Troubleshooting
 
