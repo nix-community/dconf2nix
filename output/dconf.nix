@@ -384,11 +384,11 @@ with lib.hm.gvariant;
     };
 
     "issue28/org/gnome/clocks" = {
-      world-clocks = [ {
-        location = mkVariant (mkTuple [ (mkUint32 2) (mkVariant (mkTuple [ "Houston" "KHOU" false [ (mkTuple [ 0.5172719570598194 (-1.6629933445314968) ]) ] [ (mkTuple [ 0.5172719570598194 (-1.6629933445314968) ]) ] ])) ]);
-      } {
-        location = mkVariant (mkTuple [ (mkUint32 2) (mkVariant (mkTuple [ "Singapore" "WSAP" true [ (mkTuple [ 2.3852838928353343e-2 1.8136879868485383 ]) ] [ (mkTuple [ 2.2568084612667797e-2 1.8126262332513803 ]) ] ])) ]);
-      } ];
+      world-clocks = [ [
+        (mkDictionaryEntry ["location" (mkVariant (mkTuple [ (mkUint32 2) (mkVariant (mkTuple [ "Houston" "KHOU" false [ (mkTuple [ 0.5172719570598194 (-1.6629933445314968) ]) ] [ (mkTuple [ 0.5172719570598194 (-1.6629933445314968) ]) ] ])) ]))])
+      ] [
+        (mkDictionaryEntry ["location" (mkVariant (mkTuple [ (mkUint32 2) (mkVariant (mkTuple [ "Singapore" "WSAP" true [ (mkTuple [ 2.3852838928353343e-2 1.8136879868485383 ]) ] [ (mkTuple [ 2.2568084612667797e-2 1.8126262332513803 ]) ] ])) ]))])
+      ] ];
     };
 
     "org/gnome/shell/extensions/arcmenu" = {

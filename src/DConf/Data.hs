@@ -24,7 +24,8 @@ data Value = S Text         -- String
            | Ty String Value -- Typed value
            | L [Value]      -- List of values
            | V Value        -- Variant
-           | R [(Text,Value)] -- Record
+           | R [(Value,Value)] -- Dictionary
+           | DE Value Value -- Dictionary entry
            | Json Text      -- Json value
            deriving (Eq, Show)
 

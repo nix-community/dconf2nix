@@ -10,8 +10,8 @@ with lib.hm.gvariant;
       doubletime = mkUint32 7;
       empty-arr = mkArray "(dd)" [];
       empty-array-dict = mkArray "{sv}" [];
-      empty-dict = mkTyped "a{sv}" {
-      };
+      empty-dict = mkTyped "a{sv}" [
+      ];
       just-empty-str = mkTyped "ms" "";
       just-str = mkTyped "ms" "hello";
       ui32 = mkUint32 7;

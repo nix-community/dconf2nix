@@ -61,6 +61,7 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   needsParen (Ty "as" (L [])) = False
   needsParen (Ty _ _) = True
   needsParen (V _) = True
+  needsParen (DE _ _) = True
   needsParen _ = False
 
   renderItem :: Value -> T.Text
@@ -90,7 +91,8 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (Json v) =
     "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"
   renderValue' (R kvs) =
-    "{\n" <> mconcat (fmap (\(k,v) -> mkSpaces 8 <> k <> " = " <> renderValue' v <> ";\n") kvs) <> mkSpaces 6 <> "}"
+    "[\n" <> mconcat (fmap (\(k,v) -> mkSpaces 8 <> renderItem (DE k v) <> "\n") kvs) <> mkSpaces 6 <> "]"
+  renderValue' (DE k v) = "mkDictionaryEntry [" <> renderItem k <> " " <> renderItem v <> "]"
 
 renderString :: T.Text -> T.Text
 renderString text = "\"" <> escaped <> "\""

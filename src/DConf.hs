@@ -117,9 +117,13 @@ vString = T.pack <$> (single <|> double)
   inputs :: [Char] -> Parsec Text () String
   inputs extra = catMaybes <$> (many $ qchar <|> (Just <$> lchar extra))
 
+baseValue :: Parsec Text () Value
+baseValue = choice
+  [vBool, vInt, vDouble, vUint32, vInt64, fmap S vString]
+
 value :: Parsec Text () Value
 value = choice
-  [vTyped, vRecord, vList, vJson, vBool, vInt, vDouble, vUint32, vInt64, fmap S vString, vTuple, vVariant]
+  [vTyped, vDictDictEntry, vList, vJson, baseValue, vTuple, vVariant]
 
 vVariant :: Parsec Text () Value
 vVariant = fmap V $ bracket "<" ">" value
@@ -165,13 +169,30 @@ vJson = try $ bracket "'" "'" $ do
   js <- many (charExcept "\r\n\'")
   pure $ Json (T.pack js)
 
-vRecord :: Parsec Text () Value
-vRecord = fmap R $ bracket "{" "}" $ commaSeparated $ do
-  k <- vString
-  _ <- char ':'
-  _ <- spaces
-  v <- value
-  return (k,v)
+-- | Parses a dictionary (@{k1: v1, k2: v2}@) or single dictionary entry (@{k, v}@)
+vDictDictEntry :: Parsec Text () Value
+vDictDictEntry = bracket "{" "}" $ do
+  (do
+    { 
+    ; k <- baseValue
+    ; isEntry <- (char ':' *> pure False) <|> (char ',' *> pure True)
+    ; _ <- spaces
+    ; v <- value
+    ; if isEntry then
+        return (DE k v)
+      else do
+        kvs <- (comma *> commaSeparated kvPair) <|> return []
+        return (R ((k,v):kvs))
+    }
+    <|> return (R []))
+
+  where
+    kvPair = do
+      k <- baseValue
+      _ <- char ':'
+      _ <- spaces
+      v <- value
+      return (k,v)
 
 dconfHeader :: Parsec Text () Header
 dconfHeader = bracket "[" "]" $ do

@@ -1,0 +1,9 @@
+[dict]
+dict={1: "one", 2: "two", 3: "three"}
+empty-dict=@a{sv} {}
+empty-arr-dict=@a{sv} []
+dict-entry={1, "one"}
+entry-arr=[{1, "one"}, {2, "two"}, {3, "three"}]
+nested=[{'org.gnome.Contacts.desktop': <{'position': <0>}>, 'org.gnome.Maps.desktop': <{'position': <1>}>, 'org.gnome.Calculator.desktop': <{'position': <2>}>}]
+alarms=[{'name': <''>, 'id': <'39d68c6c283032ad5549c9bd5f5161c4'>, 'active': <false>, 'hour': <17>, 'minute': <50>, 'days': <@ai []>, 'snooze_minutes': <10>, 'ring_minutes': <5>}]
+timers=[{'duration': <300>, 'name': <''>}]

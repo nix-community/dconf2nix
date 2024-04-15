@@ -57,6 +57,16 @@ dconf2nixCustomNestedRoot =
       root   = Root "org/gnome/desktop/peripherals"
   in  baseProperty input output root
 
+dconf2nixDict :: Property
+dconf2nixDict =
+  let input  = "data/dict.settings"
+      output = "output/dict.nix"
+      root   = Root T.empty
+  in  baseProperty input output root
+
+prop_dconf2nix_dict :: Property
+prop_dconf2nix_dict = withTests (10 :: TestLimit) dconf2nixDict
+
 dconf2nixIndexer :: Property
 dconf2nixIndexer =
   let input  = "data/indexer.settings"
