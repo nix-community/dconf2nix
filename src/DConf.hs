@@ -61,15 +61,12 @@ vInt = try $ do
   n <- many1 digit <* notFollowedBy (char '.')
   pure . I $ read (s <> n)
 
-vUint32 :: Parsec Text () Value
-vUint32 = try $ do
-  many1 (string "uint32 ") >> spaces
-  I32 . read <$> many1 digit
-
-vInt64 :: Parsec Text () Value
-vInt64 = try $ do
-  many1 (string "int64 ") >> spaces
-  I64 . read <$> many1 digit
+vCast :: Parsec Text () Value
+vCast = do
+  ty <- choice $ map (\ty -> string' (castName ty) *> pure ty) (enumFrom (toEnum 0))
+  _ <- spaces
+  v <- value
+  return (C ty v)
 
 vTuple :: Parsec Text () Value
 vTuple = T <$> (bracket "(" ")" $ sepOneEndBy value comma)
@@ -119,11 +116,11 @@ vString = T.pack <$> (single <|> double)
 
 baseValue :: Parsec Text () Value
 baseValue = choice
-  [vBool, vInt, vDouble, vUint32, vInt64, fmap S vString]
+  [vBool, vInt, vDouble, fmap S vString]
 
 value :: Parsec Text () Value
 value = choice
-  [vTyped, vDictDictEntry, vList, vJson, baseValue, vTuple, vVariant]
+  [vTyped, vDictDictEntry, vList, vJson, baseValue, vCast, vTuple, vVariant]
 
 vVariant :: Parsec Text () Value
 vVariant = fmap V $ bracket "<" ">" value

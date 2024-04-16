@@ -49,13 +49,29 @@ renderEntry (Entry h c) root =
       close = mkSpaces 4 <> "};\n\n"
   in  Nix $ header <> T.pack body <> close
 
+-- | Converts type to home-manager constructor function name.
+-- | Most constructors will prefix the value with type annotation, we have to avoid those that don’t or we might get ambiguous expressions.
+constrName :: Ty -> Maybe String
+constrName TyObjectpath = Just "mkObjectpath"
+constrName TyByte = Just "mkUchar"
+constrName TyInt16 = Just "mkInt16"
+constrName TyUint16 = Just "mkUint16"
+-- Displays value as is.
+constrName TyInt32 = Nothing
+constrName TyUint32 = Just "mkUint32"
+constrName TyInt64 = Just "mkInt64"
+constrName TyUint64 = Just "mkUint64"
+-- Displays value as is.
+constrName TyDouble = Nothing
+constrName _ = Nothing
+
 renderValue :: Value -> Nix
 renderValue raw = Nix $ renderValue' raw <> ";"
  where
   needsParen :: Value -> Bool
   needsParen (I x) = x < 0
   needsParen (D x) = x < 0
-  needsParen (I32 _) = True
+  needsParen (C _ _) = True
   needsParen (T _) = True
   -- will be rendered as @[]@
   needsParen (Ty "as" (L [])) = False
@@ -77,8 +93,11 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (B   v) = T.toLower . T.pack $ show v
   renderValue' (I   v) = T.pack $ show v
   renderValue' (D   v) = T.pack $ show v
-  renderValue' (I32 v) = "mkUint32 " <> T.pack (show v)
-  renderValue' (I64 v) = "mkInt64 " <> T.pack (show v)
+  renderValue' (C ty v) =
+    case constrName ty of
+      Just constr -> T.pack constr <> " " <> renderItem v
+      -- TODO: add mkCast to h-m
+      Nothing -> "mkCast " <> T.pack (show (castName ty)) <> " " <> renderItem v
   renderValue' (L  xs) = renderList xs
   renderValue' (T  xs) = "mkTuple " <> renderList xs
   -- In home-manager, @mkValue []@ emits @\@as []@

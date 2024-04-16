@@ -14,11 +14,38 @@ newtype Root = Root Text deriving (Eq, Show)
 
 newtype Key = Key Text deriving (Eq, Ord, Show)
 
+data Ty = TyBoolean
+        | TyByte
+        | TyInt16
+        | TyUint16
+        | TyInt32
+        | TyUint32
+        | TyHandle
+        | TyInt64
+        | TyUint64
+        | TyDouble
+        | TyString
+        | TyObjectpath
+         deriving (Eq, Show, Enum)
+
+castName :: Ty -> String
+castName TyBoolean = "boolean"
+castName TyByte = "byte"
+castName TyInt16 = "int16"
+castName TyUint16 = "uint16"
+castName TyInt32 = "int32"
+castName TyUint32 = "uint32"
+castName TyHandle = "handle"
+castName TyInt64 = "int64"
+castName TyUint64 = "uint64"
+castName TyDouble = "double"
+castName TyString = "string"
+castName TyObjectpath = "objectpath"
+
 data Value = S Text         -- String
            | B Bool         -- Bool
            | I Int          -- Int
-           | I32 Int        -- Int32
-           | I64 Int        -- Int64
+           | C Ty Value     -- Cast
            | D Double       -- Double
            | T [Value]      -- Tuple of n-arity
            | Ty String Value -- Typed value
