@@ -91,6 +91,7 @@ renderValue raw = Nix $ renderValue' raw <> ";"
 
   renderValue' (S   v) = renderString v
   renderValue' (B   v) = T.toLower . T.pack $ show v
+  renderValue' (No   ) = error "Standalone nothing not supported"
   renderValue' (I   v) = T.pack $ show v
   renderValue' (D   v) = T.pack $ show v
   renderValue' (C ty v) =
@@ -102,6 +103,7 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (T  xs) = "mkTuple " <> renderList xs
   -- In home-manager, @mkValue []@ emits @\@as []@
   renderValue' (Ty "as" (L [])) = renderList []
+  renderValue' (Ty ('m':t) No) = "mkNothing " <> T.pack (show t)
   -- In home-manager, arrays are always typed when using @mkArray@.
   renderValue' (Ty ('a':t) (L v)) = "mkArray " <> T.pack (show t) <> " " <> renderList v
   -- TODO: add mkTyped to h-m

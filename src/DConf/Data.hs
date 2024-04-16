@@ -44,6 +44,7 @@ castName TyObjectpath = "objectpath"
 
 data Value = S Text         -- String
            | B Bool         -- Bool
+           | No             -- Nothing case of Maybe
            | I Int          -- Int
            | C Ty Value     -- Cast
            | D Double       -- Double

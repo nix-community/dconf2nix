@@ -47,6 +47,9 @@ sepOneEndBy p sep =
 vBool :: Parsec Text () Value
 vBool = B False <$ string "false" <|> B True <$ string "true"
 
+vNothing :: Parsec Text () Value
+vNothing = No <$ string "nothing"
+
 vDouble :: Parsec Text () Value
 vDouble = try $ do
   s <- option "" $ string "-"
@@ -120,7 +123,7 @@ baseValue = choice
 
 value :: Parsec Text () Value
 value = choice
-  [vTyped, vDictDictEntry, vList, vJson, baseValue, vCast, vTuple, vVariant]
+  [vTyped, vDictDictEntry, vList, vJson, baseValue, vCast, vNothing, vTuple, vVariant]
 
 vVariant :: Parsec Text () Value
 vVariant = fmap V $ bracket "<" ">" value

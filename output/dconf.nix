@@ -400,5 +400,14 @@ with lib.hm.gvariant;
       reminders-snoozed = [ "=" ];
     };
 
+    "org/gnome/Tetravex" = {
+      saved-game = mkNothing "(yyda(yyyyyyyy)ua(yyyyu))";
+    };
+
+    "org/gnome/evince" = {
+      document-directory = mkNothing "s";
+      pictures-directory = mkNothing "s";
+    };
+
   };
 }

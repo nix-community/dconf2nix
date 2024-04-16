@@ -319,3 +319,10 @@ recently-installed-apps=['RollerCoaster Tycoon 3 Platinum!.desktop', 'RollerCoas
 
 [org/gnome/evolution-data-server/calendar/list-of-equal]
 reminders-snoozed=['=']
+
+[org/gnome/Tetravex]
+saved-game=@m(yyda(yyyyyyyy)ua(yyyyu)) nothing
+
+[org/gnome/evince]
+document-directory=@ms nothing
+pictures-directory=@ms nothing
