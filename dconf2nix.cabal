@@ -40,7 +40,6 @@ test-Suite dconf2nix-tests
                      , dconf2nix
                      , hedgehog
                      , parsec
-                     , template-haskell
                      , text
   default-language:     Haskell2010
   ghc-options:         -Wall -threaded -with-rtsopts -N

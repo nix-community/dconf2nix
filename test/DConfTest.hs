@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, TemplateHaskell #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module DConfTest
   ( dconfParserTests
@@ -16,9 +16,6 @@ import           Text.Parsec                    ( runParser )
 -- | No need to repeat tests that do not use generator.
 runOnce :: Property -> Property
 runOnce = withTests 1
-
-prop_simple_parser :: Property
-prop_simple_parser = runOnce simpleParser
 
 simpleParser :: Property
 simpleParser =
@@ -40,4 +37,7 @@ testOutput = Entry
   }
 
 dconfParserTests :: Group
-dconfParserTests = $$(discover)
+dconfParserTests = Group "Parser tests"
+  [
+    ("simpleParser", runOnce simpleParser)
+  ]
