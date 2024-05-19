@@ -89,8 +89,8 @@ prop_dconf2nix_indexer = withTests (10 :: TestLimit) dconf2nixIndexer
 
 dconf2nixNegative :: Property
 dconf2nixNegative =
-  let input  = "data/negative.settings"
-      output = "output/negative.nix"
+  let input  = "data/numbers.settings"
+      output = "output/numbers.nix"
       root   = Root T.empty
   in  baseProperty input output root
 

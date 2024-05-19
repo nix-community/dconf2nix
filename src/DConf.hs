@@ -53,19 +53,36 @@ vBool = B False <$ string "false" <|> B True <$ string "true"
 vNothing :: Parsec Text () Value
 vNothing = No <$ string "nothing"
 
+
+numSign :: Num a => Parsec Text () a
+numSign =
+  (pure (-1) <* string "-")
+  <|> (pure 1 <* string "+")
+  <|> pure 1
+
 vDouble :: Parsec Text () Value
 vDouble = try $ do
-  s <- option "" $ string "-"
+  s <- numSign
   n <- many1 digit
   d <- string "."
   e <- many1 (digit <|> oneOf "eEdD-")
-  pure . D $ read (s <> n <> d <> e)
+  pure . D $ s * read (n <> d <> e)
 
 vInt :: Parsec Text () Value
 vInt = try $ do
-  s <- option "" $ string "-"
-  n <- many1 digit <* notFollowedBy (char '.')
-  pure . I $ read (s <> n)
+  s <- numSign
+  (base, digitParser) <- prefix
+  n <- (many1 digitParser <* notFollowedBy (char '.'))
+    -- There was only a lone zero digit, already consumed by the octal prefix.
+    <|> (if base == 8 then pure [0] else fail "Not a number")
+  pure . I $ s * digitsToNum base n
+ where
+  prefix =
+    ((pure (16, fromHexDigit <$> hexDigit) <* (string' "0x" <|> string' "0X"))
+      -- @notFollowedBy@ to prevent ambiguity with @vDouble@.
+      <|> (pure (8, fromOctDigit <$> octDigit) <* (string' "0" <* notFollowedBy (char '.')))
+      <|> (pure (10, fromDecDigit <$> digit)))
+
 
 vCast :: Parsec Text () Value
 vCast = do
@@ -102,33 +119,40 @@ vString = T.pack <$> (single <|> double)
   lchar :: [Char] -> Parsec Text () Char
   lchar extra = charExcept $ "\r\n\\" <> extra
 
-  fromHexDigit :: Char -> Int
-  fromHexDigit n | inRange ('A', 'F') n = ord n - ord 'A' + 0xA
-  fromHexDigit n | inRange ('a', 'f') n = ord n - ord 'a' + 0xA
-  fromHexDigit n | inRange ('0', '9') n = ord n - ord '0'
-  fromHexDigit n = error $ "Expected a hexadecimal digit, '" ++ n : "' given"
-
-  hexNum :: Int -> Parsec Text () Int
-  hexNum l = do
-    digits <- replicateM l (fromHexDigit <$> hexDigit)
-    return $ foldl (\acc d -> 16 * acc + d) 0 digits
-
   qchar :: Parsec Text () (Maybe Char)
   qchar = do
     _ <- char '\\'
     (
       -- Unicode escapes of the form `\uxxxx` and `\Uxxxxxxxx` are supported, in hexadecimal.
-      (char 'u' *> (Just <$> (chr <$> hexNum 4)))
-      <|> (char 'U' *> (Just <$> (chr <$> hexNum 8)))
+      (char 'u' *> (Just <$> (chr <$> hexNumFix 4)))
+      <|> (char 'U' *> (Just <$> (chr <$> hexNumFix 8)))
       <|> commonEscapes)
 
   inputs :: [Char] -> Parsec Text () String
   inputs extra = catMaybes <$> (many $ qchar <|> (Just <$> lchar extra))
 
+fromDecDigit :: Char -> Int
+fromDecDigit n | inRange ('0', '9') n = ord n - ord '0'
+fromDecDigit n = error $ "Expected a decimal digit, '" ++ n : "' given"
+
+fromHexDigit :: Char -> Int
+fromHexDigit n | inRange ('A', 'F') n = ord n - ord 'A' + 0xA
+fromHexDigit n | inRange ('a', 'f') n = ord n - ord 'a' + 0xA
+fromHexDigit n | inRange ('0', '9') n = ord n - ord '0'
+fromHexDigit n = error $ "Expected a hexadecimal digit, '" ++ n : "' given"
 
 fromOctDigit :: Char -> Int
 fromOctDigit n | inRange ('0', '7') n = ord n - ord '0'
 fromOctDigit n = error $ "Expected an octal digit, '" ++ n : "' given"
+
+-- | Parses a hexadecimal number of precisely @l@ digits.
+hexNumFix :: Int -> Parsec Text () Int
+hexNumFix l = do
+  digits <- replicateM l (fromHexDigit <$> hexDigit)
+  return $ digitsToNum 16 digits
+
+digitsToNum :: Int -> [Int] -> Int
+digitsToNum base = foldl (\acc d -> base * acc + d) 0
 
 -- | Parses an octal number between 1 and @maxlen@ digits.
 octNumMax :: Int -> Parsec Text () Int

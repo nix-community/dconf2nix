@@ -173,6 +173,9 @@ initial-size=(890, 550)
 maximized=false
 sidebar-width=189
 
+[org/gnome/settings-daemon/plugins/color]
+night-light-last-coordinates=(43.684199280057591, -79.347200000000001)
+
 [org/gnome/settings-daemon/plugins/media-keys]
 custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']
 
@@ -296,3 +299,6 @@ foo_bar='test'
 
 [com/github/wwmm/easyeffects/streamoutputs/compressor#0]
 sidechain-input-device='alsa_input.platform-snd_aloop.0.analog-stereo'
+
+[org/gnome/gnome-commander/preferences/general]
+file-list-tabs=[('file:///home/alice', byte 0x00, byte 0x01, false, false), ('file:///home/alice', 0x01, 0x01, false, false)]

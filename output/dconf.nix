@@ -220,6 +220,10 @@ with lib.hm.gvariant;
       sidebar-width = 189;
     };
 
+    "org/gnome/settings-daemon/plugins/color" = {
+      night-light-last-coordinates = mkTuple [ 43.68419928005759 (-79.3472) ];
+    };
+
     "org/gnome/settings-daemon/plugins/media-keys" = {
       custom-keybindings = [ "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/" ];
     };
@@ -372,6 +376,10 @@ with lib.hm.gvariant;
 
     "com/github/wwmm/easyeffects/streamoutputs/compressor#0" = {
       sidechain-input-device = "alsa_input.platform-snd_aloop.0.analog-stereo";
+    };
+
+    "org/gnome/gnome-commander/preferences/general" = {
+      file-list-tabs = [ (mkTuple [ "file:///home/alice" (mkUchar 0) (mkUchar 1) false false ]) (mkTuple [ "file:///home/alice" 1 1 false false ]) ];
     };
 
   };
