@@ -1,5 +1,5 @@
 {
-  compiler ? "ghc964",
+  compiler ? import ./ghc-version.nix,
 }:
 
 let

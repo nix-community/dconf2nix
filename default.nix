@@ -1,6 +1,6 @@
 {
   packages ? import nix/pkgs.nix { inherit compiler; },
-  compiler ? "ghc964",
+  compiler ? import nix/ghc-version.nix,
 }:
 
 let
