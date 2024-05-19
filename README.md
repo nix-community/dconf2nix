@@ -10,7 +10,7 @@ A convenient converter of [dconf](https://gitlab.gnome.org/GNOME/dconf) files to
 * [Run](#run)
   * [Custom root](#custom-root)
 * [Supported types](#supported-types)
-* [Gnome Shell configuration](#gnome-shell-configuration)
+* [GNOME Shell configuration](#gnome-shell-configuration)
 * [Installation](#installation)
 * [Troubleshooting](#troubleshooting)
 * [Development](#development)
@@ -146,7 +146,7 @@ For now, only types supported by Home Manager as specified [here](https://github
 
 Due to the lack of support, `dconf2nix` parses dictionaries and list of variants as simple strings to avoid failing to parse a file and retain most of the information.
 
-### Gnome Shell configuration
+### GNOME Shell configuration
 
 Once you have your `dconf.nix`, you can import it via Home Manager.
 
