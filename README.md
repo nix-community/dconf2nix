@@ -2,7 +2,7 @@
 
 [![CI Status](https://github.com/nix-commmunity/dconf2nix/workflows/Haskell%20CI/badge.svg)](https://github.com/nix-commmunity/dconf2nix/actions)
 
-A convenient converter of [DConf](https://wiki.gnome.org/Projects/dconf) files to Nix, as expected by [Home Manager's dconf settings](https://rycee.gitlab.io/home-manager/options.html#opt-dconf.settings). So you can Nixify your [Gnome Shell](https://wiki.gnome.org/Projects/GnomeShell) configuration :wink:
+A convenient converter of [dconf](https://gitlab.gnome.org/GNOME/dconf) files to Nix, as expected by [Home Manager's dconf settings](https://rycee.gitlab.io/home-manager/options.xhtml#opt-dconf.settings). So you can Nixify your [GNOME Shell](https://gitlab.gnome.org/GNOME/gnome-shell) configuration :wink:
 
 <!--ts-->
 * [Benchmarks](#benchmarks)
@@ -40,10 +40,10 @@ two-finger-scrolling-enabled=true
 [org/gnome/desktop/input-sources]
 current=uint32 0
 sources=[('xkb', 'us')]
-xkb-options=[' terminate:ctrl_alt_bksp ', ' lv3:ralt_switch ', ' caps:ctrl_modifier ']
+xkb-options=['terminate:ctrl_alt_bksp', 'lv3:ralt_switch', 'caps:ctrl_modifier']
 
 [org/gnome/desktop/screensaver]
-picture-uri=' file:///home/gvolpe/Pictures/nixos.png '
+picture-uri='file:///home/gvolpe/Pictures/nixos.png'
 ```
 
 You will get the following output when running `dconf2nix`:
@@ -168,14 +168,14 @@ If you are using the Home Manager module for NixOS you can import it like so:
 {
   home-manager.users.joe = { pkgs, ... }: {
     imports = [ ./dconf.nix ];
-	# ...
+    # ...
   };
 }
 ```
 
 ### Installation
 
-`dconf2nix` is available on [nixpkgs](https://github.com/NixOS/nixpkgs) and can be installed as any other package. It can also be used without installing. For example, with flakes.
+`dconf2nix` is available in [Nixpkgs](https://github.com/NixOS/nixpkgs) and can be installed as any other package. It can also be used without installing. For example, with flakes.
 
 ```console 
 $ nix run nixpkgs#dconf2nix -- --version
