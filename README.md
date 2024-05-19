@@ -142,9 +142,7 @@ This will generate an output similar to the one below.
 
 ### Supported types
 
-For now, only types supported by Home Manager as specified [here](https://github.com/rycee/home-manager/blob/master/modules/lib/gvariant.nix) are supported. If there's enough interest, we might be able to work on supporting the [full specification](https://docs.gtk.org/glib/gvariant-text.html).
-
-Due to the lack of support, `dconf2nix` parses dictionaries and list of variants as simple strings to avoid failing to parse a file and retain most of the information.
+With some minor spots (e.g. hexadecimal floats), the complete [GVariant text format](https://docs.gtk.org/glib/gvariant-text-format.html) is supported. But because Nix and GVariant data models are quite different, the Nix format can be a bit verbose, relying on constructor functions.
 
 ### GNOME Shell configuration
 
