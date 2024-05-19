@@ -9,7 +9,7 @@ with lib.hm.gvariant;
       at-u = mkTyped "u" 5;
       boolean = mkCast "boolean" true;
       byte = mkUchar 23;
-      double = mkCast "double" 28.2;
+      double = mkCast "double" (mkDouble "28.2");
       doubletime = mkUint32 (mkUint32 7);
       empty-arr = mkArray "(dd)" [];
       empty-array-dict = mkArray "{sv}" [];

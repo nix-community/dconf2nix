@@ -94,7 +94,7 @@ renderValue raw = Nix $ unparens (renderValue' raw) <> ";"
   renderValue' (B   v) = Atomic $ T.toLower . T.pack $ show v
   renderValue' (No   ) = error "Standalone nothing not supported"
   renderValue' (I   v) = (if v < 0 then NeedsParens else Atomic) (T.pack $ show v)
-  renderValue' (D   v) = (if v < 0 then NeedsParens else Atomic) (T.pack $ show v)
+  renderValue' (D   v) = NeedsParens $ "mkDouble \"" <> (T.pack $ show v) <> "\""
   renderValue' (C ty v) =
     NeedsParens $ case constrName ty of
       Just constr -> T.pack constr <> " " <> renderItem v

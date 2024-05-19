@@ -6,17 +6,17 @@ with lib.hm.gvariant;
 {
   dconf.settings = {
     "floats" = {
-      avogadro = 6.283185307179586;
-      basic = 1.2345678901234567e9;
-      negative = -72.02;
-      positive = 72.02;
-      sci = 6.022e23;
-      sci-exp-neg = 7.51e-9;
-      sci-neg = -72020.0;
-      sci-neg-exp-neg = -9.11e-17;
-      zero = 0.0;
-      zero-neg = -0.0;
-      zero-pos = 0.0;
+      avogadro = mkDouble "6.283185307179586";
+      basic = mkDouble "1.2345678901234567e9";
+      negative = mkDouble "-72.02";
+      positive = mkDouble "72.02";
+      sci = mkDouble "6.022e23";
+      sci-exp-neg = mkDouble "7.51e-9";
+      sci-neg = mkDouble "-72020.0";
+      sci-neg-exp-neg = mkDouble "-9.11e-17";
+      zero = mkDouble "0.0";
+      zero-neg = mkDouble "-0.0";
+      zero-pos = mkDouble "0.0";
     };
 
     "int" = {
