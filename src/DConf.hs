@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE KindSignatures, RankNTypes #-}
 
-{- Parser combinators for dconf files (Gnome Shell) -}
+{- Parser combinators for dconf files (GNOME Shell) -}
 module DConf
   ( dconfParser
   )
