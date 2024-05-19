@@ -13,8 +13,12 @@ import           DConf.Data
 import           Hedgehog
 import           Text.Parsec                    ( runParser )
 
+-- | No need to repeat tests that do not use generator.
+runOnce :: Property -> Property
+runOnce = withTests 1
+
 prop_simple_parser :: Property
-prop_simple_parser = withTests (100 :: TestLimit) simpleParser
+prop_simple_parser = runOnce simpleParser
 
 simpleParser :: Property
 simpleParser =

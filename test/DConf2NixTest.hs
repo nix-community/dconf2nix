@@ -14,8 +14,12 @@ import           DConf.Data
 import           Hedgehog
 import           Text.Parsec                    ( runParser )
 
+-- | No need to repeat tests that do not use generator.
+runOnce :: Property -> Property
+runOnce = withTests 1
+
 prop_dconf2nix :: Property
-prop_dconf2nix = withTests (10 :: TestLimit) dconf2nix
+prop_dconf2nix = runOnce dconf2nix
 
 baseProperty :: FilePath -> FilePath -> Root -> Property
 baseProperty i o root = property $ do
@@ -44,10 +48,10 @@ dconf2nixBytestring =
   in  baseProperty input output root
 
 prop_dconf2nix_bytestring :: Property
-prop_dconf2nix_bytestring = withTests (10 :: TestLimit) dconf2nixBytestring
+prop_dconf2nix_bytestring = runOnce dconf2nixBytestring
 
 prop_dconf2nix_custom_root :: Property
-prop_dconf2nix_custom_root = withTests (10 :: TestLimit) dconf2nixCustomRoot
+prop_dconf2nix_custom_root = runOnce dconf2nixCustomRoot
 
 dconf2nixCustomRoot :: Property
 dconf2nixCustomRoot =
@@ -58,7 +62,7 @@ dconf2nixCustomRoot =
 
 prop_dconf2nix_custom_nested_root :: Property
 prop_dconf2nix_custom_nested_root =
-  withTests (10 :: TestLimit) dconf2nixCustomNestedRoot
+  runOnce dconf2nixCustomNestedRoot
 
 dconf2nixCustomNestedRoot :: Property
 dconf2nixCustomNestedRoot =
@@ -75,7 +79,7 @@ dconf2nixDict =
   in  baseProperty input output root
 
 prop_dconf2nix_dict :: Property
-prop_dconf2nix_dict = withTests (10 :: TestLimit) dconf2nixDict
+prop_dconf2nix_dict = runOnce dconf2nixDict
 
 dconf2nixIndexer :: Property
 dconf2nixIndexer =
@@ -85,7 +89,7 @@ dconf2nixIndexer =
   in  baseProperty input output root
 
 prop_dconf2nix_indexer :: Property
-prop_dconf2nix_indexer = withTests (10 :: TestLimit) dconf2nixIndexer
+prop_dconf2nix_indexer = runOnce dconf2nixIndexer
 
 dconf2nixNegative :: Property
 dconf2nixNegative =
@@ -95,7 +99,7 @@ dconf2nixNegative =
   in  baseProperty input output root
 
 prop_dconf2nix_negative :: Property
-prop_dconf2nix_negative = withTests (10 :: TestLimit) dconf2nixNegative
+prop_dconf2nix_negative = runOnce dconf2nixNegative
 
 dconf2nixJson :: Property
 dconf2nixJson =
@@ -105,7 +109,7 @@ dconf2nixJson =
   in  baseProperty input output root
 
 prop_dconf2nix_json :: Property
-prop_dconf2nix_json = withTests (10 :: TestLimit) dconf2nixJson
+prop_dconf2nix_json = runOnce dconf2nixJson
 
 dconf2nixClocks :: Property
 dconf2nixClocks =
@@ -115,7 +119,7 @@ dconf2nixClocks =
   in  baseProperty input output root
 
 prop_dconf2nix_clocks :: Property
-prop_dconf2nix_clocks = withTests (10 :: TestLimit) dconf2nixClocks
+prop_dconf2nix_clocks = runOnce dconf2nixClocks
 
 dconf2nixKeybindings :: Property
 dconf2nixKeybindings =
@@ -125,7 +129,7 @@ dconf2nixKeybindings =
   in  baseProperty input output root
 
 prop_dconf2nix_keybindings :: Property
-prop_dconf2nix_keybindings = withTests (10 :: TestLimit) dconf2nixKeybindings
+prop_dconf2nix_keybindings = runOnce dconf2nixKeybindings
 
 dconf2nixScientificNotation :: Property
 dconf2nixScientificNotation =
@@ -136,7 +140,7 @@ dconf2nixScientificNotation =
 
 prop_dconf2nix_scientific_notation :: Property
 prop_dconf2nix_scientific_notation =
-  withTests (10 :: TestLimit) dconf2nixScientificNotation
+  runOnce dconf2nixScientificNotation
 
 dconf2nixHeaders :: Property
 dconf2nixHeaders =
@@ -147,7 +151,7 @@ dconf2nixHeaders =
 
 prop_dconf2nix_headers :: Property
 prop_dconf2nix_headers =
-  withTests (10 :: TestLimit) dconf2nixHeaders
+  runOnce dconf2nixHeaders
 
 dconf2nixTuples :: Property
 dconf2nixTuples =
@@ -158,7 +162,7 @@ dconf2nixTuples =
 
 prop_dconf2nix_tuples :: Property
 prop_dconf2nix_tuples =
-  withTests (10 :: TestLimit) dconf2nixTuples
+  runOnce dconf2nixTuples
 
 dconf2nixTyped :: Property
 dconf2nixTyped =
@@ -169,7 +173,7 @@ dconf2nixTyped =
 
 prop_dconf2nix_typed :: Property
 prop_dconf2nix_typed =
-  withTests (10 :: TestLimit) dconf2nixTyped
+  runOnce dconf2nixTyped
 
 dconf2nixUnicode :: Property
 dconf2nixUnicode =
@@ -180,7 +184,7 @@ dconf2nixUnicode =
 
 prop_dconf2nix_unicode :: Property
 prop_dconf2nix_unicode =
-  withTests (10 :: TestLimit) dconf2nixUnicode
+  runOnce dconf2nixUnicode
 
 dconf2nixVariant :: Property
 dconf2nixVariant =
@@ -191,7 +195,7 @@ dconf2nixVariant =
 
 prop_dconf2nix_variant :: Property
 prop_dconf2nix_variant =
-  withTests (10 :: TestLimit) dconf2nixVariant
+  runOnce dconf2nixVariant
 
 dconf2nixEmoji :: Property
 dconf2nixEmoji =
@@ -202,7 +206,7 @@ dconf2nixEmoji =
 
 prop_dconf2nix_emoji :: Property
 prop_dconf2nix_emoji =
-  withTests (10 :: TestLimit) dconf2nixEmoji
+  runOnce dconf2nixEmoji
 
 dconf2nixTests :: Group
 dconf2nixTests = $$(discover)
