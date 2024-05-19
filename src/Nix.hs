@@ -67,59 +67,58 @@ constrName TyUint64 = Just "mkUint64"
 constrName TyDouble = Nothing
 constrName _ = Nothing
 
+-- | Distinguishes Nix expression that consist of a self-contained term (e.g. string, list)
+-- from those that need to be wrapped in parentheses to be able to pass them as function
+-- arguments or list items (e.g. function application).
+data NixExpr = NeedsParens T.Text | Atomic T.Text
+
 renderValue :: Value -> Nix
-renderValue raw = Nix $ renderValue' raw <> ";"
+renderValue raw = Nix $ unparens (renderValue' raw) <> ";"
  where
-  needsParen :: Value -> Bool
-  needsParen (I x) = x < 0
-  needsParen (D x) = x < 0
-  needsParen (C _ _) = True
-  needsParen (T _) = True
-  -- will be rendered as @[]@
-  needsParen (Ty "as" (L [])) = False
-  needsParen (Ty _ _) = True
-  needsParen (V _) = True
-  needsParen (DE _ _) = True
-  needsParen _ = False
+  parens :: NixExpr -> T.Text
+  parens (NeedsParens v) = "(" <> v <> ")"
+  parens (Atomic v) = v
+
+  unparens :: NixExpr -> T.Text
+  unparens (NeedsParens v) = v
+  unparens (Atomic v) = v
 
   renderItem :: Value -> T.Text
-  renderItem v | needsParen v = "(" <> renderValue' v <> ")"
-  renderItem v = renderValue' v
+  renderItem v = parens (renderValue' v)
 
-  renderList :: [Value] -> T.Text
-  renderList [] = "[]"
-  renderList xs = let
-    in "[ " <> T.intercalate " " (renderItem <$> xs) <> " ]"
+  renderList :: [Value] -> NixExpr
+  renderList [] = Atomic "[]"
+  renderList xs = Atomic $ "[ " <> T.intercalate " " (renderItem <$> xs) <> " ]"
 
   renderValue' (S   v) = renderString v
-  renderValue' (B   v) = T.toLower . T.pack $ show v
+  renderValue' (B   v) = Atomic $ T.toLower . T.pack $ show v
   renderValue' (No   ) = error "Standalone nothing not supported"
-  renderValue' (I   v) = T.pack $ show v
-  renderValue' (D   v) = T.pack $ show v
+  renderValue' (I   v) = (if v < 0 then NeedsParens else Atomic) (T.pack $ show v)
+  renderValue' (D   v) = (if v < 0 then NeedsParens else Atomic) (T.pack $ show v)
   renderValue' (C ty v) =
-    case constrName ty of
+    NeedsParens $ case constrName ty of
       Just constr -> T.pack constr <> " " <> renderItem v
       -- TODO: add mkCast to h-m
       Nothing -> "mkCast " <> T.pack (show (castName ty)) <> " " <> renderItem v
   renderValue' (L  xs) = renderList xs
-  renderValue' (T  xs) = "mkTuple " <> renderList xs
+  renderValue' (T  xs) = NeedsParens $ "mkTuple " <> parens (renderList xs)
   -- In home-manager, @mkValue []@ emits @\@as []@
   renderValue' (Ty "as" (L [])) = renderList []
-  renderValue' (Ty ('m':t) No) = "mkNothing " <> T.pack (show t)
+  renderValue' (Ty ('m':t) No) = NeedsParens $ "mkNothing " <> T.pack (show t)
   -- In home-manager, arrays are always typed when using @mkArray@.
-  renderValue' (Ty ('a':t) (L v)) = "mkArray " <> T.pack (show t) <> " " <> renderList v
+  renderValue' (Ty ('a':t) (L v)) = NeedsParens $ "mkArray " <> T.pack (show t) <> " " <> parens (renderList v)
   -- TODO: add mkTyped to h-m
-  renderValue' (Ty t v) = "mkTyped " <> T.pack (show t) <> " " <> renderItem v
-  renderValue' (Bs  v) = "mkByteString " <> renderByteString v
-  renderValue' (V   v) = "mkVariant " <> renderItem v
+  renderValue' (Ty t v) = NeedsParens $ "mkTyped " <> T.pack (show t) <> " " <> renderItem v
+  renderValue' (Bs  v) = NeedsParens $ "mkByteString " <> renderByteString v
+  renderValue' (V   v) = NeedsParens $ "mkVariant " <> renderItem v
   renderValue' (Json v) =
-    "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"
+    Atomic $ "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"
   renderValue' (R kvs) =
-    "[\n" <> mconcat (fmap (\(k,v) -> mkSpaces 8 <> renderItem (DE k v) <> "\n") kvs) <> mkSpaces 6 <> "]"
-  renderValue' (DE k v) = "mkDictionaryEntry [" <> renderItem k <> " " <> renderItem v <> "]"
+    Atomic $ "[\n" <> mconcat (fmap (\(k,v) -> mkSpaces 8 <> renderItem (DE k v) <> "\n") kvs) <> mkSpaces 6 <> "]"
+  renderValue' (DE k v) = NeedsParens $ "mkDictionaryEntry [" <> renderItem k <> " " <> renderItem v <> "]"
 
-renderString :: T.Text -> T.Text
-renderString text = "\"" <> escaped <> "\""
+renderString :: T.Text -> NixExpr
+renderString text = Atomic $ "\"" <> escaped <> "\""
   where
     escaped =
       text
