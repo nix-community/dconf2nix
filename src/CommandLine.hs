@@ -1,7 +1,7 @@
 module CommandLine
-  ( FileArgs(..)
+  ( Args(..)
+  , FileArgs(..)
   , Input(..)
-  , StdinArgs(..)
   , runArgs
   )
 where
@@ -12,18 +12,17 @@ import           DConf.Data
 import           Options.Applicative
 import           Paths_dconf2nix                ( version )
 
-data Input = FileInput FileArgs | StdinInput StdinArgs
+data Args = Args
+  { argsRoot :: Root
+  , argsVerbosity :: Verbosity
+  , argsInput :: Input
+  }
+
+data Input = FileInput FileArgs | StdinInput
 
 data FileArgs = FileArgs
   { fileInput :: InputFilePath
   , fileOutput :: OutputFilePath
-  , fileRoot :: Root
-  , fileVerbosity :: Verbosity
-  }
-
-data StdinArgs = StdinArgs
-  { stdinRoot :: Root
-  , stdinVerbosity :: Verbosity
   }
 
 verbosityArgs :: Parser Verbosity
@@ -46,12 +45,9 @@ fileArgs = fmap FileInput $ FileArgs
             "Path to the Nix output file (to be created)"
           )
         )
-    <*> rootArgs
-    <*> verbosityArgs
 
 stdinArgs :: Parser Input
-stdinArgs =
-  StdinInput <$> (StdinArgs <$> rootArgs <*> verbosityArgs)
+stdinArgs = pure StdinInput
 
 versionInfo :: String
 versionInfo = unlines
@@ -72,11 +68,13 @@ versionOpt :: Parser (a -> a)
 versionOpt = infoOption versionInfo
   (long "version" <> short 'v' <> help "Show the current version")
 
-runArgs :: IO Input
+runArgs :: IO Args
 runArgs =
   let
+    args = Args <$> rootArgs <*> verbosityArgs <*> (stdinArgs <|> fileArgs)
+
     opts = info
-      (helper <*> versionOpt <*> (stdinArgs <|> fileArgs))
+      (helper <*> versionOpt <*> args)
       (  fullDesc
       <> progDesc
            "Convert a dconf file into a Nix file, as expected by Home Manager."

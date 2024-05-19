@@ -2,9 +2,9 @@
 
 module Main where
 
-import           CommandLine                    ( FileArgs(..)
+import           CommandLine                    ( Args(..)
+                                                , FileArgs(..)
                                                 , Input(..)
-                                                , StdinArgs(..)
                                                 , runArgs
                                                 )
 import           DConf2Nix                      ( dconf2nixFile
@@ -13,7 +13,7 @@ import           DConf2Nix                      ( dconf2nixFile
 
 main :: IO ()
 main = runArgs >>= \case
-  FileInput (FileArgs i o r v) ->
+  Args r v (FileInput (FileArgs i o)) ->
     dconf2nixFile i o r v
-  StdinInput (StdinArgs r v)   ->
+  Args r v StdinInput   ->
     dconf2nixStdin r v

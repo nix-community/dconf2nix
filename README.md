@@ -105,9 +105,9 @@ Type `--help` for some more information.
 ```shell
 dconf2nix - Nixify dconf configuration files
 
-Usage: dconf2nix [-v|--version] 
-                 [[-r|--root ARG] [--verbose] | (-i|--input ARG)
-                   (-o|--output ARG) [-r|--root ARG] [--verbose]]
+Usage: dconf2nix [-v|--version] [-r|--root ARG] [--verbose]
+                 [(-i|--input ARG) (-o|--output ARG)]
+
   Convert a dconf file into a Nix file, as expected by Home Manager.
 
 Available options:
@@ -117,8 +117,6 @@ Available options:
   --verbose                Verbose mode (debug)
   -i,--input ARG           Path to the dconf file (input)
   -o,--output ARG          Path to the Nix output file (to be created)
-  -r,--root ARG            Custom root path. e.g.: system/locale/
-  --verbose                Verbose mode (debug)
 ```
 
 #### Custom root
