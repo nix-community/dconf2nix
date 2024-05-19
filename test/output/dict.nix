@@ -28,14 +28,14 @@ with lib.hm.gvariant;
       entry-arr = [ (mkDictionaryEntry [1 "one"]) (mkDictionaryEntry [2 "two"]) (mkDictionaryEntry [3 "three"]) ];
       nested = [ [
         (mkDictionaryEntry ["org.gnome.Contacts.desktop" (mkVariant [
-        (mkDictionaryEntry ["position" (mkVariant 0)])
-      ])])
+          (mkDictionaryEntry ["position" (mkVariant 0)])
+        ])])
         (mkDictionaryEntry ["org.gnome.Maps.desktop" (mkVariant [
-        (mkDictionaryEntry ["position" (mkVariant 1)])
-      ])])
+          (mkDictionaryEntry ["position" (mkVariant 1)])
+        ])])
         (mkDictionaryEntry ["org.gnome.Calculator.desktop" (mkVariant [
-        (mkDictionaryEntry ["position" (mkVariant 2)])
-      ])])
+          (mkDictionaryEntry ["position" (mkVariant 2)])
+        ])])
       ] ];
       timers = [ [
         (mkDictionaryEntry ["duration" (mkVariant 300)])

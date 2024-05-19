@@ -73,8 +73,10 @@ constrName _ = Nothing
 data NixExpr = NeedsParens T.Text | Atomic T.Text
 
 renderValue :: Value -> Nix
-renderValue raw = Nix $ unparens (renderValue' raw) <> ";"
+renderValue raw = Nix $ unparens (renderValue' initialIndent raw) <> ";"
  where
+  initialIndent = 6
+
   parens :: NixExpr -> T.Text
   parens (NeedsParens v) = "(" <> v <> ")"
   parens (Atomic v) = v
@@ -83,39 +85,39 @@ renderValue raw = Nix $ unparens (renderValue' raw) <> ";"
   unparens (NeedsParens v) = v
   unparens (Atomic v) = v
 
-  renderItem :: Value -> T.Text
-  renderItem v = parens (renderValue' v)
+  renderItem :: Int -> Value -> T.Text
+  renderItem indent v = parens (renderValue' indent v)
 
-  renderList :: [Value] -> NixExpr
-  renderList [] = Atomic "[]"
-  renderList xs = Atomic $ "[ " <> T.intercalate " " (renderItem <$> xs) <> " ]"
+  renderList :: Int -> [Value] -> NixExpr
+  renderList _indent [] = Atomic "[]"
+  renderList indent xs = Atomic $ "[ " <> T.intercalate " " (renderItem indent <$> xs) <> " ]"
 
-  renderValue' (S   v) = renderString v
-  renderValue' (B   v) = Atomic $ T.toLower . T.pack $ show v
-  renderValue' (No   ) = error "Standalone nothing not supported"
-  renderValue' (I   v) = (if v < 0 then NeedsParens else Atomic) (T.pack $ show v)
-  renderValue' (D   v) = NeedsParens $ "mkDouble \"" <> (T.pack $ show v) <> "\""
-  renderValue' (C ty v) =
+  renderValue' _indent (S   v) = renderString v
+  renderValue' _indent (B   v) = Atomic $ T.toLower . T.pack $ show v
+  renderValue' _indent (No   ) = error "Standalone nothing not supported"
+  renderValue' _indent (I   v) = (if v < 0 then NeedsParens else Atomic) (T.pack $ show v)
+  renderValue' _indent (D   v) = NeedsParens $ "mkDouble \"" <> (T.pack $ show v) <> "\""
+  renderValue' indent (C ty v) =
     NeedsParens $ case constrName ty of
-      Just constr -> T.pack constr <> " " <> renderItem v
+      Just constr -> T.pack constr <> " " <> renderItem indent v
       -- TODO: add mkCast to h-m
-      Nothing -> "mkCast " <> T.pack (show (castName ty)) <> " " <> renderItem v
-  renderValue' (L  xs) = renderList xs
-  renderValue' (T  xs) = NeedsParens $ "mkTuple " <> parens (renderList xs)
+      Nothing -> "mkCast " <> T.pack (show (castName ty)) <> " " <> renderItem indent v
+  renderValue' indent (L  xs) = renderList indent xs
+  renderValue' indent (T  xs) = NeedsParens $ "mkTuple " <> parens (renderList indent xs)
   -- In home-manager, @mkValue []@ emits @\@as []@
-  renderValue' (Ty "as" (L [])) = renderList []
-  renderValue' (Ty ('m':t) No) = NeedsParens $ "mkNothing " <> T.pack (show t)
+  renderValue' indent (Ty "as" (L [])) = renderList indent []
+  renderValue' _indent (Ty ('m':t) No) = NeedsParens $ "mkNothing " <> T.pack (show t)
   -- In home-manager, arrays are always typed when using @mkArray@.
-  renderValue' (Ty ('a':t) (L v)) = NeedsParens $ "mkArray " <> T.pack (show t) <> " " <> parens (renderList v)
+  renderValue' indent (Ty ('a':t) (L v)) = NeedsParens $ "mkArray " <> T.pack (show t) <> " " <> parens (renderList indent v)
   -- TODO: add mkTyped to h-m
-  renderValue' (Ty t v) = NeedsParens $ "mkTyped " <> T.pack (show t) <> " " <> renderItem v
-  renderValue' (Bs  v) = NeedsParens $ "mkByteString " <> renderByteString v
-  renderValue' (V   v) = NeedsParens $ "mkVariant " <> renderItem v
-  renderValue' (Json v) =
-    Atomic $ "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"
-  renderValue' (R kvs) =
-    Atomic $ "[\n" <> mconcat (fmap (\(k,v) -> mkSpaces 8 <> renderItem (DE k v) <> "\n") kvs) <> mkSpaces 6 <> "]"
-  renderValue' (DE k v) = NeedsParens $ "mkDictionaryEntry [" <> renderItem k <> " " <> renderItem v <> "]"
+  renderValue' indent (Ty t v) = NeedsParens $ "mkTyped " <> T.pack (show t) <> " " <> renderItem indent v
+  renderValue' _indent (Bs  v) = NeedsParens $ "mkByteString " <> renderByteString v
+  renderValue' indent (V   v) = NeedsParens $ "mkVariant " <> renderItem indent v
+  renderValue' indent (Json v) =
+    Atomic $ "''\n" <> mkSpaces (indent + 2) <> T.strip v <> "\n" <> mkSpaces indent <> "''"
+  renderValue' indent (R kvs) =
+    Atomic $ "[\n" <> mconcat (fmap (\(k,v) -> mkSpaces (indent + 2) <> renderItem (indent + 2) (DE k v) <> "\n") kvs) <> mkSpaces indent <> "]"
+  renderValue' indent (DE k v) = NeedsParens $ "mkDictionaryEntry [" <> renderItem indent k <> " " <> renderItem indent v <> "]"
 
 renderString :: T.Text -> NixExpr
 renderString text = Atomic $ "\"" <> escaped <> "\""
