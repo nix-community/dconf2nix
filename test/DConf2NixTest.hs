@@ -34,6 +34,7 @@ inputTests =
   , (it "nested") { itRoot = Root "org/gnome/desktop/peripherals" }
   , it "numbers"
   , it "scientific-notation"
+  , it "strings"
   , it "tuples"
   , it "typed"
   , it "unicode"
