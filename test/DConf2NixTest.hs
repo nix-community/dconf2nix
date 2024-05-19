@@ -56,10 +56,12 @@ runOnce = withTests 1
 baseProperty :: FilePath -> FilePath -> Root -> Property
 baseProperty i o root = property $ do
   input  <- evalIO $ T.readFile i
-  output <- evalIO $ T.readFile o
   ref    <- evalIO $ newIORef T.empty
   evalIO $ handler (writer ref) (writer ref) root (entries input)
   result <- evalIO $ readIORef ref
+  -- Uncomment to overwrite the output files.
+  -- evalIO $ T.writeFile o result
+  output <- evalIO $ T.readFile o
   result === output
  where
   entries = runParser (dconfParser Normal) () "<test>"
