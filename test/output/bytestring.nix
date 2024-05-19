@@ -17,6 +17,7 @@ with lib.hm.gvariant;
       nix-dollar = mkByteString ''${"$"}'';
       no-unicode = mkByteString ''u202F'';
       octal = mkByteString ''\3777\1\28\33${"$"}9m8"~\177'';
+      spaces = mkByteString '' foo\n bar '';
     };
 
   };

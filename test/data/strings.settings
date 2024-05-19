@@ -1,3 +1,8 @@
+[strings]
+escapes-double="\\\a\b\f\n\r\t\v\c\d\e\"'\'"
+escapes-single='\\\a\b\f\n\r\t\v\c\d\e\""\''
+spaces=" foo\n bar "
+
 [org/gnome/evince]
 document-directory="@ms 'file:///home/user/Downloads'"
 

@@ -12,3 +12,4 @@ more'
 nix-dollar=b"$"
 no-unicode=b"\u202F"
 octal=b'\7777\1\28\33\449\555\8\42\176\177'
+spaces=b' foo\n bar '

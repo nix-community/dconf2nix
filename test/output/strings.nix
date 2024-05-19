@@ -5,6 +5,12 @@ with lib.hm.gvariant;
 
 {
   dconf.settings = {
+    "strings" = {
+      escapes-double = "\\\n	cde\"''";
+      escapes-single = "\\\n	cde\"\"'";
+      spaces = " foo\n bar ";
+    };
+
     "org/gnome/evince" = {
       document-directory = "@ms 'file:///home/user/Downloads'";
     };
