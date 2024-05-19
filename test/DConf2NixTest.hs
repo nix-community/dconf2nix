@@ -36,6 +36,16 @@ dconf2nix =
       root   = Root T.empty
   in  baseProperty input output root
 
+dconf2nixBytestring :: Property
+dconf2nixBytestring =
+  let input  = "data/bytestring.settings"
+      output = "output/bytestring.nix"
+      root   = Root T.empty
+  in  baseProperty input output root
+
+prop_dconf2nix_bytestring :: Property
+prop_dconf2nix_bytestring = withTests (10 :: TestLimit) dconf2nixBytestring
+
 prop_dconf2nix_custom_root :: Property
 prop_dconf2nix_custom_root = withTests (10 :: TestLimit) dconf2nixCustomRoot
 

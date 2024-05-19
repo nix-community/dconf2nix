@@ -2,6 +2,7 @@ module DConf.Data where
 
 import           Data.Map                       ( Map )
 import           Data.Text                      ( Text )
+import           Data.Word                      ( Word8 )
 
 newtype InputFilePath = InputFilePath FilePath deriving Show
 newtype OutputFilePath = OutputFilePath FilePath deriving Show
@@ -51,6 +52,7 @@ data Value = S Text         -- String
            | T [Value]      -- Tuple of n-arity
            | Ty String Value -- Typed value
            | L [Value]      -- List of values
+           | Bs [Word8]     -- Byte string (special syntax for array of bytes)
            | V Value        -- Variant
            | R [(Value,Value)] -- Dictionary
            | DE Value Value -- Dictionary entry

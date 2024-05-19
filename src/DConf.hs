@@ -7,12 +7,14 @@ module DConf
   )
 where
 
+import           Codec.Binary.UTF8.String       ( encodeChar )
 import           Control.Monad                  ( replicateM )
 import           Data.Ix                        ( inRange )
 import qualified Data.Map                      as Map
 import           Data.Maybe                     ( catMaybes )
 import           Data.Text                      ( Text )
 import qualified Data.Text                     as T
+import           Data.Word                      ( Word8 )
 import           DConf.Data
 import           Text.Parsec
 import           Data.Char
@@ -22,7 +24,8 @@ charExcept cc = satisfy $ \c -> not $ elem c cc
 
 bracket :: String -> String -> Parsec Text () a -> Parsec Text () a
 bracket s1 s2 pa = do
-  _ <- string s1
+  -- Avoid consuming prefix to prevent conflict between b' and boolean cast.
+  _ <- string' s1
   a <- pa
   _ <- string s2
   return a
@@ -74,6 +77,22 @@ vCast = do
 vTuple :: Parsec Text () Value
 vTuple = T <$> (bracket "(" ")" $ sepOneEndBy value comma)
 
+-- | Escape sequences common to strings and bytestrings
+commonEscapes :: Parsec Text () (Maybe Char)
+commonEscapes =
+  -- The usual control sequence escapes `\a`, `\b`, `\f`, `\n`, `\r`, `\t` and `\v` are supported.
+  (char 'a' *> pure (Just '\a'))
+  <|> (char 'b' *> pure (Just '\b'))
+  <|> (char 'f' *> pure (Just '\f'))
+  <|> (char 'n' *> pure (Just '\n'))
+  <|> (char 'r' *> pure (Just '\r'))
+  <|> (char 't' *> pure (Just '\t'))
+  <|> (char 'v' *> pure (Just '\v'))
+  -- Additionally, a `\` before a newline character causes the newline to be ignored.
+  <|> (char '\n' *> pure Nothing)
+  -- Finally, any other character following `\` is copied literally (for example, `\"` or `\\`)
+  <|> (Just <$> anyChar)
+
 vString :: Parsec Text () Text
 vString = T.pack <$> (single <|> double)
  where
@@ -101,21 +120,46 @@ vString = T.pack <$> (single <|> double)
       -- Unicode escapes of the form `\uxxxx` and `\Uxxxxxxxx` are supported, in hexadecimal.
       (char 'u' *> (Just <$> (chr <$> hexNum 4)))
       <|> (char 'U' *> (Just <$> (chr <$> hexNum 8)))
-      -- The usual control sequence escapes `\a`, `\b`, `\f`, `\n`, `\r`, `\t` and `\v` are supported.
-      <|> (char 'a' *> pure (Just '\a'))
-      <|> (char 'b' *> pure (Just '\b'))
-      <|> (char 'f' *> pure (Just '\f'))
-      <|> (char 'n' *> pure (Just '\n'))
-      <|> (char 'r' *> pure (Just '\r'))
-      <|> (char 't' *> pure (Just '\t'))
-      <|> (char 'v' *> pure (Just '\v'))
-      -- Additionally, a `\` before a newline character causes the newline to be ignored.
-      <|> (char '\n' *> pure Nothing)
-      -- Finally, any other character following `\` is copied literally (for example, `\"` or `\\`)
-      <|> (Just <$> anyChar))
+      <|> commonEscapes)
 
   inputs :: [Char] -> Parsec Text () String
   inputs extra = catMaybes <$> (many $ qchar <|> (Just <$> lchar extra))
+
+
+fromOctDigit :: Char -> Int
+fromOctDigit n | inRange ('0', '7') n = ord n - ord '0'
+fromOctDigit n = error $ "Expected an octal digit, '" ++ n : "' given"
+
+-- | Parses an octal number between 1 and @maxlen@ digits.
+octNumMax :: Int -> Parsec Text () Int
+octNumMax maxLen = octNum' 0 maxLen
+ where
+  octNum' :: Int -> Int -> Parsec Text () Int
+  octNum' acc 0 = return acc
+  octNum' acc l = do
+    d <- fromOctDigit <$> octDigit
+    let acc' = acc * 8 + d
+    octNum' acc' (l - 1) <|> octNum' acc' 0
+
+vByteString :: Parsec Text () Value
+vByteString = Bs <$> (single <|> double)
+ where
+  single = bracket "b'" "'" $ bs "'"
+  double = bracket "b\"" "\"" $ bs "\""
+
+  lchar :: [Char] -> Parsec Text () [Word8]
+  lchar extra = encodeChar <$> (charExcept $ "\r\n\\" <> extra)
+
+  qchar :: Parsec Text () [Word8]
+  qchar = do
+    _ <- char '\\'
+    (
+      -- Octal number (wrapped to 0-255)
+      ((:[]) . fromIntegral . toInteger <$> octNumMax 3)
+      <|> (maybe [] encodeChar <$> commonEscapes))
+
+  bs :: [Char] -> Parsec Text () [Word8]
+  bs extra = concat <$> (many $ qchar <|> lchar extra)
 
 baseValue :: Parsec Text () Value
 baseValue = choice
@@ -123,7 +167,7 @@ baseValue = choice
 
 value :: Parsec Text () Value
 value = choice
-  [vTyped, vDictDictEntry, vList, vJson, baseValue, vCast, vNothing, vTuple, vVariant]
+  [vTyped, vDictDictEntry, vList, vJson, baseValue, vByteString, vCast, vNothing, vTuple, vVariant]
 
 vVariant :: Parsec Text () Value
 vVariant = fmap V $ bracket "<" ">" value

@@ -409,5 +409,9 @@ with lib.hm.gvariant;
       pictures-directory = mkNothing "s";
     };
 
+    "org/gnome/easytag" = {
+      default-path = mkByteString ''/home/alice/Music'';
+    };
+
   };
 }

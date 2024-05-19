@@ -1,0 +1,14 @@
+[bytestring]
+basic-double=b"foo"
+basic-single=b'bar'
+empty-double=b""
+empty-single=b''
+escapes-double=b"\\\a\b\f\n\r\t\v\c\d\e\"'\'"
+escapes-single=b'\\\a\b\f\n\r\t\v\c\d\e\""\''
+line-continues-double=b"start \
+more"
+line-continues-single=b'start \
+more'
+nix-dollar=b"$"
+no-unicode=b"\u202F"
+octal=b'\7777\1\28\33\449\555\8\42\176\177'

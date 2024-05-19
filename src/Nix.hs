@@ -9,9 +9,11 @@ module Nix
   )
 where
 
+import           Data.Char                      ( chr, ord )
 import           Data.Function                  ( (&) )
 import qualified Data.Map                      as Map
 import qualified Data.Text                     as T
+import           Data.Word                      ( Word8 )
 import           DConf.Data
 
 renderHeader :: Header
@@ -108,6 +110,7 @@ renderValue raw = Nix $ renderValue' raw <> ";"
   renderValue' (Ty ('a':t) (L v)) = "mkArray " <> T.pack (show t) <> " " <> renderList v
   -- TODO: add mkTyped to h-m
   renderValue' (Ty t v) = "mkTyped " <> T.pack (show t) <> " " <> renderItem v
+  renderValue' (Bs  v) = "mkByteString " <> renderByteString v
   renderValue' (V   v) = "mkVariant " <> renderItem v
   renderValue' (Json v) =
     "''\n" <> mkSpaces 8 <> T.strip v <> "\n" <> mkSpaces 6 <> "''"
@@ -124,3 +127,34 @@ renderString text = "\"" <> escaped <> "\""
         & T.replace "\n" "\\n"
         & T.replace "$" "\\$"
         & T.replace "\"" "\\\""
+
+-- We are going to use doubled apostrophes to avoid the need to escape backslashes.
+renderByteString :: [Word8] -> T.Text
+renderByteString bs = "''" <> T.pack (concatMap encode bs) <> "''"
+  where
+    encode :: Word8 -> String
+    encode b =
+      case chr (fromIntegral b) of
+        '\a' -> "\\a"
+        '\b' -> "\\b"
+        '\f' -> "\\f"
+        '\n' -> "\\n"
+        '\r' -> "\\r"
+        '\t' -> "\\t"
+        '\v' -> "\\v"
+        '\\' -> "\\\\"
+        -- We do not need to escape double quotes. Instead we care about dollars and apostrophes.
+        -- This is overly aggressive but keeping the implementation simple for now.
+        '$' -> "${\"$\"}"
+        '\'' -> "${\"'\"}"
+        c ->
+          if c < ' ' || c >= '\127' then
+            "\\" <> oct "" b
+          else
+            [c]
+
+oct :: String -> Word8 -> String
+oct acc 0 = acc
+oct acc n = oct (chr (fromIntegral (fromIntegral (ord '0') + remainder)) : acc) quotient
+  where
+    (quotient, remainder) = n `divMod` 8

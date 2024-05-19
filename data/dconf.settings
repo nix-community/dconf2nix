@@ -326,3 +326,6 @@ saved-game=@m(yyda(yyyyyyyy)ua(yyyyu)) nothing
 [org/gnome/evince]
 document-directory=@ms nothing
 pictures-directory=@ms nothing
+
+[org/gnome/easytag]
+default-path=b'/home/alice/Music'
