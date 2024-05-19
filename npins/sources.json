@@ -1,5 +1,20 @@
 {
   "pins": {
+    "github-markdown-toc": {
+      "type": "GitRelease",
+      "repository": {
+        "type": "GitHub",
+        "owner": "ekalinin",
+        "repo": "github-markdown-toc"
+      },
+      "pre_releases": false,
+      "version_upper_bound": null,
+      "release_prefix": null,
+      "version": "0.10.0",
+      "revision": "7d0a86b3be2e8e959cd9747fcf2c4a1f0e6a24eb",
+      "url": "https://api.github.com/repos/ekalinin/github-markdown-toc/tarball/0.10.0",
+      "hash": "14gnj1pwbscs0bj1wkzc342r0v1d5ib4c8bizyqg5djkl4j3rlzh"
+    },
     "nixpkgs": {
       "type": "Channel",
       "name": "nixos-unstable",

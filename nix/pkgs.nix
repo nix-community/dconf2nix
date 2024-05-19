@@ -11,5 +11,5 @@ let
   };
 in
 {
-  inherit pkgs hp;
+  inherit pkgs hp sources;
 }
