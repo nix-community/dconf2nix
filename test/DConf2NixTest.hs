@@ -1,7 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module DConf2NixTest
-  ( dconf2nixTests
+  ( dconf2nixHmTests
+  , dconf2nixNixOSTests
   )
 where
 
@@ -15,9 +16,13 @@ import           DConf.Data
 import           Hedgehog
 import           Text.Parsec                    ( runParser )
 
-dconf2nixTests :: Group
-dconf2nixTests = Group "Tests"
-  [(fromString name, runOnce (inputTestProperty (fromString name) root)) | InputTest name root <- inputTests]
+dconf2nixHmTests :: Group
+dconf2nixHmTests = Group "Home Manager tests"
+  [(fromString name, runOnce (inputTestProperty HomeManager (fromString name) root)) | InputTest name root <- inputTests]
+
+dconf2nixNixOSTests :: Group
+dconf2nixNixOSTests = Group "NixOS tests"
+  [(fromString name, runOnce (inputTestProperty NixOS (fromString name) root)) | InputTest name root <- inputTests]
 
 inputTests :: [InputTest]
 inputTests =
@@ -53,11 +58,11 @@ it name = InputTest { itName = name, itRoot = (Root T.empty) }
 runOnce :: Property -> Property
 runOnce = withTests 1
 
-baseProperty :: FilePath -> FilePath -> Root -> Property
-baseProperty i o root = property $ do
+baseProperty :: Style -> FilePath -> FilePath -> Root -> Property
+baseProperty s i o root = property $ do
   input  <- evalIO $ T.readFile i
   ref    <- evalIO $ newIORef T.empty
-  evalIO $ handler (writer ref) (writer ref) root (entries input)
+  evalIO $ handler (writer ref) (writer ref) root s (entries input)
   result <- evalIO $ readIORef ref
   -- Uncomment to overwrite the output files.
   -- evalIO $ T.writeFile o result
@@ -67,8 +72,11 @@ baseProperty i o root = property $ do
   entries = runParser (dconfParser Normal) () "<test>"
   writer ref x = modifyIORef ref (`T.append` x)
 
-inputTestProperty :: FilePath -> Root -> Property
-inputTestProperty name root =
+inputTestProperty :: Style -> FilePath -> Root -> Property
+inputTestProperty s name root =
   let input  = "test/data/" <> name <> ".settings"
-      output = "test/output/" <> name <> ".nix"
-  in  baseProperty input output root
+      output = "test/output/" <> name <> suffix <> ".nix"
+      suffix = case s of
+        HomeManager -> ""
+        NixOS -> "-nixos"
+  in  baseProperty s input output root

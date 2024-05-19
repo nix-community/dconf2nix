@@ -14,6 +14,7 @@ import           Paths_dconf2nix                ( version )
 
 data Args = Args
   { argsRoot :: Root
+  , argsStyle :: Style
   , argsVerbosity :: Verbosity
   , argsInput :: Input
   }
@@ -24,6 +25,11 @@ data FileArgs = FileArgs
   { fileInput :: InputFilePath
   , fileOutput :: OutputFilePath
   }
+
+styleArgs :: Parser Style
+styleArgs =
+  flag' HomeManager (long "home-manager" <> help "Use NixOS syntax")
+  <|> flag' NixOS (long "nixos" <> help "Use home-manager syntax")
 
 verbosityArgs :: Parser Verbosity
 verbosityArgs =
@@ -71,7 +77,7 @@ versionOpt = infoOption versionInfo
 runArgs :: IO Args
 runArgs =
   let
-    args = Args <$> rootArgs <*> verbosityArgs <*> (stdinArgs <|> fileArgs)
+    args = Args <$> rootArgs <*> styleArgs <*> verbosityArgs <*> (stdinArgs <|> fileArgs)
 
     opts = info
       (helper <*> versionOpt <*> args)

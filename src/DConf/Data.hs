@@ -7,6 +7,9 @@ import           Data.Word                      ( Word8 )
 newtype InputFilePath = InputFilePath FilePath deriving Show
 newtype OutputFilePath = OutputFilePath FilePath deriving Show
 
+data Style = HomeManager | NixOS
+  deriving Eq
+
 data Verbosity = Normal | Verbose
 
 newtype Nix = Nix { unNix :: Text } deriving Show
