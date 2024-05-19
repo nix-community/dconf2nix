@@ -240,14 +240,12 @@ vDictDictEntry = bracket "{" "}" $ do
 
 dconfHeader :: Parsec Text () Header
 dconfHeader = bracket "[" "]" $ do
-  _ <- spaces
-  h <- many1 $ satisfy $ \c -> isAlphaNum c || elem c ("/.-:_" :: [Char])
-  _ <- spaces
+  h <- many1 $ satisfy $ \c -> not (isControl c) && not (elem c ("[]" :: [Char]))
   return $ T.pack h
 
 kvLine :: Parsec Text () (Key,Value)
 kvLine = do
-  k <- many1 $ satisfy $ \c -> isAlphaNum c || c == '-'
+  k <- many1 $ satisfy $ \c -> isAlphaNum c || c == '-' || c == '_'
   _ <- char '='
   v <- value
   _ <- endOfLine

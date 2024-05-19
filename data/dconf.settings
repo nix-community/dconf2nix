@@ -1,34 +1,8 @@
 [org/virt-manager/virt-manager/urls]
 isos=['/home/bbigras/Downloads/something {ddsa}']
 
-[ org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9 ]
+[org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
 foo=true
-
-[ org/gnome/desktop/interface ]
-clock-show-weekday=true
-document-font-name=' JetBrainsMono Nerd Font 11 '
-enable-hot-corners=false
-font-name=' JetBrainsMono Nerd Font 11 '
-gtk-im-module=' gtk-im-context-simple '
-gtk-theme=' Adwaita-dark '
-icon-theme=' Adwaita '
-monospace-font-name=' JetBrainsMono Nerd Font 10 '
-show-battery-percentage=true
-
-[ org/gnome/desktop/peripherals/mouse ]
-natural-scroll=false
-speed=-0.5
-
-[ org/gnome/desktop/peripherals/touchpad ]
-tap-to-click=false
-two-finger-scrolling-enabled=true
-
-[ org/gnome/desktop/screensaver ]
-picture-uri=' file:///home/gvolpe/Pictures/nixos.png '
-
-[ org/gnome/desktop/sound ]
-allow-volume-above-100-percent=true
-event-sounds=true
 
 [org/gnome/desktop/wm/keybindings]
 close=['<Super>w']
@@ -36,11 +10,6 @@ switch-applications=@as []
 switch-applications-backward=@as []
 switch-windows=['<Alt>Tab']
 switch-windows-backward=['<Shift><Alt>Tab']
-
-[ org/gnome/desktop/wm/preferences ]
-button-layout=' close,minimize,maximize:'
-titlebar-font='JetBrainsMono Nerd Font Mono 11'
-workspace-names=@as []
 
 [ca/desrt/dconf-editor]
 saved-pathbar-path='/org/gnome/desktop/input-sources/'
@@ -226,10 +195,6 @@ disabled-extensions=['apps-menu@gnome-shell-extensions.gcampax.github.com', 'pla
 enabled-extensions=['horizontal-workspaces@gnome-shell-extensions.gcampax.github.com', 'drive-menu@gnome-shell-extensions.gcampax.github.com', 'screenshot-window-sizer@gnome-shell-extensions.gcampax.github.com', 'workspace-indicator@gnome-shell-extensions.gcampax.github.com', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'dash-to-dock@micxgx.gmail.com', 'timepp@zagortenay333', 'TopIcons@phocean.net']
 favorite-apps=['chromium-browser.desktop', 'spotify.desktop', 'slack.desktop', 'telegramdesktop.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.tweaks.desktop', 'terminator.desktop']
 
-[org/gnome/shell/extensions/dash-to-dock ]
-dock-fixed=false
-dock-position=' BOTTOM '
-
 [org/gnome/shell/extensions/dash-to-dock]
 background-opacity=0.80000000000000004
 custom-theme-shrink=false
@@ -246,10 +211,6 @@ isolate-workspaces=true
 running-indicator-style='DEFAULT'
 show-trash=false
 transparency-mode='DEFAULT'
-
-[org/gnome/shell/extensions/desktop-icons ]
-show-home=false
-show-trash=false
 
 [org/gnome/shell/extensions/desktop-icons]
 show-home=false
@@ -329,3 +290,9 @@ pictures-directory=@ms nothing
 
 [org/gnome/easytag]
 default-path=b'/home/alice/Music'
+
+[ test / *#@= All the special characters ]
+foo_bar='test'
+
+[com/github/wwmm/easyeffects/streamoutputs/compressor#0]
+sidechain-input-device='alsa_input.platform-snd_aloop.0.analog-stereo'

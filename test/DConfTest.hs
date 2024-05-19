@@ -23,7 +23,7 @@ simpleParser =
 
 testInput :: Text
 testInput = T.unlines
-  [ "[ org/gnome/desktop/peripherals/mouse ]"
+  [ "[org/gnome/desktop/peripherals/mouse]"
   , "natural-scroll=false"
   , "speed=-0.5"
   ]
