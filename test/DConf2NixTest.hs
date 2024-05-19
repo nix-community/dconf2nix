@@ -66,6 +66,6 @@ baseProperty i o root = property $ do
 
 inputTestProperty :: FilePath -> Root -> Property
 inputTestProperty name root =
-  let input  = "data/" <> name <> ".settings"
-      output = "output/" <> name <> ".nix"
+  let input  = "test/data/" <> name <> ".settings"
+      output = "test/output/" <> name <> ".nix"
   in  baseProperty input output root
