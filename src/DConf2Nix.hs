@@ -13,15 +13,15 @@ import           Text.Parsec                    ( ParseError
                                                 , runParser
                                                 )
 
-dconf2nixFile :: InputFilePath -> OutputFilePath -> Root -> Verbosity -> IO ()
-dconf2nixFile (InputFilePath input) (OutputFilePath output) root v =
-  let run   = handler (T.writeFile output) (T.appendFile output) root
+dconf2nixFile :: InputFilePath -> OutputFilePath -> Root -> Style -> Verbosity -> IO ()
+dconf2nixFile (InputFilePath input) (OutputFilePath output) root s v =
+  let run   = handler (T.writeFile output) (T.appendFile output) root s
       parse = parseFromFile (dconfParser v) input
   in  run =<< parse
 
-dconf2nixStdin :: Root -> Verbosity -> IO ()
-dconf2nixStdin root v =
-  let run   = handler T.putStr T.putStr root
+dconf2nixStdin :: Root -> Style -> Verbosity -> IO ()
+dconf2nixStdin root s v =
+  let run   = handler T.putStr T.putStr root s
       parse = runParser (dconfParser v) () "<stdin>"
   in  run . parse =<< T.getContents
 
@@ -29,11 +29,12 @@ handler
   :: (T.Text -> IO ())
   -> (T.Text -> IO ())
   -> Root
+  -> Style
   -> Either ParseError [Entry]
   -> IO ()
-handler writer appender root = \case
+handler writer appender root s = \case
   Left  err -> error $ show err
   Right xs  -> do
-    writer Nix.renderHeader
-    traverse_ (\e -> appender (unNix $ Nix.renderEntry e root)) xs
-    appender Nix.renderFooter
+    writer (Nix.renderHeader s)
+    traverse_ (\e -> appender (unNix $ Nix.renderEntry s e root)) xs
+    appender (Nix.renderFooter s)

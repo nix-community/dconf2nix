@@ -16,8 +16,12 @@ import qualified Data.Text                     as T
 import           Data.Word                      ( Word8 )
 import           DConf.Data
 
-renderHeader :: Header
-renderHeader = T.unlines
+renderHeader :: Style -> Header
+renderHeader HomeManager = renderHeaderHm
+renderHeader NixOS = renderHeaderNixOS
+
+renderHeaderHm :: Header
+renderHeaderHm = T.unlines
   [ "# Generated via dconf2nix: https://github.com/nix-commmunity/dconf2nix"
   , "{ lib, ... }:"
   , ""
@@ -27,8 +31,33 @@ renderHeader = T.unlines
   , "  dconf.settings = {"
   ]
 
-renderFooter :: Header
-renderFooter = T.unlines ["  };", "}"]
+renderHeaderNixOS :: Header
+renderHeaderNixOS = T.unlines
+  [ "# Generated via dconf2nix: https://github.com/nix-commmunity/dconf2nix"
+  , "{ lib, ... }:"
+  , ""
+  , "with lib.gvariant;"
+  , ""
+  , "{"
+  , "  programs.dconf.profiles.user.databases = ["
+  , "    {"
+  , "      settings = {"
+  ]
+
+renderFooter :: Style -> Header
+renderFooter HomeManager = renderFooterHm
+renderFooter NixOS = renderFooterNixOS
+
+renderFooterHm :: Header
+renderFooterHm = T.unlines ["  };", "}"]
+
+renderFooterNixOS :: Header
+renderFooterNixOS = T.unlines
+  [ "      };"
+  , "    }"
+  , "  ];"
+  , "}"
+  ]
 
 normalizeRoot :: T.Text -> T.Text
 normalizeRoot r | T.null r           = r
@@ -43,15 +72,20 @@ normalizeHeader h   (Root r) = normalizeRoot r <> T.replace "." "/" h
 mkSpaces :: Int -> T.Text
 mkSpaces = T.pack . flip replicate ' '
 
-renderEntry :: Entry -> Root -> Nix
-renderEntry (Entry h c) root =
-  let header = mkSpaces 4 <> "\"" <> normalizeHeader h root <> "\" = {\n"
+indentBase :: Style -> Int
+indentBase HomeManager = 4
+indentBase NixOS = 8
+
+renderEntry :: Style -> Entry -> Root -> Nix
+renderEntry s (Entry h c) root =
+  let base = indentBase s
+      header = mkSpaces base <> "\"" <> normalizeHeader h root <> "\" = {\n"
       body   = Map.toList c >>= \(Key k, v) ->
-        T.unpack $ mkSpaces 6 <> k <> " = " <> unNix (renderValue v) <> "\n"
-      close = mkSpaces 4 <> "};\n\n"
+        T.unpack $ mkSpaces (base + 2) <> k <> " = " <> unNix (renderValue s v) <> "\n"
+      close = mkSpaces base <> "};\n\n"
   in  Nix $ header <> T.pack body <> close
 
--- | Converts type to home-manager constructor function name.
+-- | Converts type to NixOS/home-manager constructor function name.
 -- | Most constructors will prefix the value with type annotation, we have to avoid those that don’t or we might get ambiguous expressions.
 constrName :: Ty -> Maybe String
 constrName TyObjectpath = Just "mkObjectpath"
@@ -72,10 +106,10 @@ constrName _ = Nothing
 -- arguments or list items (e.g. function application).
 data NixExpr = NeedsParens T.Text | Atomic T.Text
 
-renderValue :: Value -> Nix
-renderValue raw = Nix $ unparens (renderValue' initialIndent raw) <> ";"
+renderValue :: Style -> Value -> Nix
+renderValue s raw = Nix $ unparens (renderValue' initialIndent raw) <> ";"
  where
-  initialIndent = 6
+  initialIndent = indentBase s + 2
 
   parens :: NixExpr -> T.Text
   parens (NeedsParens v) = "(" <> v <> ")"
@@ -95,7 +129,10 @@ renderValue raw = Nix $ unparens (renderValue' initialIndent raw) <> ";"
   renderValue' _indent (S   v) = renderString v
   renderValue' _indent (B   v) = Atomic $ T.toLower . T.pack $ show v
   renderValue' _indent (No   ) = error "Standalone nothing not supported"
-  renderValue' _indent (I   v) = (if v < 0 then NeedsParens else Atomic) (T.pack $ show v)
+  renderValue' _indent (I   v) =
+    case s of
+      HomeManager -> (if v < 0 then NeedsParens else Atomic) (T.pack $ show v)
+      NixOS -> NeedsParens $ "mkInt32 " <> parens ((if v < 0 then NeedsParens else Atomic) (T.pack $ show v))
   renderValue' _indent (D   v) = NeedsParens $ "mkDouble \"" <> (T.pack $ show v) <> "\""
   renderValue' indent (C ty v) =
     NeedsParens $ case constrName ty of
@@ -117,7 +154,10 @@ renderValue raw = Nix $ unparens (renderValue' initialIndent raw) <> ";"
     Atomic $ "''\n" <> mkSpaces (indent + 2) <> T.strip v <> "\n" <> mkSpaces indent <> "''"
   renderValue' indent (R kvs) =
     Atomic $ "[\n" <> mconcat (fmap (\(k,v) -> mkSpaces (indent + 2) <> renderItem (indent + 2) (DE k v) <> "\n") kvs) <> mkSpaces indent <> "]"
-  renderValue' indent (DE k v) = NeedsParens $ "mkDictionaryEntry [" <> renderItem indent k <> " " <> renderItem indent v <> "]"
+  renderValue' indent (DE k v) =
+    case s of
+      HomeManager -> NeedsParens $ "mkDictionaryEntry [" <> renderItem indent k <> " " <> renderItem indent v <> "]"
+      NixOS -> NeedsParens $ "mkDictionaryEntry " <> renderItem indent k <> " " <> renderItem indent v
 
 renderString :: T.Text -> NixExpr
 renderString text = Atomic $ "\"" <> escaped <> "\""
